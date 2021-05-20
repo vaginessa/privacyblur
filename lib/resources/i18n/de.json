@@ -1,0 +1,53 @@
+{
+  "app_name": "PrivacyBlur",
+  "help_lines": {
+    "help0": "1. Tippe auf den zu ändernden Bereich",
+    "help1": "2. Du kannst den Bereich mit Tippen und Halten verschieben",
+    "help2": "3. Stelle den Effekt wie gewünscht ein",
+    "help3": "4. Tippe auf Anwenden, um den Effekt zu speichern",
+    "help4": "5. Tippe auf Speichern, um das Bild zu exportieren"
+  },
+  "buttons": {
+    "save": "Speichern",
+    "apply": "Anwenden",
+    "accept": "Akzeptieren",
+    "settings": "Einstellungen",
+    "ok": "OK",
+    "cancel": "Abbrechen",
+    "circle": "Kreis",
+    "square": "Quadrat",
+    "pixelate": "Verpixeln",
+    "blur": "Unschärfe",
+    "tool_size": "Größe",
+    "tool_grain": "Körnung",
+    "tool_shape": "Form",
+    "tool_type": "Typ"
+  },
+  "messages": {
+    "errors": {
+      "image_crash": "Beim Laden des letzten Bildes ist ein Fehler aufgetreten. Soll ich das Bild in einer kleineren Auflösung laden?",
+      "undefined": "Undefinierter Fehler",
+      "image_library": "Fehler beim Lesen der Bildbibliothek",
+      "target_directory": "Zielverzeichnis nicht vorhanden",
+      "photo_permissions": "PrivacyBlur muss auf deine Fotos zugreifen, um zu funktionieren.\nGehe in die Einstellungen, um der App die Erlaubnis zu erteilen.",
+      "file_system": "Dateisystem-Ausnahme",
+      "no_image": "Bild wurde nicht ausgewählt",
+      "problem_img_read": "Problem beim Lesen eines Bildes.\nDatei nicht vorhanden?",
+      "img_format": "Problem mit dem Dateiformat.\nIst dies ein Bild?",
+      "img_size": "Probleme mit der Bildgröße.\nVersuche es erneut.",
+      "img_not_readable": "Bild konnte nich ausgelesen werden.",
+      "processing_image": "Bei der Verarbeitung des Bildes ist ein Fehler aufgetreten.\nBitte versuche es erneut.",
+      "image_scale_down": "Warnung: Das Bild wurde herunterskaliert. Was du siehst, ist die endgültige Qualität. Original-Auflösung: {origRes}, neue Auflösung: {newRes}"
+    },
+    "infos": {
+      "exit_request": "Beenden ohne zu speichern?",
+      "success_saved": "Bild wurde erfolgreich gespeichert!",
+      "imageNotSelected": "Es wurde kein Bild ausgewählt"
+    }
+  },
+  "main_screen": {
+    "content": "Mach sensible Bereiche auf\ndeinen Bildern unkenntlich",
+    "select_image": "Aus Bibliothek auswählen",
+    "photo_permissions": "PrivacyBlur muss auf deine Fotos zugreifen, um zu funktionieren. Tippe auf \"Aus Bibliothek wählen\", um loszulegen."
+  }
+}

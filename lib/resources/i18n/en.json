@@ -1,0 +1,53 @@
+{
+  "app_name": "PrivacyBlur",
+  "help_lines": {
+    "help0": "1. Tap over the area to modify",
+    "help1": "2. You can move the area using tap and hold",
+    "help2": "3. Setup the effect as desired",
+    "help3": "4. Tap Apply to save the effect",
+    "help4": "5. Tap Save to export the picture"
+  },
+  "buttons": {
+    "save": "Save",
+    "apply": "Apply",
+    "accept": "Accept",
+    "settings": "Settings",
+    "ok": "OK",
+    "cancel": "Cancel",
+    "circle": "Circle",
+    "square": "Square",
+    "pixelate": "Pixelate",
+    "blur": "Blur",
+    "tool_size": "Size",
+    "tool_grain": "Grain",
+    "tool_shape": "Shape",
+    "tool_type": "Type"
+  },
+  "messages": {
+    "errors": {
+      "image_crash": "An error occurred while loading the last image. Should I load the picture in a smaller resolution?",
+      "undefined": "Undefined error",
+      "image_library": "Image library reading error",
+      "target_directory": "Target directory not exists",
+      "photo_permissions": "PrivacyBlur needs full access to your photos to function.\nGo to the settings to grant the app your permission.",
+      "file_system": "Filesystem exception",
+      "no_image": "Image was not selected",
+      "problem_img_read": "Problem reading the image.\nFile does not exist?",
+      "img_format": "Problem with the file format.\nIs this an image?",
+      "img_size": "Problems with the image size.\nTry again.",
+      "img_not_readable": "Cannot read the image from the file.",
+      "processing_image": "An exception occurred while processing the image.\nPlease try again.",
+      "image_scale_down": "Warning: the picture was scaled down. What you see is the final quality. Original resolution: {origRes}, new resolution: {newRes}"
+    },
+    "infos": {
+      "exit_request": "Exit without saving?",
+      "success_saved": "Success! Image was saved",
+      "imageNotSelected": "No image has been selected"
+    }
+  },
+  "main_screen": {
+    "content": "Hide sensitive data\nfrom your pictures!",
+    "select_image": "Select from library",
+    "photo_permissions": "PrivacyBlur needs full access to your photos to function. Tap \"Select from Library\" to get started."
+  }
+}

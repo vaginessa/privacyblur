@@ -4,7 +4,7 @@ import 'package:privacyblur/src/screens/image/helpers/image_classes_helper.dart'
 
 class ShapePainter extends CustomPainter {
   static int _old_hash = 0;
-  int _hash=0;
+  int _hash = 0;
   final int maxRadius;
   final int selectedPosition;
   final List<FilterPosition> positions;
@@ -57,14 +57,16 @@ class ShapePainter extends CustomPainter {
       }
       var radius = position.radiusRatio * maxRadius;
       var colorBorder = index == selectedPosition ? Colors.red : Colors.black;
+      var colorBorderInner =
+          index == selectedPosition ? Colors.pink : Colors.grey;
       if (position.isRounded) {
         _drawCircle(canvas, position.posX, position.posY, radius, colorBorder);
         _drawCircle(
-            canvas, position.posX, position.posY, radius - 2, Colors.grey);
+            canvas, position.posX, position.posY, radius - 2, colorBorderInner);
       } else {
         _drawRect(canvas, position.posX, position.posY, radius, colorBorder);
         _drawRect(
-            canvas, position.posX, position.posY, radius - 2, Colors.grey);
+            canvas, position.posX, position.posY, radius - 2, colorBorderInner);
       }
     });
   }

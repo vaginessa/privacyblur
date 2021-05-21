@@ -45,6 +45,14 @@ class ImageEventFilterGranularity extends ImageEventBase {
 }
 
 
+/// filter power changed
+class ImageEventPositionSelected extends ImageEventBase {
+  final int index;
+
+  ImageEventPositionSelected(this.index);
+}
+
+
 /// image click (tap) position updated
 class ImageEventAddPosition extends ImageEventBase {
   final double x;

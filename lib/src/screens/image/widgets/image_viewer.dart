@@ -16,6 +16,7 @@ class ImageViewer extends StatelessWidget {
   final double height; //available height for viewer
   final void Function(double, double) moveFilterPosition;
   final void Function(double, double) addFilterPosition;
+  final void Function(int) selectFilter;
   late TransformationController _transformationController;
 
   ImageViewer(
@@ -25,7 +26,8 @@ class ImageViewer extends StatelessWidget {
       this.height,
       this._transformationController,
       this.moveFilterPosition,
-      this.addFilterPosition);
+      this.addFilterPosition,
+      this.selectFilter);
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +48,7 @@ class ImageViewer extends StatelessWidget {
         EdgeInsets.fromLTRB(0, 0, horizontalBorder, verticalBorder);
 
     return GestureDetector(
-      onTapUp: onAddFilterPosition,
+      onTapUp: onTapPosition,
       onLongPressMoveUpdate: onDragFilter,
       onLongPressStart: onDragStartFilter,
       child: InteractiveViewer(
@@ -66,8 +68,8 @@ class ImageViewer extends StatelessWidget {
                 isComplex: true,
                 willChange: true,
                 painter: ImgPainter(image),
-                foregroundPainter:
-                    ShapePainter(state.positions, state.maxRadius, state.selectedFilterPosition),
+                foregroundPainter: ShapePainter(state.positions,
+                    state.maxRadius, state.selectedFilterPosition),
               ))),
     );
   }
@@ -79,11 +81,16 @@ class ImageViewer extends StatelessWidget {
     moveFilterPosition(offset.dx, offset.dy);
   }
 
-  onAddFilterPosition(TapUpDetails details) {
+  onTapPosition(TapUpDetails details) {
     Offset offset = _transformationController.toScene(
       details.localPosition,
     );
-    addFilterPosition(offset.dx, offset.dy);
+    var selected = _detectSelectedFilter(offset);
+    if (selected >= 0) {
+      selectFilter(selected);
+    } else {
+      addFilterPosition(offset.dx, offset.dy);
+    }
   }
 
   onDragFilter(LongPressMoveUpdateDetails details) {
@@ -102,6 +109,26 @@ class ImageViewer extends StatelessWidget {
     if (_calulateDragInArea(offset)) {
       moveFilterPosition(offset.dx, offset.dy);
     }
+  }
+
+  int _detectSelectedFilter(Offset offset) {
+    int index = -1;
+    double dist = 10000000;
+    state.positions.asMap().forEach((key, value) {
+      var tmpRadius = state.maxRadius * value.radiusRatio;
+      var tmp =
+          sqrt(pow(value.posX - offset.dx, 2) + pow(value.posY - offset.dy, 2));
+      if ((value.isRounded && (tmp <= tmpRadius)) ||
+          ((!value.isRounded) &&
+              ((value.posX - offset.dx).abs() <= tmpRadius) &&
+              ((value.posY - offset.dy).abs() <= tmpRadius))) {
+        if (tmp < dist) {
+          index = key;
+          dist = tmp;
+        }
+      }
+    });
+    return index;
   }
 
   bool _calulateDragInArea(Offset offset) {

@@ -56,6 +56,8 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
       yield* positionFilterChanged(event);
     } else if (event is ImageEventAddPosition) {
       yield* addFilter(event);
+    } else if (event is ImageEventPositionSelected) {
+      yield* selectPosition(event);
     } else if (event is ImageEventApply) {
       yield* applyFilterChanged(event);
     } else if (event is ImageEventCancel) {
@@ -184,6 +186,12 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
     imageFilter.transactionCancel();
     _blocState.resetSelection();
     _blocState.image = await imageFilter.getImage();
+    yield _blocState.clone();
+  }
+
+  Stream<ImageStateScreen> selectPosition(
+      ImageEventPositionSelected event) async* {
+    _blocState.selectedFilterPosition = event.index;
     yield _blocState.clone();
   }
 

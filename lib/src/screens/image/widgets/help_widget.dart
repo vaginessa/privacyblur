@@ -41,6 +41,7 @@ class HelpWidget extends StatelessWidget {
 
   Widget _helpTemplate(BuildContext context, HelpLine line) {
     double spacePerHelpline = height / helpLines.length;
+    double textSize = min(max(spacePerHelpline * 0.4, 12), 16);
     return Padding(
       padding: EdgeInsets.only(
         left: _internalLayout.spacer * 2,
@@ -53,15 +54,15 @@ class HelpWidget extends StatelessWidget {
             padding:
                 EdgeInsets.fromLTRB(0.0, 0, _internalLayout.spacer * 1.5, 0),
             child: Icon(line.icon,
-                color: AppTheme.fontColor(context), size: min(spacePerHelpline * 0.4, 16)),
-          ),
+                color: AppTheme.fontColor(context), size: textSize,
+          ),),
           Flexible(
               child: Text(
             translate(line.text),
             style: TextStyle(
               color: AppTheme.fontColor(context),
               height: 1.2,
-              fontSize: min(spacePerHelpline * 0.35, 16)
+              fontSize: textSize
             ),
           ))
         ],

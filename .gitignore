@@ -47,3 +47,4 @@ pubspec.lock
 ios/Podfile.lock
 
 android/key.properties
+android/key.jks

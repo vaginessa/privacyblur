@@ -13,6 +13,7 @@ import 'package:privacyblur/src/widgets/theme/theme_provider.dart';
 class HelpLine {
   final IconData icon;
   final String text;
+
   HelpLine(this.icon, this.text);
 }
 
@@ -34,9 +35,9 @@ class HelpWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     _internalLayout = InternalLayout(context);
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: helpLines.map((help) => _helpTemplate(context, help)).toList()
-    );
+        mainAxisAlignment: MainAxisAlignment.center,
+        children:
+            helpLines.map((help) => _helpTemplate(context, help)).toList());
   }
 
   Widget _helpTemplate(BuildContext context, HelpLine line) {
@@ -44,26 +45,27 @@ class HelpWidget extends StatelessWidget {
     double textSize = min(max(spacePerHelpline * 0.4, 12), 16);
     return Padding(
       padding: EdgeInsets.only(
-        left: _internalLayout.spacer * 2,
-        right: _internalLayout.spacer * 2,
-        bottom: spacePerHelpline * 0.25
-      ),
+          left: _internalLayout.spacer * 2,
+          right: _internalLayout.spacer * 2,
+          bottom: spacePerHelpline * 0.25),
       child: Row(
         children: [
           Padding(
             padding:
                 EdgeInsets.fromLTRB(0.0, 0, _internalLayout.spacer * 1.5, 0),
-            child: Icon(line.icon,
-                color: AppTheme.fontColor(context), size: textSize,
-          ),),
+            child: Icon(
+              line.icon,
+              color: AppTheme.fontColor(context),
+              size: textSize,
+            ),
+          ),
           Flexible(
               child: Text(
             translate(line.text),
             style: TextStyle(
-              color: AppTheme.fontColor(context),
-              height: 1.2,
-              fontSize: textSize
-            ),
+                color: AppTheme.fontColor(context),
+                height: 1.2,
+                fontSize: textSize),
           ))
         ],
       ),

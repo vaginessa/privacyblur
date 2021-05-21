@@ -11,21 +11,20 @@ class ScreenRotation extends StatelessWidget {
       BuildContext context, double width, double height, bool landscape) view2;
   final double view2Portrait;
   final double view2Landscape;
+  final double baseHeight;
 
   ScreenRotation(
       {required this.view1,
       required this.view2,
       required this.view2Portrait,
-      required this.view2Landscape});
+      required this.view2Landscape,
+      required this.baseHeight
+      });
 
   @override
   Widget build(BuildContext context) {
     var config = LayoutConfig(context);
-    var toolbarSize = AppTheme.isIOS
-        ? (kMinInteractiveDimensionCupertino + (50 /*statusbar height*/))
-        : (Scaffold.of(context).appBarMaxHeight ?? kToolbarHeight);
     var baseWidth = MediaQuery.of(context).size.width;
-    var baseHeight = MediaQuery.of(context).size.height - toolbarSize;
 
     if (config.landscapeMode) {
       double view2Width = view2Landscape;

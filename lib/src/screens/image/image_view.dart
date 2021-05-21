@@ -89,7 +89,9 @@ class ImageScreen extends StatelessWidget with AppMessages {
                     context: context,
                     title: translate(Keys.App_Name),
                     actions: _actionsIcon(context, isEditState, imgNotSaved),
-                    body: _buildHomeBody(context, state));
+                    body: SafeArea(child:
+                      _buildHomeBody(context, state))
+                    );
               })),
     );
   }
@@ -109,25 +111,30 @@ class ImageScreen extends StatelessWidget with AppMessages {
 
   Widget _buildHomeBody(BuildContext context, ImageStateBase? state) {
     if (state is ImageStateScreen) {
-      return ScreenRotation(
-        view1: (context, w, h, landscape) {
-          if (_transformationController == null) {
-            _transformationController = TransformationController(
-                _calculateInitialScaleAndOffset(
-                    context, state.image.mainImage, w, h));
-          }
-          return ImageViewer(
-              state.image,
-              state,
-              w,
-              h,
-              _transformationController!,
-                  (posX, posY) => _bloc.add(ImageEventSetPosition(posX, posY)));
-        },
-        view2: (context, w, h, landscape) =>
-            drawImageToolbar(context, state, w, h, landscape),
-        view2Portrait: view2PortraitSize,
-        view2Landscape: view2LandScapeSize,
+      return LayoutBuilder(
+        builder: (context, constraints) {
+          return ScreenRotation(
+            baseHeight: constraints.maxHeight,
+            view1: (context, w, h, landscape) {
+              if (_transformationController == null) {
+                _transformationController = TransformationController(
+                    _calculateInitialScaleAndOffset(
+                        context, state.image.mainImage, w, h));
+              }
+              return ImageViewer(
+                  state.image,
+                  state,
+                  w,
+                  h,
+                  _transformationController!,
+                      (posX, posY) => _bloc.add(ImageEventSetPosition(posX, posY)));
+            },
+            view2: (context, w, h, landscape) =>
+                drawImageToolbar(context, state, w, h, landscape),
+            view2Portrait: view2PortraitSize,
+            view2Landscape: view2LandScapeSize,
+          );
+        }
       );
     } else {
       return Center(child: CircularProgressIndicator.adaptive());

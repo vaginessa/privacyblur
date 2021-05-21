@@ -15,6 +15,7 @@ import 'package:privacyblur/src/utils/image_filter/helpers/matrix_pixelate.dart'
 import 'package:privacyblur/src/utils/image_filter/image_filters.dart';
 import 'package:privacyblur/src/widgets/message_bar.dart';
 
+import 'helpers/image_classes_helper.dart';
 import 'helpers/image_events.dart';
 import 'helpers/image_states.dart';
 import 'image_repo.dart';
@@ -53,6 +54,8 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
       yield* radiusFilterChanged(event);
     } else if (event is ImageEventSetPosition) {
       yield* positionFilterChanged(event);
+    } else if (event is ImageEventAddPosition) {
+      yield* addFilter(event);
     } else if (event is ImageEventApply) {
       yield* applyFilterChanged(event);
     } else if (event is ImageEventCancel) {
@@ -166,7 +169,7 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
       message = Keys.Messages_Errors_File_System;
     }
     yield ImageStateFeedback(message, messageType: messageType);
-    if (_blocState.image != null) yield _blocState.clone();
+    yield _blocState.clone();
   }
 
   Stream<ImageStateScreen> applyFilterChanged(ImageEventApply event) async* {
@@ -181,6 +184,14 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
     imageFilter.transactionCancel();
     _blocState.resetSelection();
     _blocState.image = await imageFilter.getImage();
+    yield _blocState.clone();
+  }
+
+  Stream<ImageStateScreen> addFilter(ImageEventAddPosition event) async* {
+    _blocState.positions.add(FilterPosition()
+      ..posX = event.x.toInt()
+      ..posY = event.y.toInt());
+    _blocState.selectedFilterPosition = _blocState.positions.length - 1;
     yield _blocState.clone();
   }
 

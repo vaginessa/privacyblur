@@ -14,16 +14,21 @@ class ImageViewer extends StatelessWidget {
   final ImageStateScreen state;
   final double width; //available width for viewer
   final double height; //available height for viewer
-  final void Function(double, double) setFilterPosition;
-  late double radiusSize;
+  final void Function(double, double) moveFilterPosition;
+  final void Function(double, double) addFilterPosition;
   late TransformationController _transformationController;
 
-  ImageViewer(this.image, this.state, this.width, this.height,
-      this._transformationController, this.setFilterPosition);
+  ImageViewer(
+      this.image,
+      this.state,
+      this.width,
+      this.height,
+      this._transformationController,
+      this.moveFilterPosition,
+      this.addFilterPosition);
 
   @override
   Widget build(BuildContext context) {
-    radiusSize = state.radiusRatio * state.maxRadius;
     var wScale = width / image.mainImage.width;
     var hScale = height / image.mainImage.height;
     var minScale = min(wScale, hScale); //to fit image
@@ -41,7 +46,7 @@ class ImageViewer extends StatelessWidget {
         EdgeInsets.fromLTRB(0, 0, horizontalBorder, verticalBorder);
 
     return GestureDetector(
-      onTapUp: onSetFilterPosition,
+      onTapUp: onAddFilterPosition,
       onLongPressMoveUpdate: onDragFilter,
       onLongPressStart: onDragStartFilter,
       child: InteractiveViewer(
@@ -61,17 +66,24 @@ class ImageViewer extends StatelessWidget {
                 isComplex: true,
                 willChange: true,
                 painter: ImgPainter(image),
-                foregroundPainter: ShapePainter(
-                    state.posX, state.posY, radiusSize, state.isRounded),
+                foregroundPainter:
+                    ShapePainter(state.positions, state.maxRadius, state.selectedFilterPosition),
               ))),
     );
   }
 
-  onSetFilterPosition(TapUpDetails details) {
+  onMoveFilterPosition(TapUpDetails details) {
     Offset offset = _transformationController.toScene(
       details.localPosition,
     );
-    setFilterPosition(offset.dx, offset.dy);
+    moveFilterPosition(offset.dx, offset.dy);
+  }
+
+  onAddFilterPosition(TapUpDetails details) {
+    Offset offset = _transformationController.toScene(
+      details.localPosition,
+    );
+    addFilterPosition(offset.dx, offset.dy);
   }
 
   onDragFilter(LongPressMoveUpdateDetails details) {
@@ -88,20 +100,24 @@ class ImageViewer extends StatelessWidget {
 
   void _setFilterDragPos(Offset offset) {
     if (_calulateDragInArea(offset)) {
-      setFilterPosition(offset.dx, offset.dy);
+      moveFilterPosition(offset.dx, offset.dy);
     }
   }
 
   bool _calulateDragInArea(Offset offset) {
+    var position = state.getSelectedPosition();
+    if (position == null) return false;
     double dist;
-    double distX = pow((state.posX.toDouble() - offset.dx), 2).abs().toDouble();
-    double distY = pow((state.posY.toDouble() - offset.dy), 2).abs().toDouble();
-    if (state.isRounded) {
+    double distX =
+        pow((position.posX.toDouble() - offset.dx), 2).abs().toDouble();
+    double distY =
+        pow((position.posY.toDouble() - offset.dy), 2).abs().toDouble();
+    if (position.isRounded) {
       dist = sqrt(distY + distX);
-      return dist <= radiusSize;
+      return dist <= position.radiusRatio * state.maxRadius;
     } else {
       dist = distY + distX;
-      return dist <= pow(radiusSize, 2);
+      return dist <= pow(position.radiusRatio * state.maxRadius, 2);
     }
   }
 }

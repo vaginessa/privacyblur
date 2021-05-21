@@ -44,6 +44,16 @@ class ImageEventFilterGranularity extends ImageEventBase {
   ImageEventFilterGranularity(this.power);
 }
 
+
+/// image click (tap) position updated
+class ImageEventAddPosition extends ImageEventBase {
+  final double x;
+  final double y;
+
+  ImageEventAddPosition(this.x, this.y);
+}
+
+
 /// image click (tap) position updated
 class ImageEventSetPosition extends ImageEventBase {
   final double x;

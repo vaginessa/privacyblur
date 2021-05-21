@@ -168,10 +168,11 @@ class ImageScreen extends StatelessWidget with AppMessages {
 
   Widget drawImageToolbar(BuildContext context, ImageStateScreen state,
       double width, double height, bool isLandscape) {
+    var position=state.getSelectedPosition();
     return Container(
       decoration: BoxDecoration(color: AppTheme.barColor(context)),
       //AppTheme.barColor(context)
-      child: (!state.hasSelection)
+      child: (position==null)
           ? HelpWidget(height)
           : RotatedBox(
           quarterTurns: isLandscape ? 3 : 0,
@@ -191,10 +192,10 @@ class ImageScreen extends StatelessWidget with AppMessages {
             onCircleSelected: () => _bloc.add(ImageEventShapeRounded(true)),
             onSquareSelected: () =>
                 _bloc.add(ImageEventShapeRounded(false)),
-            isRounded: state.isRounded,
-            isPixelate: state.isPixelate,
-            curPower: state.granularityRatio,
-            curRadius: state.radiusRatio,
+            isRounded: position.isRounded,
+            isPixelate: position.isPixelate,
+            curPower: position.granularityRatio,
+            curRadius: position.radiusRatio,
             isLandscape: isLandscape,
             activeTool: state.activeTool,
           )),

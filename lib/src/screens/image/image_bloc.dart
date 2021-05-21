@@ -71,21 +71,27 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
   var imageFilter = ImageAppFilter();
 
   void _filterInArea() {
-    var radius = _blocState.radiusRatio * _blocState.maxRadius;
-    if (_blocState.isRounded) {
-      imageFilter.apply2CircleArea(_blocState.posX, _blocState.posY, radius);
-    } else {
-      imageFilter.apply2SquareArea(_blocState.posX, _blocState.posY, radius);
+    var position = _blocState.getSelectedPosition();
+    if (position != null) {
+      var radius = position.radiusRatio * _blocState.maxRadius;
+      if (position.isRounded) {
+        imageFilter.apply2CircleArea(position.posX, position.posY, radius);
+      } else {
+        imageFilter.apply2SquareArea(position.posX, position.posY, radius);
+      }
     }
   }
 
   void _setMatrix() {
-    if (_blocState.isPixelate) {
-      imageFilter.setFilter(MatrixAppPixelate(
-          (_blocState.maxPower * _blocState.granularityRatio).toInt()));
-    } else {
-      imageFilter.setFilter(MatrixAppBlur(
-          (_blocState.maxPower * _blocState.granularityRatio).toInt()));
+    var position = _blocState.getSelectedPosition();
+    if (position != null) {
+      if (position.isPixelate) {
+        imageFilter.setFilter(MatrixAppPixelate(
+            (_blocState.maxPower * position.granularityRatio).toInt()));
+      } else {
+        imageFilter.setFilter(MatrixAppBlur(
+            (_blocState.maxPower * position.granularityRatio).toInt()));
+      }
     }
   }
 
@@ -108,22 +114,24 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
 
   Stream<ImageStateBase> filterShapeChanged(
       ImageEventShapeRounded event) async* {
-    if (event.isRounded == _blocState.isRounded) return;
-    if (_blocState.hasSelection) {
-      _blocState.isRounded = event.isRounded;
+    var position = _blocState.getSelectedPosition();
+    if (position != null) {
+      if (event.isRounded == position.isRounded) return;
+      position.isRounded = event.isRounded;
       _applyCurrentFilter();
+      yield _blocState.clone();
     }
-    yield _blocState.clone();
   }
 
   Stream<ImageStateBase> filterTypeChanged(
       ImageEventFilterPixelate event) async* {
-    if (event.isPixelate == _blocState.isPixelate) return;
-    if (_blocState.hasSelection) {
-      _blocState.isPixelate = event.isPixelate;
+    var position = _blocState.getSelectedPosition();
+    if (position != null) {
+      if (event.isPixelate == position.isPixelate) return;
+      position.isPixelate = event.isPixelate;
       _applyCurrentFilter();
+      yield _blocState.clone();
     }
-    yield _blocState.clone();
   }
 
   Stream<ImageStateBase> saveImage(ImageEventSave2Disk event) async* {
@@ -178,26 +186,31 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
 
   Stream<ImageStateScreen> positionFilterChanged(
       ImageEventSetPosition event) async* {
-    imageFilter.transactionStart();
-    _blocState.posX = event.x.toInt();
-    _blocState.posY = event.y.toInt();
-    _applyCurrentFilter();
-    yield _blocState.clone();
+    var position = _blocState.getSelectedPosition();
+    if (position != null) {
+      imageFilter.transactionStart();
+      position.posX = event.x.toInt();
+      position.posY = event.y.toInt();
+      _applyCurrentFilter();
+      yield _blocState.clone();
+    }
   }
 
   Stream<ImageStateScreen> radiusFilterChanged(
       ImageEventShapeSize event) async* {
-    if (_blocState.hasSelection) {
-      _blocState.radiusRatio = event.radius;
+    var position = _blocState.getSelectedPosition();
+    if (position != null) {
+      position.radiusRatio = event.radius;
       _applyCurrentFilter();
+      yield _blocState.clone();
     }
-    yield _blocState.clone();
   }
 
   Stream<ImageStateScreen> powerFilterChanged(
       ImageEventFilterGranularity event) async* {
-    if (_blocState.hasSelection) {
-      _blocState.granularityRatio = event.power;
+    var position = _blocState.getSelectedPosition();
+    if (position != null) {
+      position.granularityRatio = event.power;
       _applyCurrentFilter();
     }
     yield _blocState.clone();

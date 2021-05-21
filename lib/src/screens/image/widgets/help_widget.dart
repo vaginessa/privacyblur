@@ -44,7 +44,7 @@ class HelpWidget extends StatelessWidget {
 
   Widget _helpTemplate(BuildContext context, IconData icon, String text) {
     return Padding(
-      padding: EdgeInsets.all(_internalLayout.spacer),
+      padding: EdgeInsets.all(_internalLayout.spacer * 0.6),
       child: Row(
         children: [
           Padding(

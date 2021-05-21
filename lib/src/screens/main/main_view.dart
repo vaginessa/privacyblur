@@ -68,64 +68,66 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     Color textColor = AppTheme.fontColor(context);
     double spacer = _layoutConfig.getScaledSize(20);
 
-    return Container(
-      constraints: BoxConstraints.expand(),
-      child: LayoutBuilder(builder: (context, BoxConstraints constraints) {
-        return SingleChildScrollView(
-          child: Container(
-            constraints: BoxConstraints(minHeight: constraints.minHeight),
-            child: Center(
-                child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: spacer),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Image.asset('lib/resources/images/launch_image.png'),
-                        SizedBox(height: spacer),
-                        Text(
-                          translate(Keys.Main_Screen_Content),
-                          style: TextStyle(
-                              fontSize: Theme.of(context)
-                                  .textTheme
-                                  .headline6!
-                                  .fontSize,
-                              fontWeight: FontWeight.bold,
-                              color: textColor),
-                          textAlign: TextAlign.center,
-                        ),
-                        SizedBox(height: spacer * 2),
-                        TextButtonBuilder.build(
-                            text: translate(Keys.Main_Screen_Select_Image),
-                            onPressed: () =>
-                                openImageAction(context, ImageSource.gallery),
-                            backgroundColor: AppTheme.buttonColor,
-                            rounded: true,
-                            padding: EdgeInsets.symmetric(
-                                vertical: 10, horizontal: 20),
-                            color: Colors.white),
-                        if (!havePermission) _showPermissionWarning(),
-                        SizedBox(height: spacer * 4),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text('Made with ',
-                                style: TextStyle(color: textColor)),
-                            Icon(CupertinoIcons.heart_fill,
-                                color: primaryColor),
-                            Text(' by ', style: TextStyle(color: textColor)),
-                            GestureDetector(
-                              child: Text('MATHEMA',
-                                  style: TextStyle(color: primaryColor)),
-                              onTap: () => launchLink(websiteURL),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ))),
-          ),
-        );
-      }),
+    return SafeArea(
+      child: Container(
+        constraints: BoxConstraints.expand(),
+        child: LayoutBuilder(builder: (context, BoxConstraints constraints) {
+          return SingleChildScrollView(
+            child: Container(
+              constraints: BoxConstraints(minHeight: constraints.minHeight),
+              child: Center(
+                  child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: spacer),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Image.asset('lib/resources/images/launch_image.png'),
+                          SizedBox(height: spacer),
+                          Text(
+                            translate(Keys.Main_Screen_Content),
+                            style: TextStyle(
+                                fontSize: Theme.of(context)
+                                    .textTheme
+                                    .headline6!
+                                    .fontSize,
+                                fontWeight: FontWeight.bold,
+                                color: textColor),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: spacer * 2),
+                          TextButtonBuilder.build(
+                              text: translate(Keys.Main_Screen_Select_Image),
+                              onPressed: () =>
+                                  openImageAction(context, ImageSource.gallery),
+                              backgroundColor: AppTheme.buttonColor,
+                              rounded: true,
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 20),
+                              color: Colors.white),
+                          if (!havePermission) _showPermissionWarning(),
+                          SizedBox(height: spacer * 4),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text('Made with ',
+                                  style: TextStyle(color: textColor)),
+                              Icon(CupertinoIcons.heart_fill,
+                                  color: primaryColor),
+                              Text(' by ', style: TextStyle(color: textColor)),
+                              GestureDetector(
+                                child: Text('MATHEMA',
+                                    style: TextStyle(color: primaryColor)),
+                                onTap: () => launchLink(websiteURL),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ))),
+            ),
+          );
+        }),
+      ),
     );
   }
 

@@ -115,6 +115,7 @@ class ImageScreen extends StatelessWidget with AppMessages {
         builder: (context, constraints) {
           return ScreenRotation(
             baseHeight: constraints.maxHeight,
+            baseWidth: constraints.maxWidth,
             view1: (context, w, h, landscape) {
               if (_transformationController == null) {
                 _transformationController = TransformationController(

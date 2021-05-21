@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
@@ -44,7 +45,7 @@ class HelpWidget extends StatelessWidget {
       padding: EdgeInsets.only(
         left: _internalLayout.spacer * 2,
         right: _internalLayout.spacer * 2,
-        bottom: spacePerHelpline * 0.3
+        bottom: spacePerHelpline * 0.25
       ),
       child: Row(
         children: [
@@ -52,7 +53,7 @@ class HelpWidget extends StatelessWidget {
             padding:
                 EdgeInsets.fromLTRB(0.0, 0, _internalLayout.spacer * 1.5, 0),
             child: Icon(line.icon,
-                color: AppTheme.fontColor(context), size: spacePerHelpline * 0.4),
+                color: AppTheme.fontColor(context), size: min(spacePerHelpline * 0.4, 16)),
           ),
           Flexible(
               child: Text(
@@ -60,7 +61,7 @@ class HelpWidget extends StatelessWidget {
             style: TextStyle(
               color: AppTheme.fontColor(context),
               height: 1.2,
-              fontSize: spacePerHelpline * 0.35
+              fontSize: min(spacePerHelpline * 0.35, 16)
             ),
           ))
         ],

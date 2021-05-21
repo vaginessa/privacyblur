@@ -49,8 +49,8 @@ class ImageViewer extends StatelessWidget {
 
     return GestureDetector(
       onTapUp: onTapPosition,
-      onLongPressMoveUpdate: onDragFilter,
-      onLongPressStart: onDragStartFilter,
+      onLongPressMoveUpdate: onMoveFilter,
+      onLongPressStart: onLongPressStart,
       child: InteractiveViewer(
           transformationController: _transformationController,
           maxScale: 10,
@@ -74,13 +74,6 @@ class ImageViewer extends StatelessWidget {
     );
   }
 
-  onMoveFilterPosition(TapUpDetails details) {
-    Offset offset = _transformationController.toScene(
-      details.localPosition,
-    );
-    moveFilterPosition(offset.dx, offset.dy);
-  }
-
   onTapPosition(TapUpDetails details) {
     Offset offset = _transformationController.toScene(
       details.localPosition,
@@ -93,20 +86,22 @@ class ImageViewer extends StatelessWidget {
     }
   }
 
-  onDragFilter(LongPressMoveUpdateDetails details) {
-    _setFilterDragPos(_transformationController.toScene(
+  onMoveFilter(LongPressMoveUpdateDetails details) {
+    Offset offset = _transformationController.toScene(
       details.localPosition,
-    ));
+    );
+    if (state.hasSelection) {
+      moveFilterPosition(offset.dx, offset.dy);
+    }
   }
 
-  onDragStartFilter(LongPressStartDetails details) {
-    _setFilterDragPos(_transformationController.toScene(
+  onLongPressStart(LongPressStartDetails details) {
+    Offset offset = _transformationController.toScene(
       details.localPosition,
-    ));
-  }
-
-  void _setFilterDragPos(Offset offset) {
-    if (_calulateDragInArea(offset)) {
+    );
+    var selected = _detectSelectedFilter(offset);
+    selectFilter(selected);
+    if (selected >= 0) {
       moveFilterPosition(offset.dx, offset.dy);
     }
   }
@@ -129,22 +124,5 @@ class ImageViewer extends StatelessWidget {
       }
     });
     return index;
-  }
-
-  bool _calulateDragInArea(Offset offset) {
-    var position = state.getSelectedPosition();
-    if (position == null) return false;
-    double dist;
-    double distX =
-        pow((position.posX.toDouble() - offset.dx), 2).abs().toDouble();
-    double distY =
-        pow((position.posY.toDouble() - offset.dy), 2).abs().toDouble();
-    if (position.isRounded) {
-      dist = sqrt(distY + distX);
-      return dist <= position.radiusRatio * state.maxRadius;
-    } else {
-      dist = distY + distX;
-      return dist <= pow(position.radiusRatio * state.maxRadius, 2);
-    }
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:privacyblur/src/screens/image/helpers/constants.dart';
 import 'package:privacyblur/src/screens/image/helpers/image_classes_helper.dart';
+import 'package:privacyblur/src/widgets/theme/theme_provider.dart';
 
 class ShapePainter extends CustomPainter {
   static int _old_hash = 0;
@@ -56,9 +57,9 @@ class ShapePainter extends CustomPainter {
         return;
       }
       var radius = position.radiusRatio * maxRadius;
-      var colorBorder = index == selectedPosition ? Colors.red : Colors.black;
+      var colorBorder = index == selectedPosition ? AppTheme.primaryColor : Colors.black;
       var colorBorderInner =
-          index == selectedPosition ? Colors.pink : Colors.grey;
+          index == selectedPosition ? AppTheme.primaryColor : Colors.grey;
       if (position.isRounded) {
         _drawCircle(canvas, position.posX, position.posY, radius, colorBorder);
         _drawCircle(

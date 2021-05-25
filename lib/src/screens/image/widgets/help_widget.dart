@@ -63,6 +63,7 @@ class HelpWidget extends StatelessWidget {
           Flexible(
               child: Text(
             translate(line.text),
+            textScaleFactor: 1,
             style: TextStyle(
                 color: AppTheme.fontColor(context),
                 height: 1.2,

@@ -20,22 +20,13 @@ import 'utils/image_tools.dart';
 class _yield_state_internally extends ImageEventBase {}
 
 class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
+  final ImageStateScreen _blocState = ImageStateScreen();
   final ImageRepository _repo;
-
   int _maxImageSize = 0;
   Timer? _deferedFuture;
   Duration _defered = Duration(milliseconds: ImgConst.applyDelayDuration);
 
-  final ImageStateScreen _blocState = ImageStateScreen();
-
   ImageBloc(this._repo) : super(null);
-
-  static final Map<EditTool, String> editToolMessage = {
-    EditTool.EditSize: Keys.Buttons_Tool_Size,
-    EditTool.EditGranularity: Keys.Buttons_Tool_Grain,
-    EditTool.EditShape: Keys.Buttons_Tool_Shape,
-    EditTool.EditType: Keys.Buttons_Tool_Type,
-  };
 
   @override
   Stream<ImageStateBase> mapEventToState(ImageEventBase event) async* {
@@ -53,6 +44,8 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
       yield* addFilter(event);
     } else if (event is ImageEventExistingFilterSelected) {
       yield* selectFilterIndex(event);
+    } else if (event is ImageEventExistingFilterDelete) {
+      yield* deleteFilterIndex(event);
     } else if (event is ImageEventApply) {
       yield* applyFilterChanged(event);
     } else if (event is ImageEventCancel) {
@@ -171,7 +164,7 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
     yield _blocState.clone();
   }
 
-  Stream<ImageStateScreen> cancelFilterChanged(ImageEventCancel event) async* {
+  Stream<ImageStateScreen> cancelFilterChanged(ImageEventBase event) async* {
     imageFilter.transactionCancel();
     _blocState.resetSelection();
     _blocState.image = await imageFilter.getImage();
@@ -182,6 +175,22 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
       ImageEventExistingFilterSelected event) async* {
     _blocState.selectedFilterPosition = event.index;
     yield _blocState.clone();
+  }
+
+  Stream<ImageStateScreen> deleteFilterIndex(
+      ImageEventExistingFilterDelete event) async* {
+    if (_blocState.positions.length <= 1) {
+      yield* cancelFilterChanged(event);
+      return;
+    }
+    var position = _blocState.getSelectedPosition();
+    if (position != null) {
+      _cancelCurrentFilter(position);
+      _blocState.selectedFilterPosition = event.index - 1;
+      _blocState.positions.removeAt(event.index);
+      _applyCurrentFilter();
+      yield _blocState.clone();
+    }
   }
 
   Stream<ImageStateScreen> addFilter(ImageEventNewFilter event) async* {

@@ -194,6 +194,7 @@ class ImageScreen extends StatelessWidget with AppMessages {
                 onCircleSelected: () => _bloc.add(ImageEventShapeRounded(true)),
                 onSquareSelected: () =>
                     _bloc.add(ImageEventShapeRounded(false)),
+                onFilterDelete: () => _bloc.add(ImageEventExistingFilterDelete(state.selectedFilterPosition)),
                 isRounded: position.isRounded,
                 isPixelate: position.isPixelate,
                 curPower: position.granularityRatio,

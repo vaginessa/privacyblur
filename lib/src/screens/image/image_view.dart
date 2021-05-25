@@ -84,12 +84,19 @@ class ImageScreen extends StatelessWidget with AppMessages {
                     (state is ImageStateScreen && !state.isImageSaved);
 
                 return ScaffoldWithAppBar.build(
-                    onBackPressed: () => _onBack(context, state),
-                    leading: _getLeadingIcon(context, isEditState),
-                    context: context,
-                    title: translate(Keys.App_Name),
-                    actions: _actionsIcon(context, isEditState, imgNotSaved),
-                    body: SafeArea(child: _buildHomeBody(context, state)));
+                  onBackPressed: () => _onBack(context, state),
+                  leading: _getLeadingIcon(context, isEditState),
+                  context: context,
+                  title: translate(Keys.App_Name),
+                  actions: _actionsIcon(context, isEditState, imgNotSaved),
+                  body: SafeArea(
+                    child: _buildHomeBody(context, state),
+                    top: internalLayout.landscapeMode,
+                    bottom: internalLayout.landscapeMode,
+                    left: !internalLayout.landscapeMode,
+                    right: !internalLayout.landscapeMode,
+                  ),
+                );
               })),
     );
   }
@@ -176,7 +183,7 @@ class ImageScreen extends StatelessWidget with AppMessages {
       decoration: BoxDecoration(color: AppTheme.barColor(context)),
       //AppTheme.barColor(context)
       child: (!state.hasSelection)
-          ? HelpWidget(height)
+          ? HelpWidget(height, width)
           : RotatedBox(
               quarterTurns: isLandscape ? 3 : 0,
               child: ImageToolsWidget(

@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +19,7 @@ class HelpLine {
 class HelpWidget extends StatelessWidget {
   static late InternalLayout _internalLayout;
   final double height;
+  final double width;
 
   final List<HelpLine> helpLines = [
     HelpLine(AppIcons.click, Keys.Help_Lines_Help0),
@@ -29,7 +29,7 @@ class HelpWidget extends StatelessWidget {
     HelpLine(AppIcons.save, Keys.Help_Lines_Help4),
   ];
 
-  HelpWidget(this.height);
+  HelpWidget(this.height, this.width);
 
   @override
   Widget build(BuildContext context) {
@@ -42,12 +42,13 @@ class HelpWidget extends StatelessWidget {
 
   Widget _helpTemplate(BuildContext context, HelpLine line) {
     double spacePerHelpline = height / helpLines.length;
-    double textSize = min(max(spacePerHelpline * 0.4, 12), 16);
+    double widthFactor = min(max(width / height, 0.4), 1);
+    double textSize = min(max(spacePerHelpline * 0.35 * widthFactor, 10), 16);
     return Padding(
       padding: EdgeInsets.only(
           left: _internalLayout.spacer * 2,
           right: _internalLayout.spacer * 2,
-          bottom: spacePerHelpline * 0.25),
+          bottom: min(spacePerHelpline * 0.25, 18)),
       child: Row(
         children: [
           Padding(

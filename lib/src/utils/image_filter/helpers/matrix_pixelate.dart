@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'image_rgb.dart';
 import 'matrix__interface.dart';
 import 'range_checker.dart';
@@ -33,7 +35,8 @@ class MatrixAppPixelate extends ImageAppMatrix {
     int lineStartRange = pointIndex;
     int arrRunIndex = 0;
     int writeValue = 0;
-
+    List<bool> globProcessed = channels.processed;
+    Uint32List globTempImgArr = channels.tempImgArr;
     while (pointIndex < endIndex) {
       writeValue = 0xff000000;
       writeValue = writeValue |
@@ -60,10 +63,12 @@ class MatrixAppPixelate extends ImageAppMatrix {
 
       for (int y = my1; y <= my2; y++) {
         for (int x = mx1; x <= mx2; x++) {
-          if (!range.checkPointInRange(x, y)) continue;
           arrRunIndex = (y * channels.imageWidth) + x;
-          channels.tempImgArr[arrRunIndex] = writeValue;
-          channels.processed[arrRunIndex] = true;
+          if ((!range.checkPointInRange(x, y)) || globProcessed[arrRunIndex]) {
+            continue;
+          }
+          globTempImgArr[arrRunIndex] = writeValue;
+          globProcessed[arrRunIndex] = true;
         }
       }
       pointIndex = pointIndex + _size;

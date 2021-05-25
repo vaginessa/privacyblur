@@ -122,9 +122,9 @@ class ImageScreen extends StatelessWidget with AppMessages {
               w,
               h,
               _transformationController!,
-              (posX, posY) => _bloc.add(ImageEventSetPosition(posX, posY)),
-              (posX, posY) => _bloc.add(ImageEventAddPosition(posX, posY)),
-              (index) => _bloc.add(ImageEventPositionSelected(index)));
+              (posX, posY) => _bloc.add(ImageEventPositionChanged(posX, posY)),
+              (posX, posY) => _bloc.add(ImageEventNewFilter(posX, posY)),
+              (index) => _bloc.add(ImageEventExistingFilterSelected(index)));
         },
         view2: (context, w, h, landscape) =>
             drawImageToolbar(context, state, w, h, landscape),

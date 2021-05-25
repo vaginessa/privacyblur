@@ -52,12 +52,12 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
       yield* powerFilterChanged(event);
     } else if (event is ImageEventShapeSize) {
       yield* radiusFilterChanged(event);
-    } else if (event is ImageEventSetPosition) {
+    } else if (event is ImageEventPositionChanged) {
       yield* positionFilterChanged(event);
-    } else if (event is ImageEventAddPosition) {
+    } else if (event is ImageEventNewFilter) {
       yield* addFilter(event);
-    } else if (event is ImageEventPositionSelected) {
-      yield* selectPosition(event);
+    } else if (event is ImageEventExistingFilterSelected) {
+      yield* selectFilterIndex(event);
     } else if (event is ImageEventApply) {
       yield* applyFilterChanged(event);
     } else if (event is ImageEventCancel) {
@@ -78,12 +78,13 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
   void _filterInArea() {
     var position = _blocState.getSelectedPosition();
     if (position != null) {
-      var radius = position.radiusRatio * _blocState.maxRadius;
+      var radius = (position.radiusRatio * _blocState.maxRadius).toInt();
       if (position.isRounded) {
         imageFilter.apply2CircleArea(position.posX, position.posY, radius);
       } else {
         imageFilter.apply2SquareArea(position.posX, position.posY, radius);
       }
+      position.canceled = false;
     }
   }
 
@@ -103,13 +104,24 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
   void _applyCurrentFilter() {
     _deferedFuture?.cancel();
     _deferedFuture = Timer(_defered, () async {
-      imageFilter.cancelCurrent();
       _setMatrix();
       _filterInArea();
       _blocState.image = await imageFilter.getImage();
       _deferedFuture?.cancel();
       add(new _yield_state_internally());
     });
+  }
+
+  void _cancelCurrentFilter(FilterPosition position) {
+    if (position.canceled) return;
+    if (position.isRounded) {
+      imageFilter.cancelSquare(position.posX, position.posY,
+          (position.radiusRatio * _blocState.maxRadius).toInt());
+    } else {
+      imageFilter.cancelCircle(position.posX, position.posY,
+          (position.radiusRatio * _blocState.maxRadius).toInt());
+    }
+    position.canceled = true;
   }
 
   ImageStateFeedback _showFilterState() {
@@ -123,6 +135,7 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
     if (position != null) {
       if (event.isRounded == position.isRounded) return;
       position.isRounded = event.isRounded;
+      _cancelCurrentFilter(position);
       _applyCurrentFilter();
       yield _blocState.clone();
     }
@@ -134,6 +147,7 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
     if (position != null) {
       if (event.isPixelate == position.isPixelate) return;
       position.isPixelate = event.isPixelate;
+      _cancelCurrentFilter(position);
       _applyCurrentFilter();
       yield _blocState.clone();
     }
@@ -189,27 +203,29 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
     yield _blocState.clone();
   }
 
-  Stream<ImageStateScreen> selectPosition(
-      ImageEventPositionSelected event) async* {
+  Stream<ImageStateScreen> selectFilterIndex(
+      ImageEventExistingFilterSelected event) async* {
     _blocState.selectedFilterPosition = event.index;
     yield _blocState.clone();
   }
 
-  Stream<ImageStateScreen> addFilter(ImageEventAddPosition event) async* {
+  Stream<ImageStateScreen> addFilter(ImageEventNewFilter event) async* {
+    imageFilter.transactionStart();
     _blocState.positions.add(FilterPosition()
       ..posX = event.x.toInt()
       ..posY = event.y.toInt());
     _blocState.selectedFilterPosition = _blocState.positions.length - 1;
+    _applyCurrentFilter();
     yield _blocState.clone();
   }
 
   Stream<ImageStateScreen> positionFilterChanged(
-      ImageEventSetPosition event) async* {
+      ImageEventPositionChanged event) async* {
     var position = _blocState.getSelectedPosition();
     if (position != null) {
-      imageFilter.transactionStart();
       position.posX = event.x.toInt();
       position.posY = event.y.toInt();
+      _cancelCurrentFilter(position);
       _applyCurrentFilter();
       yield _blocState.clone();
     }
@@ -220,6 +236,7 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
     var position = _blocState.getSelectedPosition();
     if (position != null) {
       position.radiusRatio = event.radius;
+      _cancelCurrentFilter(position);
       _applyCurrentFilter();
       yield _blocState.clone();
     }
@@ -230,6 +247,7 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
     var position = _blocState.getSelectedPosition();
     if (position != null) {
       position.granularityRatio = event.power;
+      _cancelCurrentFilter(position);
       _applyCurrentFilter();
     }
     yield _blocState.clone();

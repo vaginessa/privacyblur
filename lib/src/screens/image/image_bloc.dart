@@ -115,10 +115,10 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
   void _cancelCurrentFilter(FilterPosition position) {
     if (position.canceled) return;
     if (position.isRounded) {
-      imageFilter.cancelSquare(position.posX, position.posY,
+      imageFilter.cancelCircle(position.posX, position.posY,
           (position.radiusRatio * _blocState.maxRadius).toInt());
     } else {
-      imageFilter.cancelCircle(position.posX, position.posY,
+      imageFilter.cancelSquare(position.posX, position.posY,
           (position.radiusRatio * _blocState.maxRadius).toInt());
     }
     position.canceled = true;

@@ -8,11 +8,10 @@ class Section extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-      return SizedBox(
-          height: this.sectionHeight!,
-          child: Center(
-            child: this.child,
-          ));
-    }
+    return SizedBox(
+        height: this.sectionHeight!,
+        child: Center(
+          child: this.child,
+        ));
   }
 }

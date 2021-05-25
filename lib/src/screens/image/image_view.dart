@@ -79,17 +79,24 @@ class ImageScreen extends StatelessWidget with AppMessages {
                 }
                 // move to notifier in next version
                 bool isEditState =
-                (state is ImageStateScreen && state.hasSelection);
+                    (state is ImageStateScreen && state.hasSelection);
                 bool imgNotSaved =
-                (state is ImageStateScreen && !state.isImageSaved);
+                    (state is ImageStateScreen && !state.isImageSaved);
 
                 return ScaffoldWithAppBar.build(
-                    onBackPressed: () => _onBack(context, state),
-                    leading: _getLeadingIcon(context, isEditState),
-                    context: context,
-                    title: translate(Keys.App_Name),
-                    actions: _actionsIcon(context, isEditState, imgNotSaved),
-                    body: _buildHomeBody(context, state));
+                  onBackPressed: () => _onBack(context, state),
+                  leading: _getLeadingIcon(context, isEditState),
+                  context: context,
+                  title: translate(Keys.App_Name),
+                  actions: _actionsIcon(context, isEditState, imgNotSaved),
+                  body: SafeArea(
+                    child: _buildHomeBody(context, state),
+                    top: internalLayout.landscapeMode,
+                    bottom: internalLayout.landscapeMode,
+                    left: !internalLayout.landscapeMode,
+                    right: !internalLayout.landscapeMode,
+                  ),
+                );
               })),
     );
   }
@@ -109,26 +116,30 @@ class ImageScreen extends StatelessWidget with AppMessages {
 
   Widget _buildHomeBody(BuildContext context, ImageStateBase? state) {
     if (state is ImageStateScreen) {
-      return ScreenRotation(
-        view1: (context, w, h, landscape) {
-          if (_transformationController == null) {
-            _transformationController = TransformationController(
-                _calculateInitialScaleAndOffset(
-                    context, state.image.mainImage, w, h));
-          }
-          return ImageViewer(
-              state.image,
-              state,
-              w,
-              h,
-              _transformationController!,
-                  (posX, posY) => _bloc.add(ImageEventSetPosition(posX, posY)));
-        },
-        view2: (context, w, h, landscape) =>
-            drawImageToolbar(context, state, w, h, landscape),
-        view2Portrait: view2PortraitSize,
-        view2Landscape: view2LandScapeSize,
-      );
+      return LayoutBuilder(builder: (context, constraints) {
+        return ScreenRotation(
+          baseHeight: constraints.maxHeight,
+          baseWidth: constraints.maxWidth,
+          view1: (context, w, h, landscape) {
+            if (_transformationController == null) {
+              _transformationController = TransformationController(
+                  _calculateInitialScaleAndOffset(
+                      context, state.image.mainImage, w, h));
+            }
+            return ImageViewer(
+                state.image,
+                state,
+                w,
+                h,
+                _transformationController!,
+                (posX, posY) => _bloc.add(ImageEventSetPosition(posX, posY)));
+          },
+          view2: (context, w, h, landscape) =>
+              drawImageToolbar(context, state, w, h, landscape),
+          view2Portrait: view2PortraitSize,
+          view2Landscape: view2LandScapeSize,
+        );
+      });
     } else {
       return Center(child: CircularProgressIndicator.adaptive());
     }
@@ -145,8 +156,8 @@ class ImageScreen extends StatelessWidget with AppMessages {
     }
   }
 
-  List<Widget> _actionsIcon(BuildContext context, bool editMode,
-      bool notSaved) {
+  List<Widget> _actionsIcon(
+      BuildContext context, bool editMode, bool notSaved) {
     if (editMode && internalLayout.landscapeMode) {
       return <Widget>[
         TextButtonBuilder.build(
@@ -172,32 +183,32 @@ class ImageScreen extends StatelessWidget with AppMessages {
       decoration: BoxDecoration(color: AppTheme.barColor(context)),
       //AppTheme.barColor(context)
       child: (!state.hasSelection)
-          ? HelpWidget(height)
+          ? HelpWidget(height, width)
           : RotatedBox(
-          quarterTurns: isLandscape ? 3 : 0,
-          child: ImageToolsWidget(
-            onEditToolSelected: (EditTool tool) =>
-                _bloc.add(ImageEventEditToolSelected(tool)),
-            onRadiusChanged: (double radius) =>
-                _bloc.add(ImageEventShapeSize(radius)),
-            onPowerChanged: (double filterPower) =>
-                _bloc.add(ImageEventFilterGranularity(filterPower)),
-            onApply: () => _bloc.add(ImageEventApply()),
-            onCancel: () => _bloc.add(ImageEventCancel()),
-            onBlurSelected: () =>
-                _bloc.add(ImageEventFilterPixelate(false)),
-            onPixelateSelected: () =>
-                _bloc.add(ImageEventFilterPixelate(true)),
-            onCircleSelected: () => _bloc.add(ImageEventShapeRounded(true)),
-            onSquareSelected: () =>
-                _bloc.add(ImageEventShapeRounded(false)),
-            isRounded: state.isRounded,
-            isPixelate: state.isPixelate,
-            curPower: state.granularityRatio,
-            curRadius: state.radiusRatio,
-            isLandscape: isLandscape,
-            activeTool: state.activeTool,
-          )),
+              quarterTurns: isLandscape ? 3 : 0,
+              child: ImageToolsWidget(
+                onEditToolSelected: (EditTool tool) =>
+                    _bloc.add(ImageEventEditToolSelected(tool)),
+                onRadiusChanged: (double radius) =>
+                    _bloc.add(ImageEventShapeSize(radius)),
+                onPowerChanged: (double filterPower) =>
+                    _bloc.add(ImageEventFilterGranularity(filterPower)),
+                onApply: () => _bloc.add(ImageEventApply()),
+                onCancel: () => _bloc.add(ImageEventCancel()),
+                onBlurSelected: () =>
+                    _bloc.add(ImageEventFilterPixelate(false)),
+                onPixelateSelected: () =>
+                    _bloc.add(ImageEventFilterPixelate(true)),
+                onCircleSelected: () => _bloc.add(ImageEventShapeRounded(true)),
+                onSquareSelected: () =>
+                    _bloc.add(ImageEventShapeRounded(false)),
+                isRounded: state.isRounded,
+                isPixelate: state.isPixelate,
+                curPower: state.granularityRatio,
+                curRadius: state.radiusRatio,
+                isLandscape: isLandscape,
+                activeTool: state.activeTool,
+              )),
     );
   }
 
@@ -208,13 +219,15 @@ class ImageScreen extends StatelessWidget with AppMessages {
     ///if you want fit, but not Cover - replace 'max' to 'min'
     imgScaleRate = max(height / image.height, imgScaleRate);
     var matrix = Matrix4.identity()
-      ..setEntry(0, 0, imgScaleRate)..setEntry(1, 1, imgScaleRate);
+      ..setEntry(0, 0, imgScaleRate)
+      ..setEntry(1, 1, imgScaleRate);
     var newWidth = image.width * imgScaleRate;
     var newHeight = image.height * imgScaleRate;
 
     /// center image
-    matrix..setEntry(0, 3, (width - newWidth) / 2)..setEntry(
-        1, 3, (height - newHeight) / 2);
+    matrix
+      ..setEntry(0, 3, (width - newWidth) / 2)
+      ..setEntry(1, 3, (height - newHeight) / 2);
     return matrix;
   }
 }

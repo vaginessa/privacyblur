@@ -28,6 +28,7 @@ class ImageToolsWidget extends StatelessWidget {
   final Function() onPixelateSelected;
   final Function() onCircleSelected;
   final Function() onSquareSelected;
+  final Function() onFilterDelete;
 
   ImageToolsWidget({
     required this.onRadiusChanged,
@@ -45,6 +46,7 @@ class ImageToolsWidget extends StatelessWidget {
     required this.isRounded,
     required this.onEditToolSelected,
     required this.activeTool,
+    required this.onFilterDelete,
   });
 
   late Map<int, Widget> shapes;
@@ -172,6 +174,13 @@ class ImageToolsWidget extends StatelessWidget {
                 ? AppTheme.primaryColor
                 : AppTheme.fontColor(context),
             onPressed: () => onEditToolSelected(EditTool.EditShape),
+            iconSize: _internalLayout.iconSize,
+          ),
+          IconButtonBuilder.build(
+            rotateIconQuarter: isLandscape ? 1 : 0,
+            icon: Icons.delete_outlined,
+            color: AppTheme.fontColor(context),
+            onPressed: onFilterDelete,
             iconSize: _internalLayout.iconSize,
           ),
         ],

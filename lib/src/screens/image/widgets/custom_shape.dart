@@ -9,8 +9,9 @@ class ShapePainter extends CustomPainter {
   final int maxRadius;
   final int selectedPosition;
   final List<FilterPosition> positions;
+  final bool isImageSelected;
 
-  ShapePainter(this.positions, this.maxRadius, this.selectedPosition) {
+  ShapePainter(this.positions, this.maxRadius, this.selectedPosition, this.isImageSelected) {
     // with prime numbers to reduce collisions... may be. Not very important
     // from https://primes.utm.edu/lists/small/10000.txt
     positions.forEach((p) {
@@ -18,8 +19,9 @@ class ShapePainter extends CustomPainter {
           selectedPosition * 8467 +
           (p.radiusRatio * maxRadius * 14557).toInt() +
           p.posX +
-          p.posY * 12347;
+          p.posY * 123479;
     });
+    _hash += isImageSelected ? 7919 : 8887;
   }
 
   @override
@@ -29,6 +31,14 @@ class ShapePainter extends CustomPainter {
 
   @override
   int get hashCode => _hash;
+
+  void _drawImageSelection(Canvas canvas, Size size) {
+    var paint1 = Paint()
+    ..color = AppTheme.primaryColor
+    ..strokeWidth = 4
+    ..style = PaintingStyle.stroke;
+    if(isImageSelected) canvas.drawRect(Offset(0, 0) & Size(size.width -2, size.height -2), paint1);
+  }
 
   void _drawCircle(Canvas canvas, int x, int y, double r, Color color) {
     var paint = Paint();
@@ -70,6 +80,7 @@ class ShapePainter extends CustomPainter {
             canvas, position.posX, position.posY, radius - 2, colorBorderInner);
       }
     });
+    if(isImageSelected) _drawImageSelection(canvas, size);
   }
 
   @override

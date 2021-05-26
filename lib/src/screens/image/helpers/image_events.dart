@@ -80,5 +80,3 @@ class ImageEventCancel extends ImageEventBase {}
 
 /// save image on disk clicked
 class ImageEventSave2Disk extends ImageEventBase {}
-
-class ImageEventTogglePreviewMode extends ImageEventBase {}

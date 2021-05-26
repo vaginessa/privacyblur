@@ -52,8 +52,6 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
       yield* cancelTransaction();
     } else if (event is ImageEventSave2Disk) {
       yield* saveImage(event);
-    } else if(event is ImageEventTogglePreviewMode) {
-      yield* togglePreviewMode();
     } else if (event is ImageEventFilterPixelate) {
       yield* filterTypeChanged(event);
     } else if (event is ImageEventShapeRounded) {
@@ -155,11 +153,6 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
       yield ImageStateFeedback(Keys.Messages_Errors_File_System,
           messageType: MessageBarType.Failure);
     }
-    yield _blocState.clone();
-  }
-
-  Stream<ImageStateScreen> togglePreviewMode() async* {
-    _blocState.isPreviewMode = !_blocState.isPreviewMode;
     yield _blocState.clone();
   }
 

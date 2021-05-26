@@ -129,7 +129,6 @@ class ImageScreen extends StatelessWidget with AppMessages {
                     _bloc.add(ImageEventPositionChanged(posX, posY)),
                 (posX, posY) => _bloc.add(ImageEventNewFilter(posX, posY)),
                 (index) => _bloc.add(ImageEventExistingFilterSelected(index)),
-                () => _bloc.add(ImageEventTogglePreviewMode()),
             );
           },
           view2: (context, w, h, landscape) =>

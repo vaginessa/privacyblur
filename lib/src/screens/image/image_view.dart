@@ -76,19 +76,12 @@ class ImageScreen extends StatelessWidget with AppMessages {
                   _bloc.add(ImageEventSelected(filename));
                 }
                 // move to notifier in next version
-/*                bool isEditState =
-                    (state is ImageStateScreen && state.hasSelection);
-                bool imgNotSaved =
-                    (state is ImageStateScreen && !state.isImageSaved);*/
-                bool isPreviewMode =
-                    (state is ImageStateScreen && state.isPreviewMode);
 
                 return ScaffoldWithAppBar.build(
                   onBackPressed: () => _onBack(context, state),
-                  leading: _getLeadingIcon(context, isPreviewMode),
                   context: context,
                   title: translate(Keys.App_Name),
-                  actions: _actionsIcon(context, isPreviewMode),
+                  actions: _actionsIcon(context),
                   body: SafeArea(
                     child: _buildHomeBody(context, state),
                     top: internalLayout.landscapeMode,
@@ -141,8 +134,8 @@ class ImageScreen extends StatelessWidget with AppMessages {
           },
           view2: (context, w, h, landscape) =>
               drawImageToolbar(context, state, w, h, landscape),
-          view2Portrait: state.isPreviewMode ? 0 : view2PortraitSize,
-          view2Landscape:  state.isPreviewMode ? 0 : view2LandScapeSize,
+          view2Portrait: view2PortraitSize,
+          view2Landscape: view2LandScapeSize,
         );
       });
     } else {
@@ -150,25 +143,13 @@ class ImageScreen extends StatelessWidget with AppMessages {
     }
   }
 
-  Widget? _getLeadingIcon(context, bool isPreviewMode) {
-    if(isPreviewMode) {
-      return SizedBox();
-    }
-    return null;
-  }
-
-  List<Widget> _actionsIcon(
-      BuildContext context, bool isPreviewMode) {
-    if(!isPreviewMode) {
-      return <Widget>[
+  List<Widget> _actionsIcon(BuildContext context) {
+    return <Widget>[
         TextButtonBuilder.build(
             color: AppTheme.appBarToolColor(context),
             text: translate(Keys.Buttons_Save),
             onPressed: () => _bloc.add(ImageEventSave2Disk()))
       ];
-    } else {
-      return <Widget>[SizedBox()];
-    }
   }
 
   Widget drawImageToolbar(BuildContext context, ImageStateScreen state,
@@ -190,14 +171,13 @@ class ImageScreen extends StatelessWidget with AppMessages {
                     _bloc.add(ImageEventFilterGranularity(filterPower)),
                 onApply: () => _bloc.add(ImageEventApply()),
                 onCancel: () => _bloc.add(ImageEventCancel()),
-                onPreview: () => _bloc.add(ImageEventTogglePreviewMode()),
+                onPreview: () => _onPreview(context),
                 onBlurSelected: () =>
                     _bloc.add(ImageEventFilterPixelate(false)),
                 onPixelateSelected: () =>
                     _bloc.add(ImageEventFilterPixelate(true)),
                 onCircleSelected: () => _bloc.add(ImageEventShapeRounded(true)),
-                onSquareSelected: () =>
-                    _bloc.add(ImageEventShapeRounded(false)),
+                onSquareSelected: () => _bloc.add(ImageEventShapeRounded(false)),
                 onFilterDelete: () => _bloc.add(ImageEventExistingFilterDelete(state.selectedFilterPosition)),
                 isRounded: position.isRounded,
                 isPixelate: position.isPixelate,
@@ -207,6 +187,10 @@ class ImageScreen extends StatelessWidget with AppMessages {
                 activeTool: state.activeTool,
               )),
     );
+  }
+
+  void _onPreview(BuildContext context) {
+    this._router.openImagePreview(context);
   }
 
   Matrix4 _calculateInitialScaleAndOffset(BuildContext context,

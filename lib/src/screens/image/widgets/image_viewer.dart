@@ -77,10 +77,6 @@ class ImageViewer extends StatelessWidget {
   }
 
   onTapPosition(TapUpDetails details) {
-    if(state.isPreviewMode) {
-      togglePreviewMode();
-      return;
-    }
     Offset offset = _transformationController.toScene(
       details.localPosition,
     );
@@ -102,10 +98,6 @@ class ImageViewer extends StatelessWidget {
   }
 
   onLongPressStart(LongPressStartDetails details) {
-    if(state.isPreviewMode) {
-      togglePreviewMode();
-      return;
-    }
     Offset offset = _transformationController.toScene(
       details.localPosition,
     );

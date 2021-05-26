@@ -19,7 +19,7 @@ class ShapePainter extends CustomPainter {
           selectedPosition * 8467 +
           (p.radiusRatio * maxRadius * 14557).toInt() +
           p.posX +
-          p.posY * 123479;
+          p.posY * 12347;
     });
     _hash += isImageSelected ? 7919 : 8887;
   }

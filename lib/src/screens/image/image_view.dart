@@ -12,6 +12,7 @@ import 'package:privacyblur/src/screens/image/helpers/image_events.dart';
 import 'package:privacyblur/src/screens/image/helpers/image_states.dart';
 import 'package:privacyblur/src/screens/image/utils/internal_layout.dart';
 import 'package:privacyblur/src/screens/image/widgets/image_viewer.dart';
+import 'package:privacyblur/src/utils/image_filter/helpers/filter_result.dart';
 import 'package:privacyblur/src/widgets/adaptive_widgets_builder.dart';
 import 'package:privacyblur/src/widgets/message_bar.dart';
 import 'package:privacyblur/src/widgets/theme/theme_provider.dart';
@@ -32,6 +33,7 @@ class ImageScreen extends StatelessWidget with AppMessages {
   late Color textColor;
   late double view2PortraitSize;
   late double view2LandScapeSize;
+  ScaleUpdateDetails interactiveDetails = ScaleUpdateDetails();
 
   TransformationController? _transformationController;
   bool imageSet = false;
@@ -129,6 +131,7 @@ class ImageScreen extends StatelessWidget with AppMessages {
                     _bloc.add(ImageEventPositionChanged(posX, posY)),
                 (posX, posY) => _bloc.add(ImageEventNewFilter(posX, posY)),
                 (index) => _bloc.add(ImageEventExistingFilterSelected(index)),
+                updateInteractiveDetails
             );
           },
           view2: (context, w, h, landscape) =>
@@ -170,7 +173,7 @@ class ImageScreen extends StatelessWidget with AppMessages {
                     _bloc.add(ImageEventFilterGranularity(filterPower)),
                 onApply: () => _bloc.add(ImageEventApply()),
                 onCancel: () => _bloc.add(ImageEventCancel()),
-                onPreview: () => _onPreview(context),
+                onPreview: () => _onPreview(context, state.image),
                 onBlurSelected: () =>
                     _bloc.add(ImageEventFilterPixelate(false)),
                 onPixelateSelected: () =>
@@ -188,8 +191,12 @@ class ImageScreen extends StatelessWidget with AppMessages {
     );
   }
 
-  void _onPreview(BuildContext context) {
-    this._router.openImagePreview(context);
+  void _onPreview(BuildContext context, ImageFilterResult image) {
+    this._router.openImagePreview(context, interactiveDetails, image);
+  }
+
+  void updateInteractiveDetails(ScaleUpdateDetails details) {
+    interactiveDetails = details;
   }
 
   Matrix4 _calculateInitialScaleAndOffset(BuildContext context,

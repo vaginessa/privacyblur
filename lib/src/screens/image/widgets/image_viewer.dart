@@ -17,6 +17,7 @@ class ImageViewer extends StatelessWidget {
   final void Function(double, double) moveFilterPosition;
   final void Function(double, double) addFilterPosition;
   final void Function(int) selectFilter;
+  final Function(ScaleUpdateDetails details) onInteractionUpdate;
   late TransformationController _transformationController;
 
   ImageViewer(
@@ -27,7 +28,8 @@ class ImageViewer extends StatelessWidget {
       this._transformationController,
       this.moveFilterPosition,
       this.addFilterPosition,
-      this.selectFilter);
+      this.selectFilter,
+      this.onInteractionUpdate);
 
   @override
   Widget build(BuildContext context) {
@@ -47,12 +49,12 @@ class ImageViewer extends StatelessWidget {
     EdgeInsets boundaryMargin =
         EdgeInsets.fromLTRB(0, 0, horizontalBorder, verticalBorder);
 
-    /* TODO: get onInteractionUpdate details on navigate */
     return GestureDetector(
       onTapUp: onTapPosition,
       onLongPressMoveUpdate: onMoveFilter,
       onLongPressStart: onLongPressStart,
       child: InteractiveViewer(
+          onInteractionUpdate: this.onInteractionUpdate,
           transformationController: _transformationController,
           maxScale: 10,
           scaleEnabled: true,

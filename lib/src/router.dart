@@ -4,6 +4,7 @@ import 'package:privacyblur/src/di.dart';
 import 'package:privacyblur/src/screens/image/image_view.dart';
 import 'package:privacyblur/src/screens/image_preview/image_preview_view.dart';
 import 'package:privacyblur/src/screens/main/main_view.dart';
+import 'package:privacyblur/src/utils/image_filter/helpers/filter_result.dart';
 
 class NoTransitionRoute extends MaterialPageRoute {
   NoTransitionRoute({builder}) : super(builder: builder);
@@ -38,6 +39,8 @@ class AppRouter {
   static final String _imagePreviewRoute = '/image_preview_route';
 
   static final String imagePathArg = 'image_path';
+  static final String interactiveDetailsArg = 'interactiveViewDetails';
+  static final String imageArg = 'image';
 
   final ScreenNavigator _navigator;
 
@@ -87,6 +90,13 @@ class AppRouter {
     return path;
   }
 
+  ScaleUpdateDetails _getDetailsFromArgs(dynamic args) {
+    ScaleUpdateDetails details = ScaleUpdateDetails();
+    if (args != null && (args is Map) && args.containsKey(interactiveDetailsArg)) {
+      details = args[interactiveDetailsArg];
+    }
+    return details;
+  }
 
   Route<dynamic> _selectRoute(String? name, dynamic args) {
     final Map appRoutes = {
@@ -97,7 +107,7 @@ class AppRouter {
         return ImageScreen(_di, this, _getPathFromArgs(args));
       }),
       _imagePreviewRoute: NoTransitionRoute(builder: (context) {
-        return ImagePreviewScreen(_di, this);
+        return ImagePreviewScreen(_di, this, _getDetailsFromArgs(args), args[imageArg]);
       }),
     };
 
@@ -117,7 +127,7 @@ class AppRouter {
     _navigator.pushNamed(context, _imageRoute, arguments: {imagePathArg: path});
   }
 
-  void openImagePreview(context) {
-    _navigator.pushNamed(context, _imagePreviewRoute);
+  void openImagePreview(context, ScaleUpdateDetails details, ImageFilterResult image) {
+    _navigator.pushNamed(context, _imagePreviewRoute, arguments: {interactiveDetailsArg: details, imageArg: image});
   }
 }

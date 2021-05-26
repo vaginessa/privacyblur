@@ -33,7 +33,7 @@ class ShapePainter extends CustomPainter {
 
   void _drawImageSelection(Canvas canvas, Size size) {
     var paint1 = Paint()
-      ..color = AppTheme.primaryColor
+      ..color = isImageSelected ? Colors.transparent : AppTheme.primaryColor
       ..strokeWidth = 4
       ..style = PaintingStyle.stroke;
     if (isImageSelected)
@@ -68,10 +68,16 @@ class ShapePainter extends CustomPainter {
         return;
       }
       var radius = position.getVisibleRadius();
-      var colorBorder =
-          index == selectedPosition ? AppTheme.primaryColor : Colors.black;
-      var colorBorderInner =
-          index == selectedPosition ? AppTheme.primaryColor : Colors.grey;
+      var colorBorder = isImageSelected
+          ? Colors.transparent
+          : index == selectedPosition
+          ? AppTheme.primaryColor
+          : Colors.black;
+      var colorBorderInner = isImageSelected
+          ? Colors.transparent
+          : index == selectedPosition
+          ? AppTheme.primaryColor
+          : Colors.grey;
       if (position.isRounded) {
         _drawCircle(canvas, position.posX, position.posY, radius, colorBorder);
         _drawCircle(

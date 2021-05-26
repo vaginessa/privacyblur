@@ -26,19 +26,17 @@ enum MenuActions { Settings, Camera, Image }
 class ImageScreen extends StatelessWidget with AppMessages {
   final DependencyInjection _di;
   final AppRouter _router;
+  final String filename;
   late ImageBloc _bloc;
   late InternalLayout internalLayout;
-
-  final String filename;
-
   late Color textColor;
   late double view2PortraitSize;
   late double view2LandScapeSize;
+
   TransformationController? _transformationController;
+  bool imageSet = false;
 
   ImageScreen(this._di, this._router, this.filename);
-
-  bool imageSet = false;
 
   @override
   Widget build(BuildContext context) {
@@ -78,17 +76,19 @@ class ImageScreen extends StatelessWidget with AppMessages {
                   _bloc.add(ImageEventSelected(filename));
                 }
                 // move to notifier in next version
-                bool isEditState =
+/*                bool isEditState =
                     (state is ImageStateScreen && state.hasSelection);
                 bool imgNotSaved =
-                    (state is ImageStateScreen && !state.isImageSaved);
+                    (state is ImageStateScreen && !state.isImageSaved);*/
+                bool isPreviewMode =
+                    (state is ImageStateScreen && state.isPreviewMode);
 
                 return ScaffoldWithAppBar.build(
                   onBackPressed: () => _onBack(context, state),
-                  leading: _getLeadingIcon(context, isEditState),
+                  leading: _getLeadingIcon(context, isPreviewMode),
                   context: context,
                   title: translate(Keys.App_Name),
-                  actions: _actionsIcon(context, isEditState, imgNotSaved),
+                  actions: _actionsIcon(context, isPreviewMode),
                   body: SafeArea(
                     child: _buildHomeBody(context, state),
                     top: internalLayout.landscapeMode,
@@ -135,12 +135,14 @@ class ImageScreen extends StatelessWidget with AppMessages {
                 (posX, posY) =>
                     _bloc.add(ImageEventPositionChanged(posX, posY)),
                 (posX, posY) => _bloc.add(ImageEventNewFilter(posX, posY)),
-                (index) => _bloc.add(ImageEventExistingFilterSelected(index)));
+                (index) => _bloc.add(ImageEventExistingFilterSelected(index)),
+                () => _bloc.add(ImageEventTogglePreviewMode()),
+            );
           },
           view2: (context, w, h, landscape) =>
               drawImageToolbar(context, state, w, h, landscape),
-          view2Portrait: view2PortraitSize,
-          view2Landscape: view2LandScapeSize,
+          view2Portrait: state.isPreviewMode ? 0 : view2PortraitSize,
+          view2Landscape:  state.isPreviewMode ? 0 : view2LandScapeSize,
         );
       });
     } else {
@@ -148,27 +150,16 @@ class ImageScreen extends StatelessWidget with AppMessages {
     }
   }
 
-  Widget? _getLeadingIcon(context, bool isEdit) {
-    if (isEdit && internalLayout.landscapeMode) {
-      return TextButtonBuilder.build(
-          color: AppTheme.appBarToolColor(context),
-          text: translate(Keys.Buttons_Cancel),
-          onPressed: () => _bloc.add(ImageEventCancel()));
-    } else if (isEdit) {
+  Widget? _getLeadingIcon(context, bool isPreviewMode) {
+    if(isPreviewMode) {
       return SizedBox();
     }
+    return null;
   }
 
   List<Widget> _actionsIcon(
-      BuildContext context, bool editMode, bool notSaved) {
-    if (editMode && internalLayout.landscapeMode) {
-      return <Widget>[
-        TextButtonBuilder.build(
-            color: AppTheme.appBarToolColor(context),
-            text: translate(Keys.Buttons_Apply),
-            onPressed: () => _bloc.add(ImageEventApply()))
-      ];
-    } else if (notSaved) {
+      BuildContext context, bool isPreviewMode) {
+    if(!isPreviewMode) {
       return <Widget>[
         TextButtonBuilder.build(
             color: AppTheme.appBarToolColor(context),
@@ -199,6 +190,7 @@ class ImageScreen extends StatelessWidget with AppMessages {
                     _bloc.add(ImageEventFilterGranularity(filterPower)),
                 onApply: () => _bloc.add(ImageEventApply()),
                 onCancel: () => _bloc.add(ImageEventCancel()),
+                onPreview: () => _bloc.add(ImageEventTogglePreviewMode()),
                 onBlurSelected: () =>
                     _bloc.add(ImageEventFilterPixelate(false)),
                 onPixelateSelected: () =>

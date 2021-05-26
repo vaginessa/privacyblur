@@ -38,6 +38,7 @@ class ImageStateScreen extends ImageStateBase {
   EditTool activeTool = EditTool.EditSize;
   int maxRadius = 300; //will be changed once on image set
   int maxPower = 50; //will be changed once on image set
+  bool isPreviewMode = false;
 
   void resetSelection() {
     positions.clear();
@@ -62,7 +63,8 @@ class ImageStateScreen extends ImageStateBase {
       ..maxPower = this.maxPower
       ..selectedFilterPosition = this.selectedFilterPosition
       ..positions = this.positions
-      ..maxRadius = this.maxRadius;
+      ..maxRadius = this.maxRadius
+      ..isPreviewMode = this.isPreviewMode;
     return newImageStateScreen;
   }
 }

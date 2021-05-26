@@ -17,6 +17,7 @@ class ImageViewer extends StatelessWidget {
   final void Function(double, double) moveFilterPosition;
   final void Function(double, double) addFilterPosition;
   final void Function(int) selectFilter;
+  final void Function() togglePreviewMode;
   late TransformationController _transformationController;
 
   ImageViewer(
@@ -27,7 +28,8 @@ class ImageViewer extends StatelessWidget {
       this._transformationController,
       this.moveFilterPosition,
       this.addFilterPosition,
-      this.selectFilter);
+      this.selectFilter,
+      this.togglePreviewMode);
 
   @override
   Widget build(BuildContext context) {
@@ -75,6 +77,10 @@ class ImageViewer extends StatelessWidget {
   }
 
   onTapPosition(TapUpDetails details) {
+    if(state.isPreviewMode) {
+      togglePreviewMode();
+      return;
+    }
     Offset offset = _transformationController.toScene(
       details.localPosition,
     );
@@ -96,6 +102,10 @@ class ImageViewer extends StatelessWidget {
   }
 
   onLongPressStart(LongPressStartDetails details) {
+    if(state.isPreviewMode) {
+      togglePreviewMode();
+      return;
+    }
     Offset offset = _transformationController.toScene(
       details.localPosition,
     );

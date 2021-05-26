@@ -33,7 +33,7 @@ void main() {
     await filter.setImage(image);
     filter.setFilter(MatrixAppBlur(3));
     filter.transactionStart();
-    filter.apply2SquareArea(3, 3, 3);
+    filter.apply2Area(3, 3, 3,false);
     filter.transactionCommit();
     image = (await filter.getImage()).mainImage;
     var imgData = (await image.toByteData())!.buffer.asUint32List();

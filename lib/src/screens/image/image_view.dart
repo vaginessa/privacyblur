@@ -118,7 +118,7 @@ class ImageScreen extends StatelessWidget with AppMessages {
           baseWidth: constraints.maxWidth,
           view1: (context, w, h, landscape) {
             if (_transformationController == null) {
-              imageTransformMatrix = _calculateInitialScaleAndOffset(context, state.image.mainImage, w, h);
+              imageTransformMatrix = _calculateInitialScaleAndOffset(state.image.mainImage, w, h);
               _transformationController = TransformationController(imageTransformMatrix);
             }
             return ImageViewer(
@@ -131,7 +131,7 @@ class ImageScreen extends StatelessWidget with AppMessages {
                     _bloc.add(ImageEventPositionChanged(posX, posY)),
                 (posX, posY) => _bloc.add(ImageEventNewFilter(posX, posY)),
                 (index) => _bloc.add(ImageEventExistingFilterSelected(index)),
-                _calculateUpdatedMatrix
+                (details) => _calculateUpdatedMatrix(details)
             );
           },
           view2: (context, w, h, landscape) =>
@@ -195,8 +195,7 @@ class ImageScreen extends StatelessWidget with AppMessages {
     this._router.openImagePreview(context, imageTransformMatrix!, image);
   }
 
-  Matrix4 _calculateInitialScaleAndOffset(BuildContext context,
-      img_tools.Image image, double width, double height) {
+  Matrix4 _calculateInitialScaleAndOffset(img_tools.Image image, double width, double height) {
     var imgScaleRate = width / image.width;
 
     ///if you want fit, but not Cover - replace 'max' to 'min'
@@ -214,8 +213,9 @@ class ImageScreen extends StatelessWidget with AppMessages {
     return matrix;
   }
 
-  Matrix4 _calculateUpdatedMatrix(ScaleUpdateDetails details) {
-    // TODO: set entries
-    return Matrix4.identity();
+  void _calculateUpdatedMatrix(ScaleUpdateDetails details) {
+    Matrix4 updatedMatrix;
+    // TODO: set entries for updatedMatrix
+    // TODO: imageTransformMatrix = updatedMatrix
   }
 }

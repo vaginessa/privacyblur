@@ -53,6 +53,7 @@ class ImageEventExistingFilterSelected extends ImageEventBase {
 
 class ImageEventExistingFilterDelete extends ImageEventBase {
   final int index;
+
   ImageEventExistingFilterDelete(this.index);
 }
 
@@ -71,9 +72,6 @@ class ImageEventPositionChanged extends ImageEventBase {
 
   ImageEventPositionChanged(this.x, this.y);
 }
-
-/// filter apply clicked
-class ImageEventCancel extends ImageEventBase {}
 
 /// save image on disk clicked
 class ImageEventSave2Disk extends ImageEventBase {}

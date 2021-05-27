@@ -16,7 +16,6 @@ class ImageToolsWidget extends StatelessWidget {
   final Function(double radius) onRadiusChanged;
   final Function(double filterPower) onPowerChanged;
   final Function(EditTool tool) onEditToolSelected;
-  final Function() onCancel;
   final Function() onPreview;
   final bool isLandscape;
   final double curRadius;
@@ -33,7 +32,6 @@ class ImageToolsWidget extends StatelessWidget {
   ImageToolsWidget({
     required this.onRadiusChanged,
     required this.onPowerChanged,
-    required this.onCancel,
     required this.onPreview,
     required this.isLandscape,
     required this.curRadius,

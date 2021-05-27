@@ -45,8 +45,6 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
       yield* selectFilterIndex(event);
     } else if (event is ImageEventExistingFilterDelete) {
       yield* deleteFilterIndex(event);
-    } else if (event is ImageEventCancel) {
-      yield* cancelTransaction();
     } else if (event is ImageEventSave2Disk) {
       yield* saveImage(event);
     } else if (event is ImageEventFilterPixelate) {
@@ -153,13 +151,6 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
     yield _blocState.clone();
   }
 
-  Stream<ImageStateScreen> cancelTransaction() async* {
-    imageFilter.transactionCancel();
-    _blocState.resetSelection();
-    _blocState.image = await imageFilter.getImage();
-    yield _blocState.clone(); //needed
-  }
-
   Stream<ImageStateScreen> selectFilterIndex(
       ImageEventExistingFilterSelected event) async* {
     _blocState.selectedFilterIndex = event.index;
@@ -169,7 +160,10 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
   Stream<ImageStateScreen> deleteFilterIndex(
       ImageEventExistingFilterDelete event) async* {
     if (_blocState.positions.length <= 1) {
-      yield* cancelTransaction();
+      imageFilter.transactionCancel();
+      _blocState.resetSelection();
+      _blocState.image = await imageFilter.getImage();
+      yield _blocState.clone(); //needed
       return;
     }
     var position = _blocState.getSelectedPosition();
@@ -189,6 +183,7 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
       ..posX = event.x.toInt()
       ..posY = event.y.toInt());
     _blocState.selectedFilterIndex = _blocState.positions.length - 1;
+    _blocState.positionsUpdateOrder();
     _applyCurrentFilter();
     yield _blocState.clone(); //needed
   }

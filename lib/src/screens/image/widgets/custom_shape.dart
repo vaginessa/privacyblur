@@ -20,7 +20,6 @@ class ShapePainter extends CustomPainter {
           p.posX +
           p.posY * 12347;
     });
-    _hash += isImageSelected ? 7919 : 8887;
   }
 
   @override
@@ -68,14 +67,10 @@ class ShapePainter extends CustomPainter {
         return;
       }
       var radius = position.getVisibleRadius();
-      var colorBorder = isImageSelected
-          ? Colors.transparent
-          : index == selectedPosition
+      var colorBorder = index == selectedPosition
           ? AppTheme.primaryColor
           : Colors.black;
-      var colorBorderInner = isImageSelected
-          ? Colors.transparent
-          : index == selectedPosition
+      var colorBorderInner = index == selectedPosition
           ? AppTheme.primaryColor
           : Colors.grey;
       if (position.isRounded) {

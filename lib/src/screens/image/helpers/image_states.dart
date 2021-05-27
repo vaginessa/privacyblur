@@ -1,7 +1,9 @@
+import 'package:privacyblur/src/screens/image/utils/positions_utils.dart';
 import 'package:privacyblur/src/utils/image_filter/helpers/filter_result.dart';
 import 'package:privacyblur/src/widgets/message_bar.dart';
 
 import 'constants.dart';
+import 'image_classes_helper.dart';
 
 enum EditTool { EditSize, EditShape, EditGranularity, EditType }
 enum FeedbackAction { ShowMessage, Navigate }
@@ -23,42 +25,53 @@ class ImageStateFeedback extends ImageStateBase {
 class ImageStateScreen extends ImageStateBase {
   String filename = "";
   late ImageFilterResult image;
-  double granularityRatio = ImgConst.startGranularityRatio;
-  double radiusRatio = ImgConst.startRadiusRatio;
-  int posX = ImgConst.undefinedPosValue;
-  int posY = ImgConst.undefinedPosValue;
+  List<FilterPosition> positions = List.empty(growable: true);
+  int selectedFilterIndex = -1;
 
   // maybe remove from bloc in next version. ...Why?
   bool get hasSelection {
-    return (posX > ImgConst.undefinedPosValue &&
-        posY > ImgConst.undefinedPosValue);
+    return positions.length > 0;
   }
 
+  bool get isImageSelected => getSelectedPosition() == null;
+
   bool isImageSaved = false;
-  bool isRounded = true;
-  bool isPixelate = true;
   EditTool activeTool = EditTool.EditSize;
   int maxRadius = 300; //will be changed once on image set
   int maxPower = 50; //will be changed once on image set
 
   void resetSelection() {
-    posX = ImgConst.undefinedPosValue;
-    posY = ImgConst.undefinedPosValue;
+    positions.clear();
+    selectedFilterIndex = -1;
+  }
+
+  void positionsUpdateOrder() {
+    selectedFilterIndex =
+        PositionsUtils.changeAreasDrawOrder(positions, selectedFilterIndex);
+  }
+
+  void positionsMark2Redraw() {
+    PositionsUtils.markCrossedAreas(positions, selectedFilterIndex);
+  }
+
+  FilterPosition? getSelectedPosition() {
+    var canGetPosition = selectedFilterIndex >= 0 &&
+        selectedFilterIndex < positions.length &&
+        positions[selectedFilterIndex].posX > ImgConst.undefinedPosValue &&
+        positions[selectedFilterIndex].posY > ImgConst.undefinedPosValue;
+    if (!canGetPosition) return null;
+    return positions[selectedFilterIndex];
   }
 
   ImageStateScreen clone() {
     var newImageStateScreen = ImageStateScreen()
       ..image = this.image
       ..filename = this.filename
-      ..granularityRatio = this.granularityRatio
-      ..radiusRatio = this.radiusRatio
-      ..posX = this.posX
-      ..posY = this.posY
       ..isImageSaved = this.isImageSaved
-      ..isRounded = this.isRounded
-      ..isPixelate = this.isPixelate
       ..activeTool = this.activeTool
       ..maxPower = this.maxPower
+      ..selectedFilterIndex = this.selectedFilterIndex
+      ..positions = this.positions
       ..maxRadius = this.maxRadius;
     return newImageStateScreen;
   }

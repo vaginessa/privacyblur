@@ -14,16 +14,23 @@ class ImageViewer extends StatelessWidget {
   final ImageStateScreen state;
   final double width; //available width for viewer
   final double height; //available height for viewer
-  final void Function(double, double) setFilterPosition;
-  late double radiusSize;
+  final void Function(double, double) moveFilterPosition;
+  final void Function(double, double) addFilterPosition;
+  final void Function(int) selectFilter;
   late TransformationController _transformationController;
 
-  ImageViewer(this.image, this.state, this.width, this.height,
-      this._transformationController, this.setFilterPosition);
+  ImageViewer(
+      this.image,
+      this.state,
+      this.width,
+      this.height,
+      this._transformationController,
+      this.moveFilterPosition,
+      this.addFilterPosition,
+      this.selectFilter);
 
   @override
   Widget build(BuildContext context) {
-    radiusSize = state.radiusRatio * state.maxRadius;
     var wScale = width / image.mainImage.width;
     var hScale = height / image.mainImage.height;
     var minScale = min(wScale, hScale); //to fit image
@@ -41,9 +48,9 @@ class ImageViewer extends StatelessWidget {
         EdgeInsets.fromLTRB(0, 0, horizontalBorder, verticalBorder);
 
     return GestureDetector(
-      onTapUp: onSetFilterPosition,
-      onLongPressMoveUpdate: onDragFilter,
-      onLongPressStart: onDragStartFilter,
+      onTapUp: onTapPosition,
+      onLongPressMoveUpdate: onMoveFilter,
+      onLongPressStart: onLongPressStart,
       child: InteractiveViewer(
           transformationController: _transformationController,
           maxScale: 10,
@@ -61,47 +68,61 @@ class ImageViewer extends StatelessWidget {
                 isComplex: true,
                 willChange: true,
                 painter: ImgPainter(image),
-                foregroundPainter: ShapePainter(
-                    state.posX, state.posY, radiusSize, state.isRounded),
+                foregroundPainter: ShapePainter(state.positions,
+                    state.selectedFilterIndex),
               ))),
     );
   }
 
-  onSetFilterPosition(TapUpDetails details) {
+  onTapPosition(TapUpDetails details) {
     Offset offset = _transformationController.toScene(
       details.localPosition,
     );
-    setFilterPosition(offset.dx, offset.dy);
-  }
-
-  onDragFilter(LongPressMoveUpdateDetails details) {
-    _setFilterDragPos(_transformationController.toScene(
-      details.localPosition,
-    ));
-  }
-
-  onDragStartFilter(LongPressStartDetails details) {
-    _setFilterDragPos(_transformationController.toScene(
-      details.localPosition,
-    ));
-  }
-
-  void _setFilterDragPos(Offset offset) {
-    if (_calulateDragInArea(offset)) {
-      setFilterPosition(offset.dx, offset.dy);
-    }
-  }
-
-  bool _calulateDragInArea(Offset offset) {
-    double dist;
-    double distX = pow((state.posX.toDouble() - offset.dx), 2).abs().toDouble();
-    double distY = pow((state.posY.toDouble() - offset.dy), 2).abs().toDouble();
-    if (state.isRounded) {
-      dist = sqrt(distY + distX);
-      return dist <= radiusSize;
+    var selected = _detectSelectedFilter(offset);
+    if (selected >= 0) {
+      selectFilter(selected);
     } else {
-      dist = distY + distX;
-      return dist <= pow(radiusSize, 2);
+      addFilterPosition(offset.dx, offset.dy);
     }
+  }
+
+  onMoveFilter(LongPressMoveUpdateDetails details) {
+    Offset offset = _transformationController.toScene(
+      details.localPosition,
+    );
+    if (state.hasSelection) {
+      moveFilterPosition(offset.dx, offset.dy);
+    }
+  }
+
+  onLongPressStart(LongPressStartDetails details) {
+    Offset offset = _transformationController.toScene(
+      details.localPosition,
+    );
+    var selected = _detectSelectedFilter(offset);
+    selectFilter(selected);
+    if (selected >= 0) {
+      moveFilterPosition(offset.dx, offset.dy);
+    }
+  }
+
+  int _detectSelectedFilter(Offset offset) {
+    int index = -1;
+    double dist = 10000000;
+    state.positions.asMap().forEach((key, value) {
+      var tmpRadius = state.maxRadius * value.radiusRatio;
+      var tmp =
+          sqrt(pow(value.posX - offset.dx, 2) + pow(value.posY - offset.dy, 2));
+      if ((value.isRounded && (tmp <= tmpRadius)) ||
+          ((!value.isRounded) &&
+              ((value.posX - offset.dx).abs() <= tmpRadius) &&
+              ((value.posY - offset.dy).abs() <= tmpRadius))) {
+        if (tmp < dist) {
+          index = key;
+          dist = tmp;
+        }
+      }
+    });
+    return index;
   }
 }

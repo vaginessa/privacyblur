@@ -25,10 +25,10 @@ void main() {
     await filter.setImage(image);
     filter.transactionStart();
     filter.setFilter(MatrixAppPixelate(3));
-    filter.apply2SquareArea(300, 300, 200); //to all image
+    filter.apply2Area(300, 300, 200, false); //to all image
     var time1 = DateTime.now().millisecondsSinceEpoch;
     for (int i = 0; i < 200; i++) {
-      filter.apply2SquareArea(300, 300, 20); //to all image
+      filter.apply2Area(300, 300, 20, false); //to all image
       image = (await filter.getImage()).mainImage;
     }
     var t1 = await Future.value(true);
@@ -94,7 +94,7 @@ void main() {
     filter.setFilter(MatrixAppBlur(500));
     filter.transactionStart();
     time1 = DateTime.now().millisecondsSinceEpoch;
-    filter.apply2SquareArea(2000, 2000, 10000); //to all image
+    filter.apply2Area(2000, 2000, 10000, false); //to all image
     diff = DateTime.now().millisecondsSinceEpoch - time1;
     print('-------------------------------------');
     print('------------Filter Time--------------');
@@ -126,7 +126,7 @@ void main() {
       filter.setFilter(MatrixAppBlur(500));
       filter.transactionStart();
       time1 = DateTime.now().millisecondsSinceEpoch;
-      filter.apply2SquareArea(2000, 2000, 10000); //to all image
+      filter.apply2Area(2000, 2000, 10000, false); //to all image
       filter.transactionCommit();
       diff = DateTime.now().millisecondsSinceEpoch - time1;
       print('-------------------------------------');
@@ -177,7 +177,7 @@ void main() {
     filter.setFilter(MatrixAppPixelate(500));
     filter.transactionStart();
     time1 = DateTime.now().millisecondsSinceEpoch;
-    filter.apply2SquareArea(10000, 10000, 10000); //to all image
+    filter.apply2Area(10000, 10000, 10000, false); //to all image
     filter.transactionCommit();
     diff = DateTime.now().millisecondsSinceEpoch - time1;
     print('-------------------------------------');

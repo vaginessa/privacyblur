@@ -44,19 +44,34 @@ class ImageEventFilterGranularity extends ImageEventBase {
   ImageEventFilterGranularity(this.power);
 }
 
-/// image click (tap) position updated
-class ImageEventSetPosition extends ImageEventBase {
+/// filter index selected
+class ImageEventExistingFilterSelected extends ImageEventBase {
+  final int index;
+
+  ImageEventExistingFilterSelected(this.index);
+}
+
+class ImageEventExistingFilterDelete extends ImageEventBase {
+  final int index;
+
+  ImageEventExistingFilterDelete(this.index);
+}
+
+/// image click (tap) new filter adding
+class ImageEventNewFilter extends ImageEventBase {
   final double x;
   final double y;
 
-  ImageEventSetPosition(this.x, this.y);
+  ImageEventNewFilter(this.x, this.y);
 }
 
-/// filter apply clicked
-class ImageEventApply extends ImageEventBase {}
+/// image move filter
+class ImageEventPositionChanged extends ImageEventBase {
+  final double x;
+  final double y;
 
-/// filter apply clicked
-class ImageEventCancel extends ImageEventBase {}
+  ImageEventPositionChanged(this.x, this.y);
+}
 
 /// save image on disk clicked
 class ImageEventSave2Disk extends ImageEventBase {}

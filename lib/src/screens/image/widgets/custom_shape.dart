@@ -1,18 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:privacyblur/src/screens/image/helpers/constants.dart';
+import 'package:privacyblur/src/screens/image/helpers/image_classes_helper.dart';
+import 'package:privacyblur/src/widgets/theme/theme_provider.dart';
 
 class ShapePainter extends CustomPainter {
   static int _old_hash = 0;
-  late int _hash;
-  final double radius;
-  final bool isRounded;
-  final int x, y;
+  int _hash = 0;
+  final int selectedPosition;
+  final List<FilterPosition> positions;
+  bool isImageSelected = true;
 
-  ShapePainter(this.x, this.y, this.radius, this.isRounded) {
+  ShapePainter(this.positions, this.selectedPosition) {
+    this.isImageSelected = selectedPosition <0 || selectedPosition >=positions.length;
     // with prime numbers to reduce collisions... may be. Not very important
     // from https://primes.utm.edu/lists/small/10000.txt
-    _hash =
-        (isRounded ? 7879 : 9341) + (radius * 14557).toInt() + x + y * 12347;
+    positions.forEach((p) {
+      _hash += (p.isRounded ? 7879 : 9341) +
+          selectedPosition * 8467 +
+          (p.getVisibleRadius() * 14557).toInt() +
+          p.posX +
+          p.posY * 12347;
+    });
+    _hash += isImageSelected ? 7919 : 8887;
   }
 
   @override
@@ -23,7 +32,16 @@ class ShapePainter extends CustomPainter {
   @override
   int get hashCode => _hash;
 
-  void _drawCircle(Canvas canvas, double r, Color color) {
+  void _drawImageSelection(Canvas canvas, Size size) {
+    var paint1 = Paint()
+      ..color = AppTheme.primaryColor
+      ..strokeWidth = 4
+      ..style = PaintingStyle.stroke;
+      canvas.drawRect(
+          Offset(0, 0) & Size(size.width - 2, size.height - 2), paint1);
+  }
+
+  void _drawCircle(Canvas canvas, int x, int y, int r, Color color) {
     var paint = Paint();
     paint.color = color;
     paint.style = PaintingStyle.stroke;
@@ -31,7 +49,7 @@ class ShapePainter extends CustomPainter {
     canvas.drawCircle(Offset(x.toDouble(), y.toDouble()), r.toDouble(), paint);
   }
 
-  void _drawRect(Canvas canvas, double r, Color color) {
+  void _drawRect(Canvas canvas, int x, int y, int r, Color color) {
     var paint = Paint();
     paint.color = color;
     paint.style = PaintingStyle.stroke;
@@ -44,16 +62,29 @@ class ShapePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    if (x <= ImgConst.undefinedPosValue || y <= ImgConst.undefinedPosValue) {
-      return;
-    }
-    if (isRounded) {
-      _drawCircle(canvas, radius, Colors.black);
-      _drawCircle(canvas, radius - 2, Colors.grey);
-    } else {
-      _drawRect(canvas, radius, Colors.black);
-      _drawRect(canvas, radius - 2, Colors.grey);
-    }
+    positions.asMap().forEach((index, position) {
+      if (position.posX <= ImgConst.undefinedPosValue ||
+          position.posY <= ImgConst.undefinedPosValue) {
+        return;
+      }
+      var radius = position.getVisibleRadius();
+      var colorBorder = index == selectedPosition
+          ? AppTheme.primaryColor
+          : Colors.black;
+      var colorBorderInner = index == selectedPosition
+          ? AppTheme.primaryColor
+          : Colors.grey;
+      if (position.isRounded) {
+        _drawCircle(canvas, position.posX, position.posY, radius, colorBorder);
+        _drawCircle(
+            canvas, position.posX, position.posY, radius - 2, colorBorderInner);
+      } else {
+        _drawRect(canvas, position.posX, position.posY, radius, colorBorder);
+        _drawRect(
+            canvas, position.posX, position.posY, radius - 2, colorBorderInner);
+      }
+    });
+    if (isImageSelected) _drawImageSelection(canvas, size);
   }
 
   @override

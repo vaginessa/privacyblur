@@ -17,7 +17,6 @@ class ImageViewer extends StatelessWidget {
   final void Function(double, double) moveFilterPosition;
   final void Function(double, double) addFilterPosition;
   final void Function(int) selectFilter;
-  final Function(ScaleUpdateDetails details) onInteractionUpdate;
   late TransformationController _transformationController;
 
   ImageViewer(
@@ -28,8 +27,7 @@ class ImageViewer extends StatelessWidget {
       this._transformationController,
       this.moveFilterPosition,
       this.addFilterPosition,
-      this.selectFilter,
-      this.onInteractionUpdate);
+      this.selectFilter);
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +52,6 @@ class ImageViewer extends StatelessWidget {
       onLongPressMoveUpdate: onMoveFilter,
       onLongPressStart: onLongPressStart,
       child: InteractiveViewer(
-          onInteractionUpdate: this.onInteractionUpdate,
           transformationController: _transformationController,
           maxScale: 10,
           scaleEnabled: true,

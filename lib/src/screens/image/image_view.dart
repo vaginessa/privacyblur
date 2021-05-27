@@ -131,8 +131,7 @@ class ImageScreen extends StatelessWidget with AppMessages {
                 (posX, posY) =>
                     _bloc.add(ImageEventPositionChanged(posX, posY)),
                 (posX, posY) => _bloc.add(ImageEventNewFilter(posX, posY)),
-                (index) => _bloc.add(ImageEventExistingFilterSelected(index)),
-                (details) => _calculateUpdatedMatrix(details));
+                (index) => _bloc.add(ImageEventExistingFilterSelected(index)));
           },
           view2: (context, w, h, landscape) =>
               drawImageToolbar(context, state, w, h, landscape),
@@ -214,11 +213,5 @@ class ImageScreen extends StatelessWidget with AppMessages {
       ..setEntry(0, 3, (width - newWidth) / 2)
       ..setEntry(1, 3, (height - newHeight) / 2);
     return matrix;
-  }
-
-  void _calculateUpdatedMatrix(ScaleUpdateDetails details) {
-    Matrix4 updatedMatrix;
-    // TODO: set entries for updatedMatrix
-    // TODO: imageTransformMatrix = updatedMatrix
   }
 }

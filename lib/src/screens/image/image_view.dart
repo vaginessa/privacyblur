@@ -79,7 +79,6 @@ class ImageScreen extends StatelessWidget with AppMessages {
                 }
                 // move to notifier in next version
 
-
                 return ScaffoldWithAppBar.build(
                   onBackPressed: () => _onBack(context, state),
                   context: context,
@@ -118,8 +117,10 @@ class ImageScreen extends StatelessWidget with AppMessages {
           baseWidth: constraints.maxWidth,
           view1: (context, w, h, landscape) {
             if (_transformationController == null) {
-              imageTransformMatrix = _calculateInitialScaleAndOffset(state.image.mainImage, w, h);
-              _transformationController = TransformationController(imageTransformMatrix);
+              imageTransformMatrix =
+                  _calculateInitialScaleAndOffset(state.image.mainImage, w, h);
+              _transformationController =
+                  TransformationController(imageTransformMatrix);
             }
             return ImageViewer(
                 state.image,
@@ -131,8 +132,7 @@ class ImageScreen extends StatelessWidget with AppMessages {
                     _bloc.add(ImageEventPositionChanged(posX, posY)),
                 (posX, posY) => _bloc.add(ImageEventNewFilter(posX, posY)),
                 (index) => _bloc.add(ImageEventExistingFilterSelected(index)),
-                (details) => _calculateUpdatedMatrix(details)
-            );
+                (details) => _calculateUpdatedMatrix(details));
           },
           view2: (context, w, h, landscape) =>
               drawImageToolbar(context, state, w, h, landscape),
@@ -147,11 +147,11 @@ class ImageScreen extends StatelessWidget with AppMessages {
 
   List<Widget> _actionsIcon(BuildContext context) {
     return <Widget>[
-        TextButtonBuilder.build(
-            color: AppTheme.appBarToolColor(context),
-            text: translate(Keys.Buttons_Save),
-            onPressed: () => _bloc.add(ImageEventSave2Disk()))
-      ];
+      TextButtonBuilder.build(
+          color: AppTheme.appBarToolColor(context),
+          text: translate(Keys.Buttons_Save),
+          onPressed: () => _bloc.add(ImageEventSave2Disk()))
+    ];
   }
 
   Widget drawImageToolbar(BuildContext context, ImageStateScreen state,
@@ -179,8 +179,10 @@ class ImageScreen extends StatelessWidget with AppMessages {
                 onPixelateSelected: () =>
                     _bloc.add(ImageEventFilterPixelate(true)),
                 onCircleSelected: () => _bloc.add(ImageEventShapeRounded(true)),
-                onSquareSelected: () => _bloc.add(ImageEventShapeRounded(false)),
-                onFilterDelete: () => _bloc.add(ImageEventExistingFilterDelete(state.selectedFilterPosition)),
+                onSquareSelected: () =>
+                    _bloc.add(ImageEventShapeRounded(false)),
+                onFilterDelete: () => _bloc.add(ImageEventExistingFilterDelete(
+                    state.selectedFilterPosition)),
                 isRounded: position.isRounded,
                 isPixelate: position.isPixelate,
                 curPower: position.granularityRatio,
@@ -195,7 +197,8 @@ class ImageScreen extends StatelessWidget with AppMessages {
     this._router.openImagePreview(context, imageTransformMatrix!, image);
   }
 
-  Matrix4 _calculateInitialScaleAndOffset(img_tools.Image image, double width, double height) {
+  Matrix4 _calculateInitialScaleAndOffset(
+      img_tools.Image image, double width, double height) {
     var imgScaleRate = width / image.width;
 
     ///if you want fit, but not Cover - replace 'max' to 'min'

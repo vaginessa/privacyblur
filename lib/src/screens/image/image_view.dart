@@ -33,7 +33,7 @@ class ImageScreen extends StatelessWidget with AppMessages {
   late Color textColor;
   late double view2PortraitSize;
   late double view2LandScapeSize;
-  ScaleUpdateDetails interactiveDetails = ScaleUpdateDetails();
+  Matrix4? imageTransformMatrix;
 
   TransformationController? _transformationController;
   bool imageSet = false;
@@ -79,6 +79,7 @@ class ImageScreen extends StatelessWidget with AppMessages {
                 }
                 // move to notifier in next version
 
+
                 return ScaffoldWithAppBar.build(
                   onBackPressed: () => _onBack(context, state),
                   context: context,
@@ -117,9 +118,8 @@ class ImageScreen extends StatelessWidget with AppMessages {
           baseWidth: constraints.maxWidth,
           view1: (context, w, h, landscape) {
             if (_transformationController == null) {
-              _transformationController = TransformationController(
-                  _calculateInitialScaleAndOffset(
-                      context, state.image.mainImage, w, h));
+              imageTransformMatrix = _calculateInitialScaleAndOffset(context, state.image.mainImage, w, h);
+              _transformationController = TransformationController(imageTransformMatrix);
             }
             return ImageViewer(
                 state.image,
@@ -131,7 +131,7 @@ class ImageScreen extends StatelessWidget with AppMessages {
                     _bloc.add(ImageEventPositionChanged(posX, posY)),
                 (posX, posY) => _bloc.add(ImageEventNewFilter(posX, posY)),
                 (index) => _bloc.add(ImageEventExistingFilterSelected(index)),
-                updateInteractiveDetails
+                _calculateUpdatedMatrix
             );
           },
           view2: (context, w, h, landscape) =>
@@ -192,11 +192,7 @@ class ImageScreen extends StatelessWidget with AppMessages {
   }
 
   void _onPreview(BuildContext context, ImageFilterResult image) {
-    this._router.openImagePreview(context, interactiveDetails, image);
-  }
-
-  void updateInteractiveDetails(ScaleUpdateDetails details) {
-    interactiveDetails = details;
+    this._router.openImagePreview(context, imageTransformMatrix!, image);
   }
 
   Matrix4 _calculateInitialScaleAndOffset(BuildContext context,
@@ -216,5 +212,10 @@ class ImageScreen extends StatelessWidget with AppMessages {
       ..setEntry(0, 3, (width - newWidth) / 2)
       ..setEntry(1, 3, (height - newHeight) / 2);
     return matrix;
+  }
+
+  Matrix4 _calculateUpdatedMatrix(ScaleUpdateDetails details) {
+    // TODO: set entries
+    return Matrix4.identity();
   }
 }

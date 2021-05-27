@@ -90,12 +90,20 @@ class AppRouter {
     return path;
   }
 
-  ScaleUpdateDetails _getDetailsFromArgs(dynamic args) {
-    ScaleUpdateDetails details = ScaleUpdateDetails();
+  Matrix4 _getDetailsFromArgs(dynamic args) {
+    Matrix4 matrix = Matrix4.identity();
     if (args != null && (args is Map) && args.containsKey(interactiveDetailsArg)) {
-      details = args[interactiveDetailsArg];
+      matrix = args[interactiveDetailsArg];
     }
-    return details;
+    return matrix;
+  }
+
+  ImageFilterResult _getImageFromArgs(dynamic args) {
+    var result;
+    if (args != null && (args is Map) && args.containsKey(imageArg)) {
+      result = args[imageArg];
+    }
+    return result;
   }
 
   Route<dynamic> _selectRoute(String? name, dynamic args) {
@@ -107,7 +115,7 @@ class AppRouter {
         return ImageScreen(_di, this, _getPathFromArgs(args));
       }),
       _imagePreviewRoute: NoTransitionRoute(builder: (context) {
-        return ImagePreviewScreen(_di, this, _getDetailsFromArgs(args), args[imageArg]);
+        return ImagePreviewScreen(_di, this, _getDetailsFromArgs(args), _getImageFromArgs(args));
       }),
     };
 
@@ -127,7 +135,7 @@ class AppRouter {
     _navigator.pushNamed(context, _imageRoute, arguments: {imagePathArg: path});
   }
 
-  void openImagePreview(context, ScaleUpdateDetails details, ImageFilterResult image) {
+  void openImagePreview(context, Matrix4 details, ImageFilterResult image) {
     _navigator.pushNamed(context, _imagePreviewRoute, arguments: {interactiveDetailsArg: details, imageArg: image});
   }
 }

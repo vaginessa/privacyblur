@@ -10,18 +10,21 @@ import 'package:privacyblur/src/screens/image/widgets/custom_painter.dart';
 import 'package:privacyblur/src/utils/image_filter/helpers/filter_result.dart';
 import 'package:privacyblur/src/widgets/adaptive_widgets_builder.dart';
 
+// ignore: must_be_immutable
 class ImagePreviewScreen extends StatelessWidget {
   final DependencyInjection di;
   final AppRouter router;
-  final ScaleUpdateDetails details;
+  final Matrix4 matrix;
   final ImageFilterResult image;
   late InternalLayout internalLayout;
+  TransformationController? transformationController;
 
-  ImagePreviewScreen(this.di, this.router, this.details, this.image);
+  ImagePreviewScreen(this.di, this.router, this.matrix, this.image);
 
   @override
   Widget build(BuildContext context) {
     internalLayout = InternalLayout(context);
+    transformationController = TransformationController(matrix);
     return ScaffoldWithAppBar.build(
       context: context,
       title: translate(Keys.App_Name),
@@ -48,7 +51,6 @@ class ImagePreviewScreen extends StatelessWidget {
         var verticalBorder = ((constraints.maxHeight - imageMinHeight).abs() / (minScale));
         EdgeInsets boundaryMargin =
         EdgeInsets.fromLTRB(0, 0, horizontalBorder, verticalBorder);
-
        return InteractiveViewer(
            maxScale: 10,
            scaleEnabled: true,
@@ -56,6 +58,7 @@ class ImagePreviewScreen extends StatelessWidget {
            constrained: false,
            boundaryMargin: boundaryMargin,
            minScale: minScale / initialScale,
+           transformationController: transformationController,
            child: SizedBox(
                width: image.mainImage.width.toDouble(),
                height: image.mainImage.height.toDouble(),

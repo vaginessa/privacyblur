@@ -34,10 +34,9 @@ class ShapePainter extends CustomPainter {
 
   void _drawImageSelection(Canvas canvas, Size size) {
     var paint1 = Paint()
-      ..color = isImageSelected ? Colors.transparent : AppTheme.primaryColor
+      ..color = AppTheme.primaryColor
       ..strokeWidth = 4
       ..style = PaintingStyle.stroke;
-    if (isImageSelected)
       canvas.drawRect(
           Offset(0, 0) & Size(size.width - 2, size.height - 2), paint1);
   }

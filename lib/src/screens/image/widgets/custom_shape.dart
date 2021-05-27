@@ -8,9 +8,10 @@ class ShapePainter extends CustomPainter {
   int _hash = 0;
   final int selectedPosition;
   final List<FilterPosition> positions;
-  final bool isImageSelected;
+  bool isImageSelected = true;
 
-  ShapePainter(this.positions, this.selectedPosition, this.isImageSelected) {
+  ShapePainter(this.positions, this.selectedPosition) {
+    this.isImageSelected = selectedPosition <0 || selectedPosition >=positions.length;
     // with prime numbers to reduce collisions... may be. Not very important
     // from https://primes.utm.edu/lists/small/10000.txt
     positions.forEach((p) {
@@ -20,6 +21,7 @@ class ShapePainter extends CustomPainter {
           p.posX +
           p.posY * 12347;
     });
+    _hash += isImageSelected ? 7919 : 8887;
   }
 
   @override

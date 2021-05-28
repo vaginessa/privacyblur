@@ -163,6 +163,7 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
       imageFilter.transactionCancel();
       _blocState.resetSelection();
       _blocState.image = await imageFilter.getImage();
+      if(_blocState.positions.isEmpty) _blocState.isImageSaved = true;
       yield _blocState.clone(); //needed
       return;
     }
@@ -183,6 +184,7 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
       ..posX = event.x.toInt()
       ..posY = event.y.toInt());
     _blocState.selectedFilterIndex = _blocState.positions.length - 1;
+    _blocState.isImageSaved = false;
     _blocState.positionsUpdateOrder();
     _applyCurrentFilter();
     yield _blocState.clone(); //needed

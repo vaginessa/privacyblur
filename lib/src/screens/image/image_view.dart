@@ -77,7 +77,8 @@ class ImageScreen extends StatelessWidget with AppMessages {
                 if (state == null && (!imageSet)) {
                   _bloc.add(ImageEventSelected(filename));
                 }
-                bool imgNotSaved = (state is ImageStateScreen && !state.isImageSaved);
+                bool imgNotSaved =
+                    (state is ImageStateScreen && !state.isImageSaved);
 
                 return ScaffoldWithAppBar.build(
                   onBackPressed: () => _onBack(context, state),
@@ -145,7 +146,7 @@ class ImageScreen extends StatelessWidget with AppMessages {
   }
 
   List<Widget> _actionsIcon(BuildContext context, bool imgNotSaved) {
-    if(imgNotSaved) {
+    if (imgNotSaved) {
       return <Widget>[
         TextButtonBuilder.build(
             color: AppTheme.appBarToolColor(context),

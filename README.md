@@ -58,6 +58,9 @@ You can find all requirements in the [CONTRIBUTING](CONTRIBUTING.md#code-style)
 
 ## Flutter SDK Setup
 
+The app is running on Flutter SDK 2.2 and dart 2.13.
+Before working with the project, please make sure to run ``flutter upgrade``.
+
 ### Windows
 click here:
 [Installation Guide on Windows](https://flutter.dev/docs/get-started/install/windows)

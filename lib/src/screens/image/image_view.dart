@@ -77,13 +77,14 @@ class ImageScreen extends StatelessWidget with AppMessages {
                 if (state == null && (!imageSet)) {
                   _bloc.add(ImageEventSelected(filename));
                 }
-                // move to notifier in next version
+                bool imgNotSaved =
+                    (state is ImageStateScreen && !state.isImageSaved);
 
                 return ScaffoldWithAppBar.build(
                   onBackPressed: () => _onBack(context, state),
                   context: context,
                   title: translate(Keys.App_Name),
-                  actions: _actionsIcon(context),
+                  actions: _actionsIcon(context, imgNotSaved),
                   body: SafeArea(
                     child: _buildHomeBody(context, state),
                     top: internalLayout.landscapeMode,
@@ -144,13 +145,16 @@ class ImageScreen extends StatelessWidget with AppMessages {
     }
   }
 
-  List<Widget> _actionsIcon(BuildContext context) {
-    return <Widget>[
-      TextButtonBuilder.build(
-          color: AppTheme.appBarToolColor(context),
-          text: translate(Keys.Buttons_Save),
-          onPressed: () => _bloc.add(ImageEventSave2Disk()))
-    ];
+  List<Widget> _actionsIcon(BuildContext context, bool imgNotSaved) {
+    if (imgNotSaved) {
+      return <Widget>[
+        TextButtonBuilder.build(
+            color: AppTheme.appBarToolColor(context),
+            text: translate(Keys.Buttons_Save),
+            onPressed: () => _bloc.add(ImageEventSave2Disk()))
+      ];
+    }
+    return <Widget>[SizedBox()];
   }
 
   Widget drawImageToolbar(BuildContext context, ImageStateScreen state,

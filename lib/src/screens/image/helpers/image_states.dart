@@ -71,7 +71,7 @@ class ImageStateScreen extends ImageStateBase {
       ..activeTool = this.activeTool
       ..maxPower = this.maxPower
       ..selectedFilterIndex = this.selectedFilterIndex
-      ..positions = this.positions
+      ..positions = [...this.positions]
       ..maxRadius = this.maxRadius;
     return newImageStateScreen;
   }

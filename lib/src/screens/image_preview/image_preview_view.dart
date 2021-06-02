@@ -27,6 +27,7 @@ class ImagePreviewScreen extends StatelessWidget {
     transformationController = TransformationController(matrix);
     return ScaffoldWithAppBar.build(
       context: context,
+      actions: [],
       title: translate(Keys.App_Name),
       body: SafeArea(
         child: _buildPreview(context),

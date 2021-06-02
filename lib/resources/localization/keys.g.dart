@@ -17,8 +17,6 @@ class Keys {
 
   static const String Help_Lines_Help3 = 'help_lines.help3';
 
-  static const String Help_Lines_Help4 = 'help_lines.help4';
-
   static const String Buttons_Save = 'buttons.save';
 
   static const String Buttons_Apply = 'buttons.apply';

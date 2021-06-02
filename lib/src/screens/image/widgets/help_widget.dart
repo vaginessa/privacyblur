@@ -25,8 +25,7 @@ class HelpWidget extends StatelessWidget {
     HelpLine(AppIcons.click, Keys.Help_Lines_Help0),
     HelpLine(AppIcons.drag, Keys.Help_Lines_Help1),
     HelpLine(AppIcons.granularity, Keys.Help_Lines_Help2),
-    HelpLine(AppIcons.done, Keys.Help_Lines_Help3),
-    HelpLine(AppIcons.save, Keys.Help_Lines_Help4),
+    HelpLine(AppIcons.save, Keys.Help_Lines_Help3)
   ];
 
   HelpWidget(this.height, this.width);
@@ -43,7 +42,7 @@ class HelpWidget extends StatelessWidget {
   Widget _helpTemplate(BuildContext context, HelpLine line) {
     double spacePerHelpline = height / helpLines.length;
     double widthFactor = min(max(width / height, 0.4), 1);
-    double textSize = min(max(spacePerHelpline * 0.35 * widthFactor, 10), 16);
+    double textSize = min(max(spacePerHelpline * 0.3 * widthFactor, 10), 16);
     return Padding(
       padding: EdgeInsets.only(
           left: _internalLayout.spacer * 2,
@@ -66,7 +65,7 @@ class HelpWidget extends StatelessWidget {
             textScaleFactor: 1,
             style: TextStyle(
                 color: AppTheme.fontColor(context),
-                height: 1.2,
+                height: 1.1,
                 fontSize: textSize),
           ))
         ],

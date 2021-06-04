@@ -84,7 +84,7 @@ class ImageToolsWidget extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Scrollbar(child: _listParameters(context)),
+              _listParameters(context),
               Container(
                 alignment: Alignment.center,
                 padding: EdgeInsets.symmetric(
@@ -146,53 +146,56 @@ class ImageToolsWidget extends StatelessWidget {
   Widget _listParameters(context) {
     return Container(
       height: _internalLayout.iconSize * 2,
-      child: ListView(
-        shrinkWrap: true,
-        scrollDirection: Axis.horizontal,
-        children: <Widget>[
-          IconButtonBuilder.build(
-            rotateIconQuarter: isLandscape ? 1 : 0,
-            icon: AppIcons.resize,
-            color: this.activeTool == EditTool.EditSize
-                ? AppTheme.primaryColor
-                : AppTheme.fontColor(context),
-            onPressed: () => onEditToolSelected(EditTool.EditSize),
-            iconSize: _internalLayout.iconSize,
-          ),
-          IconButtonBuilder.build(
-            icon: AppIcons.granularity,
-            color: this.activeTool == EditTool.EditGranularity
-                ? AppTheme.primaryColor
-                : AppTheme.fontColor(context),
-            onPressed: () => onEditToolSelected(EditTool.EditGranularity),
-            iconSize: _internalLayout.iconSize,
-          ),
-          IconButtonBuilder.build(
-            rotateIconQuarter: isLandscape ? 1 : 0,
-            icon: AppIcons.type,
-            color: this.activeTool == EditTool.EditType
-                ? AppTheme.primaryColor
-                : AppTheme.fontColor(context),
-            onPressed: () => onEditToolSelected(EditTool.EditType),
-            iconSize: _internalLayout.iconSize,
-          ),
-          IconButtonBuilder.build(
-            rotateIconQuarter: isLandscape ? 1 : 0,
-            icon: AppIcons.shape,
-            color: this.activeTool == EditTool.EditShape
-                ? AppTheme.primaryColor
-                : AppTheme.fontColor(context),
-            onPressed: () => onEditToolSelected(EditTool.EditShape),
-            iconSize: _internalLayout.iconSize,
-          ),
-          IconButtonBuilder.build(
-            rotateIconQuarter: isLandscape ? 1 : 0,
-            icon: Icons.delete_outlined,
-            color: AppTheme.fontColor(context),
-            onPressed: onFilterDelete,
-            iconSize: _internalLayout.iconSize,
-          ),
-        ],
+      child: Scrollbar(
+        isAlwaysShown: false,
+        child: ListView(
+          shrinkWrap: true,
+          scrollDirection: Axis.horizontal,
+          children: <Widget>[
+            IconButtonBuilder.build(
+              rotateIconQuarter: isLandscape ? 1 : 0,
+              icon: AppIcons.resize,
+              color: this.activeTool == EditTool.EditSize
+                  ? AppTheme.primaryColor
+                  : AppTheme.fontColor(context),
+              onPressed: () => onEditToolSelected(EditTool.EditSize),
+              iconSize: _internalLayout.iconSize,
+            ),
+            IconButtonBuilder.build(
+              icon: AppIcons.granularity,
+              color: this.activeTool == EditTool.EditGranularity
+                  ? AppTheme.primaryColor
+                  : AppTheme.fontColor(context),
+              onPressed: () => onEditToolSelected(EditTool.EditGranularity),
+              iconSize: _internalLayout.iconSize,
+            ),
+            IconButtonBuilder.build(
+              rotateIconQuarter: isLandscape ? 1 : 0,
+              icon: AppIcons.type,
+              color: this.activeTool == EditTool.EditType
+                  ? AppTheme.primaryColor
+                  : AppTheme.fontColor(context),
+              onPressed: () => onEditToolSelected(EditTool.EditType),
+              iconSize: _internalLayout.iconSize,
+            ),
+            IconButtonBuilder.build(
+              rotateIconQuarter: isLandscape ? 1 : 0,
+              icon: AppIcons.shape,
+              color: this.activeTool == EditTool.EditShape
+                  ? AppTheme.primaryColor
+                  : AppTheme.fontColor(context),
+              onPressed: () => onEditToolSelected(EditTool.EditShape),
+              iconSize: _internalLayout.iconSize,
+            ),
+            IconButtonBuilder.build(
+              rotateIconQuarter: isLandscape ? 1 : 0,
+              icon: Icons.delete_outlined,
+              color: AppTheme.fontColor(context),
+              onPressed: onFilterDelete,
+              iconSize: _internalLayout.iconSize,
+            ),
+          ],
+        ),
       ),
     );
   }

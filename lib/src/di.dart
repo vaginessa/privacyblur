@@ -3,6 +3,7 @@ import 'package:privacyblur/src/data/services/heap_size.dart';
 import 'package:privacyblur/src/data/services/local_storage.dart';
 import 'package:privacyblur/src/screens/image/image_bloc.dart';
 import 'package:privacyblur/src/screens/image/image_repo.dart';
+import 'package:privacyblur/src/screens/image/utils/image_tools.dart';
 
 class DependencyInjection {
   late String appName;
@@ -21,5 +22,5 @@ class DependencyInjection {
 
   BlocProvider<ImageBloc> getImageBloc() => BlocProvider<ImageBloc>(
       create: (context) =>
-          ImageBloc(RepositoryProvider.of<ImageRepository>(context)));
+          ImageBloc(RepositoryProvider.of<ImageRepository>(context), ImgTools()));
 }

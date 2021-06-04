@@ -22,10 +22,11 @@ class _yield_state_internally extends ImageEventBase {}
 class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
   final ImageStateScreen _blocState = ImageStateScreen();
   final ImageRepository _repo;
+  final ImgTools imgTools;
   Timer? _deferedFuture;
   Duration _defered = Duration(milliseconds: ImgConst.applyDelayDuration);
 
-  ImageBloc(this._repo) : super(null);
+  ImageBloc(this._repo, this.imgTools) : super(null);
 
   @override
   Stream<ImageStateBase> mapEventToState(ImageEventBase event) async* {
@@ -137,7 +138,7 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
     imageFilter.transactionCommit();
     _blocState.resetSelection();
     _blocState.image = await imageFilter.getImage();
-    _blocState.isImageSaved = await ImgTools().save2Gallery(
+    _blocState.isImageSaved = await imgTools.save2Gallery(
         imageFilter.imgChannels.imageWidth,
         imageFilter.imgChannels.imageHeight,
         imageFilter.imgChannels.tempImgArr);
@@ -248,7 +249,6 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
     _blocState.filename = event.filename;
     _blocState.isImageSaved = true;
     img_tools.Image? tmpImage;
-    var imgTools = ImgTools();
     try {
       tmpImage = await imgTools.scaleFile(_blocState.filename, maxImageSize);
       if (imgTools.scaled) {

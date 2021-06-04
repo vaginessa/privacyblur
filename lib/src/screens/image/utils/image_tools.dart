@@ -16,6 +16,8 @@ class ImgTools {
   int srcWidth = 0;
   int srcHeight = 0;
   bool scaled = false;
+  final String saveFileName =
+      'blur' + DateTime.now().millisecondsSinceEpoch.toString() + '.jpg';
 
   Future<img_tools.Image> scaleFile(String filePath, int maxSize) async {
     File file = await _fixRotationBug(filePath);
@@ -54,8 +56,7 @@ class ImgTools {
     } catch (e) {}
 
     try {
-      var randomNumber = Random().nextInt(10000).toString();
-      String tmpFile = directory.path + '/pix' + randomNumber + '.jpg';
+      String tmpFile = directory.path + '/' + saveFileName;
       var file = File(tmpFile);
       file.writeAsBytesSync(img_external.encodeJpg(
           img_external.Image.fromBytes(width, height, raw),

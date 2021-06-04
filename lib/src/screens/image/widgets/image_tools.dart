@@ -69,30 +69,46 @@ class ImageToolsWidget extends StatelessWidget {
     return Container(
       alignment: Alignment.topCenter,
       padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-      child:
-          Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        _listParameters(context),
-        Container(
-          alignment: Alignment.center,
-          padding: EdgeInsets.symmetric(horizontal: _internalLayout.spacer * 2),
-          child: _buildControl(context),
-        ),
-        if (!isLandscape)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+      child: Row(children: [
+        if (isLandscape)
+          Expanded(
+            flex: 1,
+            child: TextButtonBuilder.build(
+                color: AppTheme.fontColor(context),
+                text: translate(Keys.Buttons_Preview),
+                onPressed: this.onPreview,
+                rotateIconQuarter: isLandscape ? 1 : 0),
+          ),
+        Expanded(
+          flex: 8,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(
-                child: TextButtonBuilder.build(
-                    color: AppTheme.fontColor(context),
-                    text: translate(Keys.Buttons_Preview),
-                    onPressed: this.onPreview,
-                    rotateIconQuarter: isLandscape ? 1 : 0),
+              _listParameters(context),
+              Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.symmetric(
+                    horizontal: _internalLayout.spacer * 2),
+                child: _buildControl(context),
               ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (!isLandscape)
+                    Expanded(
+                        child: TextButtonBuilder.build(
+                            color: AppTheme.fontColor(context),
+                            text: translate(Keys.Buttons_Preview),
+                            onPressed: this.onPreview,
+                            rotateIconQuarter: isLandscape ? 1 : 0))
+                ],
+              ),
+              (_internalLayout.isNeedSafeArea || isLandscape)
+                  ? SizedBox(height: _internalLayout.spacer)
+                  : SizedBox(height: 0),
             ],
           ),
-        (_internalLayout.isNeedSafeArea || isLandscape)
-            ? SizedBox(height: _internalLayout.spacer)
-            : SizedBox(height: 0),
+        )
       ]),
     );
   }
@@ -130,53 +146,56 @@ class ImageToolsWidget extends StatelessWidget {
   Widget _listParameters(context) {
     return Container(
       height: _internalLayout.iconSize * 2,
-      child: ListView(
-        shrinkWrap: true,
-        scrollDirection: Axis.horizontal,
-        children: <Widget>[
-          IconButtonBuilder.build(
-            rotateIconQuarter: isLandscape ? 1 : 0,
-            icon: AppIcons.resize,
-            color: this.activeTool == EditTool.EditSize
-                ? AppTheme.primaryColor
-                : AppTheme.fontColor(context),
-            onPressed: () => onEditToolSelected(EditTool.EditSize),
-            iconSize: _internalLayout.iconSize,
-          ),
-          IconButtonBuilder.build(
-            icon: AppIcons.granularity,
-            color: this.activeTool == EditTool.EditGranularity
-                ? AppTheme.primaryColor
-                : AppTheme.fontColor(context),
-            onPressed: () => onEditToolSelected(EditTool.EditGranularity),
-            iconSize: _internalLayout.iconSize,
-          ),
-          IconButtonBuilder.build(
-            rotateIconQuarter: isLandscape ? 1 : 0,
-            icon: AppIcons.type,
-            color: this.activeTool == EditTool.EditType
-                ? AppTheme.primaryColor
-                : AppTheme.fontColor(context),
-            onPressed: () => onEditToolSelected(EditTool.EditType),
-            iconSize: _internalLayout.iconSize,
-          ),
-          IconButtonBuilder.build(
-            rotateIconQuarter: isLandscape ? 1 : 0,
-            icon: AppIcons.shape,
-            color: this.activeTool == EditTool.EditShape
-                ? AppTheme.primaryColor
-                : AppTheme.fontColor(context),
-            onPressed: () => onEditToolSelected(EditTool.EditShape),
-            iconSize: _internalLayout.iconSize,
-          ),
-          IconButtonBuilder.build(
-            rotateIconQuarter: isLandscape ? 1 : 0,
-            icon: Icons.delete_outlined,
-            color: AppTheme.fontColor(context),
-            onPressed: onFilterDelete,
-            iconSize: _internalLayout.iconSize,
-          ),
-        ],
+      child: Scrollbar(
+        isAlwaysShown: false,
+        child: ListView(
+          shrinkWrap: true,
+          scrollDirection: Axis.horizontal,
+          children: <Widget>[
+            IconButtonBuilder.build(
+              rotateIconQuarter: isLandscape ? 1 : 0,
+              icon: AppIcons.resize,
+              color: this.activeTool == EditTool.EditSize
+                  ? AppTheme.primaryColor
+                  : AppTheme.fontColor(context),
+              onPressed: () => onEditToolSelected(EditTool.EditSize),
+              iconSize: _internalLayout.iconSize,
+            ),
+            IconButtonBuilder.build(
+              icon: AppIcons.granularity,
+              color: this.activeTool == EditTool.EditGranularity
+                  ? AppTheme.primaryColor
+                  : AppTheme.fontColor(context),
+              onPressed: () => onEditToolSelected(EditTool.EditGranularity),
+              iconSize: _internalLayout.iconSize,
+            ),
+            IconButtonBuilder.build(
+              rotateIconQuarter: isLandscape ? 1 : 0,
+              icon: AppIcons.type,
+              color: this.activeTool == EditTool.EditType
+                  ? AppTheme.primaryColor
+                  : AppTheme.fontColor(context),
+              onPressed: () => onEditToolSelected(EditTool.EditType),
+              iconSize: _internalLayout.iconSize,
+            ),
+            IconButtonBuilder.build(
+              rotateIconQuarter: isLandscape ? 1 : 0,
+              icon: AppIcons.shape,
+              color: this.activeTool == EditTool.EditShape
+                  ? AppTheme.primaryColor
+                  : AppTheme.fontColor(context),
+              onPressed: () => onEditToolSelected(EditTool.EditShape),
+              iconSize: _internalLayout.iconSize,
+            ),
+            IconButtonBuilder.build(
+              rotateIconQuarter: isLandscape ? 1 : 0,
+              icon: Icons.delete_outlined,
+              color: AppTheme.fontColor(context),
+              onPressed: onFilterDelete,
+              iconSize: _internalLayout.iconSize,
+            ),
+          ],
+        ),
       ),
     );
   }

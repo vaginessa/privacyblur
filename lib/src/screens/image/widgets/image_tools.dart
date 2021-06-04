@@ -69,30 +69,46 @@ class ImageToolsWidget extends StatelessWidget {
     return Container(
       alignment: Alignment.topCenter,
       padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-      child:
-          Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        _listParameters(context),
-        Container(
-          alignment: Alignment.center,
-          padding: EdgeInsets.symmetric(horizontal: _internalLayout.spacer * 2),
-          child: _buildControl(context),
-        ),
-        if (!isLandscape)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+      child: Row(children: [
+        if (isLandscape)
+          Expanded(
+            flex: 1,
+            child: TextButtonBuilder.build(
+                color: AppTheme.fontColor(context),
+                text: translate(Keys.Buttons_Preview),
+                onPressed: this.onPreview,
+                rotateIconQuarter: isLandscape ? 1 : 0),
+          ),
+        Expanded(
+          flex: 8,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(
-                child: TextButtonBuilder.build(
-                    color: AppTheme.fontColor(context),
-                    text: translate(Keys.Buttons_Preview),
-                    onPressed: this.onPreview,
-                    rotateIconQuarter: isLandscape ? 1 : 0),
+              Scrollbar(child: _listParameters(context)),
+              Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.symmetric(
+                    horizontal: _internalLayout.spacer * 2),
+                child: _buildControl(context),
               ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (!isLandscape)
+                    Expanded(
+                        child: TextButtonBuilder.build(
+                            color: AppTheme.fontColor(context),
+                            text: translate(Keys.Buttons_Preview),
+                            onPressed: this.onPreview,
+                            rotateIconQuarter: isLandscape ? 1 : 0))
+                ],
+              ),
+              (_internalLayout.isNeedSafeArea || isLandscape)
+                  ? SizedBox(height: _internalLayout.spacer)
+                  : SizedBox(height: 0),
             ],
           ),
-        (_internalLayout.isNeedSafeArea || isLandscape)
-            ? SizedBox(height: _internalLayout.spacer)
-            : SizedBox(height: 0),
+        )
       ]),
     );
   }

@@ -56,16 +56,13 @@ class ImgTools {
     } catch (e) {}
 
     try {
-      String tmpFile = directory.path + '/' + saveFileName;
-      var file = File(tmpFile);
-      file.writeAsBytesSync(img_external.encodeJpg(
-          img_external.Image.fromBytes(width, height, raw),
-          quality: ImgConst.imgQuality));
-      await ImageGallerySaver.saveFile(tmpFile);
+      await ImageGallerySaver.saveImage(
+          Uint8List.fromList(img_external
+              .encodeJpg(img_external.Image.fromBytes(width, height, raw))),
+          quality: ImgConst.imgQuality,
+          name: saveFileName);
+
       saved = true;
-      try {
-        file.delete();
-      } catch (_) {}
     } catch (e) {
       saved = false;
     }

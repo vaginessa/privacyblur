@@ -104,57 +104,52 @@ void main() {
     expect((templateTime * 15.0) > diff, true);
   });
 
-  try {
-    test('blur speed compare 1000x1000', () async {
-      ImageAppFilter filter = ImageAppFilter();
+  test('blur speed compare 1000x1000', () async {
+    ImageAppFilter filter = ImageAppFilter();
 
-      var _width = 1000;
-      var _height = 1000;
-      Uint32List listData = Uint32List(_width * _height); //7x7
-      Completer<Image> _completer = new Completer();
-      decodeImageFromPixels(
-          listData.buffer.asUint8List(), _width, _height, PixelFormat.rgba8888,
-          (result) {
-        _completer.complete(result);
-      });
-      var image = await _completer.future;
-      await filter.setImage(image);
-      ImageAppFilter.setMaxProcessedWidth(_width + 1);
-      var time1 = DateTime.now().millisecondsSinceEpoch;
-      var diff = DateTime.now().millisecondsSinceEpoch - time1;
-      var templateTime = diff;
-      filter.setFilter(MatrixAppBlur(500));
-      filter.transactionStart();
-      time1 = DateTime.now().millisecondsSinceEpoch;
-      filter.apply2Area(2000, 2000, 10000, false); //to all image
-      filter.transactionCommit();
-      diff = DateTime.now().millisecondsSinceEpoch - time1;
-      print('-------------------------------------');
-      print('------------Filter Time--------------');
-      print(((diff ~/ 100) / 10).toString() + " sec");
-      print('-------------------------------------');
-      print('-------------------------------------');
-      var appFilterTime = diff;
-      img_external.Image ext_image_lib =
-          img_external.Image.rgb(_width, _height);
-      time1 = DateTime.now().millisecondsSinceEpoch;
-
-      ///this library use a trick as fact they calculate only 2/3 of radius.
-      ///bluring is not so powerfull as with linear bluring.
-      ///to get same result radius must be in 3-4 times bigger
-      ///but even with same block size it works in 7 times slower.
-      img_external.gaussianBlur(ext_image_lib, 250);
-      diff = DateTime.now().millisecondsSinceEpoch - time1;
-      print('-------------------------------------');
-      print('---------External Lib Time-----------');
-      print(((diff ~/ 100) / 10).toString() + " sec");
-      print('-------------------------------------');
-      print('*************************************');
-      expect(appFilterTime * 6.0 < diff, true);
+    var _width = 1000;
+    var _height = 1000;
+    Uint32List listData = Uint32List(_width * _height); //7x7
+    Completer<Image> _completer = new Completer();
+    decodeImageFromPixels(
+        listData.buffer.asUint8List(), _width, _height, PixelFormat.rgba8888,
+        (result) {
+      _completer.complete(result);
     });
-  } catch (e, s) {
-    print(s);
-  }
+    var image = await _completer.future;
+    await filter.setImage(image);
+    ImageAppFilter.setMaxProcessedWidth(_width + 1);
+    var time1 = DateTime.now().millisecondsSinceEpoch;
+    var diff = DateTime.now().millisecondsSinceEpoch - time1;
+    var templateTime = diff;
+    filter.setFilter(MatrixAppBlur(500));
+    filter.transactionStart();
+    time1 = DateTime.now().millisecondsSinceEpoch;
+    filter.apply2Area(2000, 2000, 10000, false); //to all image
+    filter.transactionCommit();
+    diff = DateTime.now().millisecondsSinceEpoch - time1;
+    print('-------------------------------------');
+    print('------------Filter Time--------------');
+    print(((diff ~/ 100) / 10).toString() + " sec");
+    print('-------------------------------------');
+    print('-------------------------------------');
+    var appFilterTime = diff;
+    img_external.Image ext_image_lib = img_external.Image.rgb(_width, _height);
+    time1 = DateTime.now().millisecondsSinceEpoch;
+
+    ///this library use a trick as fact they calculate only 2/3 of radius.
+    ///bluring is not so powerfull as with linear bluring.
+    ///to get same result radius must be in 3-4 times bigger
+    ///but even with same block size it works in 7 times slower.
+    img_external.gaussianBlur(ext_image_lib, 250);
+    diff = DateTime.now().millisecondsSinceEpoch - time1;
+    print('-------------------------------------');
+    print('---------External Lib Time-----------');
+    print(((diff ~/ 100) / 10).toString() + " sec");
+    print('-------------------------------------');
+    print('*************************************');
+    expect(appFilterTime * 6.0 < diff, true);
+  });
 
   test('pixelate speed compare 15.000x15.000', () async {
     ImageAppFilter filter = ImageAppFilter();

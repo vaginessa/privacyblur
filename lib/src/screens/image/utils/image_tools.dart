@@ -17,7 +17,7 @@ class ImgTools {
   int srcHeight = 0;
   bool scaled = false;
   final String saveFileName =
-      'blur' + DateTime.now().millisecondsSinceEpoch.toString() + '.jpg';
+      'blur' + DateTime.now().millisecondsSinceEpoch.toString(); //no extention!
 
   Future<img_tools.Image> scaleFile(String filePath, int maxSize) async {
     File file = await _fixRotationBug(filePath);

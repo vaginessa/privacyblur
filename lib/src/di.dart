@@ -21,6 +21,6 @@ class DependencyInjection {
       ];
 
   BlocProvider<ImageBloc> getImageBloc() => BlocProvider<ImageBloc>(
-      create: (context) =>
-          ImageBloc(RepositoryProvider.of<ImageRepository>(context), ImgTools()));
+      create: (context) => ImageBloc(
+          RepositoryProvider.of<ImageRepository>(context), ImgTools()));
 }

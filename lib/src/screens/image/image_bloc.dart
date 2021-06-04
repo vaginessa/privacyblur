@@ -22,7 +22,7 @@ class _yield_state_internally extends ImageEventBase {}
 class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
   final ImageStateScreen _blocState = ImageStateScreen();
   final ImageRepository _repo;
-  final ImgTools imgTools;
+  final ImgTools imgTools; //for mocking saving operations in future tests
   Timer? _deferedFuture;
   Duration _defered = Duration(milliseconds: ImgConst.applyDelayDuration);
 

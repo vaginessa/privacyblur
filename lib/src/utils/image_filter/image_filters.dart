@@ -37,7 +37,7 @@ class ImageAppFilter {
 
   Future<ImageFilterResult> setImage(img_tools.Image image) async {
     await imgChannels.splitImage(image);
-    _response_cache=await getImage(); //Important to set it first before all
+    _response_cache = await getImage(); //Important to set it first before all
     imgChannels.transactionActive = false;
     return Future.value(_response_cache);
   }
@@ -60,6 +60,7 @@ class ImageAppFilter {
             ((imgChannels.sourceBlue[pointIndex]) & 0xff); //blue*/
       }
     }
+    imgChannels.resetSmallCacheAfterCancel();
     needRebuild = true;
   }
 

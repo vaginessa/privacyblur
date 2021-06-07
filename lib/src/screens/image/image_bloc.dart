@@ -178,7 +178,7 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
       _blocState.selectedFilterIndex = event.index - 1;
       if (_blocState.selectedFilterIndex < 0)
         _blocState.selectedFilterIndex = _blocState.positions.length - 1;
-      _applyCurrentFilter();//yield _blocState.clone();// - not needed here??
+      _applyCurrentFilter(); //yield _blocState.clone(); - not needed here
     }
   }
 

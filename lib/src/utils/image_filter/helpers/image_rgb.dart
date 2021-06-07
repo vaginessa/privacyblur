@@ -46,11 +46,17 @@ class ImageRGB {
     maxy = 0;
     minx = imageWidth - 1;
     miny = imageHeight - 1;
-    _copyAgain = true;
+    resetSmallCacheAfterCancel();
   }
 
   Uint32List _changedArea = Uint32List(0);
   bool _copyAgain = true;
+
+  /// particular image will be reseted.
+  /// it necessary only after canceling filter result
+  void resetSmallCacheAfterCancel(){
+    _copyAgain = true;
+  }
 
   void collectRange(RangeHelper range) {
     if (range.x1 > maxx) maxx = range.x1;
@@ -61,8 +67,8 @@ class ImageRGB {
     if (range.x2 < minx) minx = range.x2;
     if (range.y2 > maxy) maxy = range.y2;
     if (range.y2 < miny) miny = range.y2;
-    _copyAgain = true;
     _range_cache = null;
+    resetSmallCacheAfterCancel();
   }
 
   RangeHelper? _range_cache;

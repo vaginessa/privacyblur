@@ -153,12 +153,13 @@ class ImageScreen extends StatelessWidget with AppMessages {
             color: AppTheme.appBarToolColor(context),
             text: translate(Keys.Buttons_Save),
             onPressed: () async {
-              var ovr = true;
+              bool? ovr = true;
               if (wasSavedOnce) {
-                ovr = await AppConfirmationBuilder.build(context,
+                ovr = await AppConfirmationBuilder.buildWithNull(context,
                     message: translate(Keys.Messages_Infos_Override_Image),
                     acceptTitle: translate(Keys.Buttons_Override_Yes),
                     rejectTitle: translate(Keys.Buttons_Override_No));
+                if(ovr==null) return;
               }
               _bloc.add(ImageEventSave2Disk(ovr));
             })

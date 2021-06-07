@@ -21,7 +21,6 @@ class ShapePainter extends CustomPainter {
           p.posX +
           p.posY * 12347;
     });
-    _hash += isImageSelected ? 7919 : 8887;
   }
 
   @override

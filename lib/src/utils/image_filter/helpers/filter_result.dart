@@ -30,7 +30,10 @@ class ImageFilterResult {
   int _hash = 0;
 
   void _updateHash() {
-    _hash = mainImage.hashCode - (changedPart?.hashCode ?? 0);
+    _hash = posX * 12347 -
+        posY * 8467 +
+        mainImage.hashCode * 3 -
+        (changedPart?.hashCode ?? 0);
   }
 
   ImageFilterResult.empty();

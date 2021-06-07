@@ -3,7 +3,6 @@ import 'package:privacyblur/src/utils/image_filter/helpers/filter_result.dart';
 
 class ImgPainter extends CustomPainter {
   final ImageFilterResult _image;
-  static int _old_hash = 0;
   late int _hash;
 
   ImgPainter(this._image) {

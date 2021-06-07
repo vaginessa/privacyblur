@@ -4,7 +4,6 @@ import 'package:privacyblur/src/screens/image/helpers/image_classes_helper.dart'
 import 'package:privacyblur/src/widgets/theme/theme_provider.dart';
 
 class ShapePainter extends CustomPainter {
-  static int _old_hash = 0;
   int _hash = 0;
   final int selectedPosition;
   final List<FilterPosition> positions;

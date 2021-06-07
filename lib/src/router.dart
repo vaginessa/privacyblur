@@ -39,7 +39,7 @@ class AppRouter {
   static final String _imagePreviewRoute = '/image_preview_route';
 
   static final String imagePathArg = 'image_path';
-  static final String transformationMatrixArg = 'interactiveViewDetails';
+  static final String controllerArg = 'transformationController';
   static final String imageArg = 'image';
 
   final ScreenNavigator _navigator;
@@ -90,14 +90,14 @@ class AppRouter {
     return path;
   }
 
-  Matrix4 _getDetailsFromArgs(dynamic args) {
-    Matrix4 matrix = Matrix4.identity();
+  TransformationController _getControllerFromArgs(dynamic args) {
+    TransformationController controller = TransformationController();
     if (args != null &&
         (args is Map) &&
-        args.containsKey(transformationMatrixArg)) {
-      matrix = args[transformationMatrixArg];
+        args.containsKey(controllerArg)) {
+      controller = args[controllerArg];
     }
-    return matrix;
+    return controller;
   }
 
   ImageFilterResult _getImageFromArgs(dynamic args) {
@@ -118,7 +118,7 @@ class AppRouter {
       }),
       _imagePreviewRoute: NoTransitionRoute(builder: (context) {
         return ImagePreviewScreen(
-            _di, this, _getDetailsFromArgs(args), _getImageFromArgs(args));
+            _di, this, _getControllerFromArgs(args), _getImageFromArgs(args));
       }),
     };
 
@@ -138,8 +138,8 @@ class AppRouter {
     _navigator.pushNamed(context, _imageRoute, arguments: {imagePathArg: path});
   }
 
-  void openImagePreview(context, Matrix4 details, ImageFilterResult image) {
+  void openImagePreview(context, TransformationController controller, ImageFilterResult image) {
     _navigator.pushNamed(context, _imagePreviewRoute,
-        arguments: {transformationMatrixArg: details, imageArg: image});
+        arguments: {controllerArg: controller, imageArg: image});
   }
 }

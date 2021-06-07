@@ -195,7 +195,7 @@ class ImageScreen extends StatelessWidget with AppMessages {
   }
 
   void _onPreview(BuildContext context, ImageFilterResult image) {
-    this._router.openImagePreview(context, imageTransformMatrix!, image);
+    this._router.openImagePreview(context, _transformationController!, image);
   }
 
   Matrix4 _calculateInitialScaleAndOffset(

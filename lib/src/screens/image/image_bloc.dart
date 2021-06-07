@@ -141,8 +141,10 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
     _blocState.isImageSaved = await imgTools.save2Gallery(
         imageFilter.imgChannels.imageWidth,
         imageFilter.imgChannels.imageHeight,
-        imageFilter.imgChannels.tempImgArr);
+        imageFilter.imgChannels.tempImgArr,
+        event.needOverride);
     if (_blocState.isImageSaved) {
+      _blocState.savedOnce=true;
       yield ImageStateFeedback(Keys.Messages_Infos_Success_Saved,
           messageType: MessageBarType.Information);
     } else {

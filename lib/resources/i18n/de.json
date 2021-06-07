@@ -21,7 +21,10 @@
     "tool_size": "Größe",
     "tool_grain": "Körnung",
     "tool_shape": "Form",
-    "tool_type": "Typ"
+    "tool_type": "Typ",
+    "override_yes": "Ersetzen",
+    "override_no": "Neu"
+
   },
   "messages": {
     "errors": {
@@ -42,7 +45,8 @@
     "infos": {
       "exit_request": "Beenden ohne zu speichern?",
       "success_saved": "Bild wurde erfolgreich gespeichert!",
-      "imageNotSelected": "Es wurde kein Bild ausgewählt"
+      "imageNotSelected": "Es wurde kein Bild ausgewählt",
+      "override_image": "Du hast diese Datei schon gespeichert. Willst du sie ersetzen oder ein neues Bild anlegen?"
     }
   },
   "main_screen": {

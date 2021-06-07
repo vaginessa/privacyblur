@@ -36,7 +36,6 @@ class ImageScreen extends StatelessWidget with AppMessages {
   Matrix4? imageTransformMatrix;
 
   TransformationController? _transformationController;
-  bool imageSet = false;
 
   ImageScreen(this._di, this._router, this.filename);
 
@@ -74,17 +73,18 @@ class ImageScreen extends StatelessWidget with AppMessages {
               },
               builder: (BuildContext context, ImageStateBase? state) {
                 _bloc = BlocProvider.of<ImageBloc>(context);
-                if (state == null && (!imageSet)) {
+                if (state == null) {
                   _bloc.add(ImageEventSelected(filename));
                 }
                 bool imgNotSaved =
                     (state is ImageStateScreen && !state.isImageSaved);
-
+                bool imgSavedOnce =
+                    (state is ImageStateScreen && !state.savedOnce);
                 return ScaffoldWithAppBar.build(
                   onBackPressed: () => _onBack(context, state),
                   context: context,
                   title: translate(Keys.App_Name),
-                  actions: _actionsIcon(context, imgNotSaved),
+                  actions: _actionsIcon(context, imgNotSaved, imgSavedOnce),
                   body: SafeArea(
                     child: _buildHomeBody(context, state),
                     top: internalLayout.landscapeMode,
@@ -145,13 +145,23 @@ class ImageScreen extends StatelessWidget with AppMessages {
     }
   }
 
-  List<Widget> _actionsIcon(BuildContext context, bool imgNotSaved) {
+  List<Widget> _actionsIcon(
+      BuildContext context, bool imgNotSaved, bool wasSavedOnce) {
     if (imgNotSaved) {
       return <Widget>[
         TextButtonBuilder.build(
             color: AppTheme.appBarToolColor(context),
             text: translate(Keys.Buttons_Save),
-            onPressed: () => _bloc.add(ImageEventSave2Disk()))
+            onPressed: () async {
+              var ovr = true;
+              if (wasSavedOnce) {
+                ovr = await AppConfirmationBuilder.build(context,
+                    message: translate(Keys.Messages_Infos_Override_Image),
+                    acceptTitle: translate(Keys.Buttons_Override_Yes),
+                    rejectTitle: translate(Keys.Buttons_Override_No));
+              }
+              _bloc.add(ImageEventSave2Disk(ovr));
+            })
       ];
     }
     return <Widget>[SizedBox()];

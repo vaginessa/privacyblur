@@ -46,10 +46,19 @@ class ImgTools {
     }
   }
 
-  Future<bool> save2Gallery(int width, int height, Uint32List raw) async {
+  int _saveCount = 0;
+
+  Future<bool> save2Gallery(
+      int width, int height, Uint32List raw, bool needOverride) async {
     Directory directory = await getTemporaryDirectory();
     String newPath = directory.path;
     directory = Directory(newPath);
+    var fileName = saveFileName;
+    if (!needOverride) {
+      fileName = 'blur' +
+          _saveCount.toString() +
+          DateTime.now().millisecondsSinceEpoch.toString();
+    }
     var saved = false;
     try {
       directory.create(recursive: true);
@@ -60,9 +69,10 @@ class ImgTools {
           Uint8List.fromList(img_external
               .encodeJpg(img_external.Image.fromBytes(width, height, raw))),
           quality: ImgConst.imgQuality,
-          name: saveFileName);
+          name: fileName);
 
       saved = true;
+      _saveCount++;
     } catch (e) {
       saved = false;
     }

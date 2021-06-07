@@ -36,9 +36,10 @@ class ImageAppFilter {
   }
 
   Future<ImageFilterResult> setImage(img_tools.Image image) async {
-    _response_cache.mainImage = image; //Important to set it first before all
-    _response_cache.changedPart = null;
     await imgChannels.splitImage(image);
+    /// here ALFA channel will be removed from PNG or GIF images
+    /// For JPEG its not relevant
+    _response_cache = await getImage();
     imgChannels.transactionActive = false;
     return Future.value(_response_cache);
   }
@@ -61,6 +62,7 @@ class ImageAppFilter {
             ((imgChannels.sourceBlue[pointIndex]) & 0xff); //blue*/
       }
     }
+    imgChannels.resetSmallCacheAfterCancel();
     needRebuild = true;
   }
 

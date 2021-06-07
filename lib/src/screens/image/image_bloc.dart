@@ -98,9 +98,9 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
     if (position.canceled) return;
     _cancelPosition(position);
     _blocState.positionsMark2Redraw();
-    _blocState.positions.forEach((position) {
-      if (position.forceRedraw) {
-        _cancelPosition(position);
+    _blocState.positions.forEach((pos) {
+      if (pos.forceRedraw) {
+        _cancelPosition(pos);
       }
     });
   }

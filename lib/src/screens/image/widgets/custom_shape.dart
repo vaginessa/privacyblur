@@ -4,14 +4,11 @@ import 'package:privacyblur/src/screens/image/helpers/image_classes_helper.dart'
 import 'package:privacyblur/src/widgets/theme/theme_provider.dart';
 
 class ShapePainter extends CustomPainter {
-  static int _old_hash = 0;
   int _hash = 0;
   final int selectedPosition;
   final List<FilterPosition> positions;
-  bool isImageSelected = true;
 
   ShapePainter(this.positions, this.selectedPosition) {
-    this.isImageSelected = selectedPosition <0 || selectedPosition >=positions.length;
     // with prime numbers to reduce collisions... may be. Not very important
     // from https://primes.utm.edu/lists/small/10000.txt
     positions.forEach((p) {
@@ -21,7 +18,6 @@ class ShapePainter extends CustomPainter {
           p.posX +
           p.posY * 12347;
     });
-    _hash += isImageSelected ? 7919 : 8887;
   }
 
   @override
@@ -37,8 +33,8 @@ class ShapePainter extends CustomPainter {
       ..color = AppTheme.primaryColor
       ..strokeWidth = 4
       ..style = PaintingStyle.stroke;
-      canvas.drawRect(
-          Offset(0, 0) & Size(size.width - 2, size.height - 2), paint1);
+    canvas.drawRect(
+        Offset(0, 0) & Size(size.width - 2, size.height - 2), paint1);
   }
 
   void _drawCircle(Canvas canvas, int x, int y, int r, Color color) {
@@ -68,12 +64,10 @@ class ShapePainter extends CustomPainter {
         return;
       }
       var radius = position.getVisibleRadius();
-      var colorBorder = index == selectedPosition
-          ? AppTheme.primaryColor
-          : Colors.black;
-      var colorBorderInner = index == selectedPosition
-          ? AppTheme.primaryColor
-          : Colors.grey;
+      var colorBorder =
+          index == selectedPosition ? AppTheme.primaryColor : Colors.black;
+      var colorBorderInner =
+          index == selectedPosition ? AppTheme.primaryColor : Colors.grey;
       if (position.isRounded) {
         _drawCircle(canvas, position.posX, position.posY, radius, colorBorder);
         _drawCircle(
@@ -84,14 +78,13 @@ class ShapePainter extends CustomPainter {
             canvas, position.posX, position.posY, radius - 2, colorBorderInner);
       }
     });
-    if (isImageSelected) _drawImageSelection(canvas, size);
+    if (selectedPosition < 0 || selectedPosition >= positions.length)
+      _drawImageSelection(canvas, size);
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    int newHash = hashCode;
-    if (newHash != _old_hash) {
-      _old_hash = newHash;
+  bool shouldRepaint(covariant ShapePainter oldDelegate) {
+    if (_hash != oldDelegate._hash) {
       return true;
     }
     return false;

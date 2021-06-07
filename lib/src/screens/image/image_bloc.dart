@@ -83,6 +83,7 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
     _deferedFuture = Timer(_defered, () async {
       _filterInArea();
       _blocState.image = await imageFilter.getImage();
+      print('yield with hash:' + _blocState.image.hashCode.toString());
       add(new _yield_state_internally());
     });
   }
@@ -98,9 +99,9 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
     if (position.canceled) return;
     _cancelPosition(position);
     _blocState.positionsMark2Redraw();
-    _blocState.positions.forEach((position) {
-      if (position.forceRedraw) {
-        _cancelPosition(position);
+    _blocState.positions.forEach((pos) {
+      if (pos.forceRedraw) {
+        _cancelPosition(pos);
       }
     });
   }
@@ -177,7 +178,7 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
       _blocState.selectedFilterIndex = event.index - 1;
       if (_blocState.selectedFilterIndex < 0)
         _blocState.selectedFilterIndex = _blocState.positions.length - 1;
-      _applyCurrentFilter(); //yield _blocState.clone(); - not needed here
+      _applyCurrentFilter();//yield _blocState.clone();// - not needed here??
     }
   }
 

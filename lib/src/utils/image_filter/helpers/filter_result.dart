@@ -36,6 +36,14 @@ class ImageFilterResult {
         (changedPart?.hashCode ?? 0);
   }
 
+  /*ImageFilterResult clone() {
+    return ImageFilterResult.empty()
+      ..posX = this.posX
+      ..posY = this.posY
+      .._mainImage = this._mainImage
+      ..changedPart = this.changedPart;
+  }*/
+
   ImageFilterResult.empty();
 
   @override

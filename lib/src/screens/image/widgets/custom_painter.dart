@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:privacyblur/src/utils/image_filter/helpers/filter_result.dart';
-import 'package:privacyblur/src/widgets/theme/theme_provider.dart';
 
 class ImgPainter extends CustomPainter {
   final ImageFilterResult _image;
@@ -21,6 +20,7 @@ class ImgPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    print('paint with hash:' + _hash.toString());
     var paint = Paint();
     canvas.drawImage(_image.mainImage, Offset.zero, paint);
     if (_image.changedPart != null) {
@@ -30,10 +30,8 @@ class ImgPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    int newHash = hashCode;
-    if (newHash != _old_hash) {
-      _old_hash = newHash;
+  bool shouldRepaint(covariant ImgPainter oldDelegate) {
+    if (_hash != oldDelegate._hash) {
       return true;
     }
     return false;

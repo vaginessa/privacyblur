@@ -21,7 +21,9 @@
     "tool_size": "Size",
     "tool_grain": "Grain",
     "tool_shape": "Shape",
-    "tool_type": "Type"
+    "tool_type": "Type",
+    "override_yes": "Replace",
+    "override_no": "New"
   },
   "messages": {
     "errors": {
@@ -42,7 +44,8 @@
     "infos": {
       "exit_request": "Exit without saving?",
       "success_saved": "Success! Image was saved",
-      "imageNotSelected": "No image has been selected"
+      "imageNotSelected": "No image has been selected",
+      "override_image": "You already saved this picture. Do you want to replace it or create a new one?"
     }
   },
   "main_screen": {

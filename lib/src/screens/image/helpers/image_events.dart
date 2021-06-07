@@ -74,4 +74,8 @@ class ImageEventPositionChanged extends ImageEventBase {
 }
 
 /// save image on disk clicked
-class ImageEventSave2Disk extends ImageEventBase {}
+class ImageEventSave2Disk extends ImageEventBase {
+  final bool needOverride;
+
+  ImageEventSave2Disk(this.needOverride);
+}

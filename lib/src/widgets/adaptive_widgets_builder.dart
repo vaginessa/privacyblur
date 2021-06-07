@@ -240,7 +240,20 @@ class _AppBarBuilder {
 }
 
 class AppConfirmationBuilder {
-  static Future<bool> build<bool>(
+  static Future<bool> build(
+    BuildContext context, {
+    required String message,
+    required String acceptTitle,
+    required String rejectTitle,
+  }) async {
+    return (await buildWithNull(context,
+            message: message,
+            acceptTitle: acceptTitle,
+            rejectTitle: rejectTitle)) ??
+        false;
+  }
+
+  static Future<bool?> buildWithNull(
     BuildContext context, {
     required String message,
     required String acceptTitle,
@@ -248,36 +261,34 @@ class AppConfirmationBuilder {
   }) async {
     if (_isIOS) {
       return (await showCupertinoDialog<bool>(
-              context: context,
-              barrierDismissible: true,
-              builder: (BuildContext context) {
-                return CupertinoAlertDialog(
-                  content: Text(message),
-                  actions: [
-                    _buildAdaptiveAlertButton(
-                        rejectTitle, () => Navigator.of(context).pop(false)),
-                    _buildAdaptiveAlertButton(
-                        acceptTitle, () => Navigator.of(context).pop(true)),
-                  ],
-                );
-              })) ??
-          Future.value(false) as FutureOr<bool>;
+          context: context,
+          barrierDismissible: true,
+          builder: (BuildContext context) {
+            return CupertinoAlertDialog(
+              content: Text(message),
+              actions: [
+                _buildAdaptiveAlertButton(
+                    rejectTitle, () => Navigator.of(context).pop(false)),
+                _buildAdaptiveAlertButton(
+                    acceptTitle, () => Navigator.of(context).pop(true)),
+              ],
+            );
+          }));
     } else {
       return (await showDialog<bool>(
-              context: context,
-              barrierDismissible: true,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  content: Text(message),
-                  actions: [
-                    _buildAdaptiveAlertButton(
-                        rejectTitle, () => Navigator.of(context).pop(false)),
-                    _buildAdaptiveAlertButton(
-                        acceptTitle, () => Navigator.of(context).pop(true)),
-                  ],
-                );
-              })) ??
-          Future.value(false) as FutureOr<bool>;
+          context: context,
+          barrierDismissible: true,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              content: Text(message),
+              actions: [
+                _buildAdaptiveAlertButton(
+                    rejectTitle, () => Navigator.of(context).pop(false)),
+                _buildAdaptiveAlertButton(
+                    acceptTitle, () => Navigator.of(context).pop(true)),
+              ],
+            );
+          }));
     }
   }
 

@@ -27,6 +27,7 @@ class ImageStateScreen extends ImageStateBase {
   late ImageFilterResult image;
   List<FilterPosition> positions = List.empty(growable: true);
   int selectedFilterIndex = -1;
+  bool savedOnce = false;
 
   // maybe remove from bloc in next version. ...Why?
   bool get hasSelection {
@@ -72,6 +73,7 @@ class ImageStateScreen extends ImageStateBase {
       ..maxPower = this.maxPower
       ..selectedFilterIndex = this.selectedFilterIndex
       ..positions = [...this.positions]
+      ..savedOnce = this.savedOnce
       ..maxRadius = this.maxRadius;
     return newImageStateScreen;
   }

@@ -30,19 +30,8 @@ class ImageFilterResult {
   int _hash = 0;
 
   void _updateHash() {
-    _hash = posX * 12347 -
-        posY * 8467 +
-        mainImage.hashCode * 3 -
-        (changedPart?.hashCode ?? 0);
+    _hash = mainImage.hashCode - (changedPart?.hashCode ?? 0);
   }
-
-  /*ImageFilterResult clone() {
-    return ImageFilterResult.empty()
-      ..posX = this.posX
-      ..posY = this.posY
-      .._mainImage = this._mainImage
-      ..changedPart = this.changedPart;
-  }*/
 
   ImageFilterResult.empty();
 

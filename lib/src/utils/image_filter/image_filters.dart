@@ -36,11 +36,14 @@ class ImageAppFilter {
   }
 
   Future<ImageFilterResult> setImage(img_tools.Image image) async {
+    transactionCancel();
     await imgChannels.splitImage(image);
+    needRebuild = true;
+
     /// here ALFA channel will be removed from PNG or GIF images
     /// For JPEG its not relevant
     _response_cache = await getImage();
-    imgChannels.transactionActive = false;
+    transactionStart();
     return Future.value(_response_cache);
   }
 

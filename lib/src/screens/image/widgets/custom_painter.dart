@@ -20,7 +20,6 @@ class ImgPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    print('paint with hash:' + _hash.toString());
     var paint = Paint();
     canvas.drawImage(_image.mainImage, Offset.zero, paint);
     if (_image.changedPart != null) {

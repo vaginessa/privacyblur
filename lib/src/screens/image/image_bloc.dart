@@ -83,7 +83,6 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
     _deferedFuture = Timer(_defered, () async {
       _filterInArea();
       _blocState.image = await imageFilter.getImage();
-      print('yield with hash:' + _blocState.image.hashCode.toString());
       add(new _yield_state_internally());
     });
   }

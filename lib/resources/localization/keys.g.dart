@@ -47,6 +47,10 @@ class Keys {
 
   static const String Buttons_Tool_Type = 'buttons.tool_type';
 
+  static const String Buttons_Override_Yes = 'buttons.override_yes';
+
+  static const String Buttons_Override_No = 'buttons.override_no';
+
   static const String Messages_Errors_Image_Crash =
       'messages.errors.image_crash';
 
@@ -90,6 +94,9 @@ class Keys {
 
   static const String Messages_Infos_Imagenotselected =
       'messages.infos.imageNotSelected';
+
+  static const String Messages_Infos_Override_Image =
+      'messages.infos.override_image';
 
   static const String Main_Screen_Content = 'main_screen.content';
 

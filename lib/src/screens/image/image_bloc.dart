@@ -98,9 +98,9 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
     if (position.canceled) return;
     _cancelPosition(position);
     _blocState.positionsMark2Redraw();
-    _blocState.positions.forEach((position) {
-      if (position.forceRedraw) {
-        _cancelPosition(position);
+    _blocState.positions.forEach((pos) {
+      if (pos.forceRedraw) {
+        _cancelPosition(pos);
       }
     });
   }
@@ -141,8 +141,10 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
     _blocState.isImageSaved = await imgTools.save2Gallery(
         imageFilter.imgChannels.imageWidth,
         imageFilter.imgChannels.imageHeight,
-        imageFilter.imgChannels.tempImgArr);
+        imageFilter.imgChannels.tempImgArr,
+        event.needOverride);
     if (_blocState.isImageSaved) {
+      _blocState.savedOnce = true;
       yield ImageStateFeedback(Keys.Messages_Infos_Success_Saved,
           messageType: MessageBarType.Information);
     } else {

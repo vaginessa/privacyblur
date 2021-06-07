@@ -87,10 +87,6 @@ class ImageScreen extends StatelessWidget with AppMessages {
                   actions: _actionsIcon(context, imgNotSaved),
                   body: SafeArea(
                     child: _buildHomeBody(context, state),
-                    top: internalLayout.landscapeMode,
-                    bottom: internalLayout.landscapeMode,
-                    left: !internalLayout.landscapeMode,
-                    right: !internalLayout.landscapeMode,
                   ),
                 );
               })),

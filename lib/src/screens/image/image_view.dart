@@ -77,9 +77,9 @@ class ImageScreen extends StatelessWidget with AppMessages {
                   _bloc.add(ImageEventSelected(filename));
                 }
                 bool imgNotSaved =
-                    (state is ImageStateScreen && !state.isImageSaved);
+                    (state is ImageStateScreen && (!state.isImageSaved));
                 bool imgSavedOnce =
-                    (state is ImageStateScreen && !state.savedOnce);
+                    (state is ImageStateScreen && state.savedOnce);
                 return ScaffoldWithAppBar.build(
                   onBackPressed: () => _onBack(context, state),
                   context: context,
@@ -159,7 +159,7 @@ class ImageScreen extends StatelessWidget with AppMessages {
                     message: translate(Keys.Messages_Infos_Override_Image),
                     acceptTitle: translate(Keys.Buttons_Override_Yes),
                     rejectTitle: translate(Keys.Buttons_Override_No));
-                if(ovr==null) return;
+                if (ovr == null) return;
               }
               _bloc.add(ImageEventSave2Disk(ovr));
             })

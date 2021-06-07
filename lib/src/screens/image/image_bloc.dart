@@ -144,7 +144,7 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
         imageFilter.imgChannels.tempImgArr,
         event.needOverride);
     if (_blocState.isImageSaved) {
-      _blocState.savedOnce=true;
+      _blocState.savedOnce = true;
       yield ImageStateFeedback(Keys.Messages_Infos_Success_Saved,
           messageType: MessageBarType.Information);
     } else {

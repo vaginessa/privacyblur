@@ -14,17 +14,15 @@ import 'package:privacyblur/src/widgets/adaptive_widgets_builder.dart';
 class ImagePreviewScreen extends StatelessWidget {
   final DependencyInjection di;
   final AppRouter router;
-  final Matrix4 matrix;
   final ImageFilterResult image;
+  final TransformationController transformationController;
   late InternalLayout internalLayout;
-  TransformationController? transformationController;
 
-  ImagePreviewScreen(this.di, this.router, this.matrix, this.image);
+  ImagePreviewScreen(this.di, this.router, this.transformationController, this.image);
 
   @override
   Widget build(BuildContext context) {
     internalLayout = InternalLayout(context);
-    transformationController = TransformationController(matrix);
     return ScaffoldWithAppBar.build(
       context: context,
       actions: [],

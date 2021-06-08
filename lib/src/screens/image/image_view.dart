@@ -24,6 +24,7 @@ import 'widgets/screen_rotation.dart';
 
 enum MenuActions { Settings, Camera, Image }
 
+// ignore: must_be_immutable
 class ImageScreen extends StatelessWidget with AppMessages {
   final DependencyInjection _di;
   final AppRouter _router;
@@ -128,7 +129,8 @@ class ImageScreen extends StatelessWidget with AppMessages {
                 (posX, posY) =>
                     _bloc.add(ImageEventPositionChanged(posX, posY)),
                 (posX, posY) => _bloc.add(ImageEventNewFilter(posX, posY)),
-                (index) => _bloc.add(ImageEventExistingFilterSelected(index)));
+                (index) => _bloc.add(ImageEventExistingFilterSelected(index)),
+            );
           },
           view2: (context, w, h, landscape) =>
               drawImageToolbar(context, state, w, h, landscape),
@@ -201,6 +203,8 @@ class ImageScreen extends StatelessWidget with AppMessages {
     );
   }
 
+
+
   void _onPreview(BuildContext context, ImageFilterResult image) {
     /// Passing complex objects may prove inefficient or problematic
     /// This may change in the future
@@ -223,6 +227,7 @@ class ImageScreen extends StatelessWidget with AppMessages {
     matrix
       ..setEntry(0, 3, (width - newWidth) / 2)
       ..setEntry(1, 3, (height - newHeight) / 2);
+
     return matrix;
   }
 }

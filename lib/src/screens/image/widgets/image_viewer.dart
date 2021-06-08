@@ -9,7 +9,7 @@ import 'custom_painter.dart';
 import 'custom_shape.dart';
 
 // ignore: must_be_immutable
-class ImageViewer extends StatelessWidget {
+class ImageViewer extends StatefulWidget {
   final ImageFilterResult image;
   final ImageStateScreen state;
   final double width; //available width for viewer
@@ -27,90 +27,150 @@ class ImageViewer extends StatelessWidget {
       this._transformationController,
       this.moveFilterPosition,
       this.addFilterPosition,
-      this.selectFilter);
+      this.selectFilter
+  );
+
+  @override
+  _ImageViewerState createState() => _ImageViewerState();
+}
+
+class _ImageViewerState extends State<ImageViewer> {
+  late Size _scrollBarSize;
+  late Offset _transformationOffset;
+
+  @override
+  void initState() {
+    widget._transformationController.addListener(() =>
+        _calculateTransformationUpdates(
+            widget._transformationController.value));
+    _calculateTransformationUpdates(widget._transformationController.value);
+    super.initState();
+  }
+
 
   @override
   Widget build(BuildContext context) {
-    var wScale = width / image.mainImage.width;
-    var hScale = height / image.mainImage.height;
+    var wScale = widget.width / widget.image.mainImage.width;
+    var hScale = widget.height / widget.image.mainImage.height;
     var minScale = min(wScale, hScale); //to fit image
     ///initialScale
     ///calculated in parent view once for transformationController
     ///look _calculateInitialScaleAndOffset()
     var initialScale = max(wScale, hScale);
-    var imageMinWidth = image.mainImage.width * minScale;
-    var imageMinHeight = image.mainImage.height * minScale;
+    var imageMinWidth = widget.image.mainImage.width * minScale;
+    var imageMinHeight = widget.image.mainImage.height * minScale;
 
     ///calculate margins for no-scaled image
-    var horizontalBorder = ((width - imageMinWidth).abs() / (minScale));
-    var verticalBorder = ((height - imageMinHeight).abs() / (minScale));
+    var horizontalBorder = ((widget.width - imageMinWidth).abs() / (minScale));
+    var verticalBorder = ((widget.height - imageMinHeight).abs() / (minScale));
     EdgeInsets boundaryMargin =
         EdgeInsets.fromLTRB(0, 0, horizontalBorder, verticalBorder);
 
-    return GestureDetector(
-      onTapUp: onTapPosition,
-      onLongPressMoveUpdate: onMoveFilter,
-      onLongPressStart: onLongPressStart,
-      child: InteractiveViewer(
-          transformationController: _transformationController,
-          maxScale: 10,
-          scaleEnabled: true,
-          panEnabled: true,
-          constrained: false,
-          boundaryMargin: boundaryMargin,
-          minScale: minScale / initialScale,
-          child: SizedBox(
-              width: image.mainImage.width.toDouble(),
-              height: image.mainImage.height.toDouble(),
-              child: CustomPaint(
-                size: Size(image.mainImage.height.toDouble(),
-                    image.mainImage.width.toDouble()),
-                isComplex: true,
-                willChange: true,
-                painter: ImgPainter(image),
-                foregroundPainter: ShapePainter(state.positions,
-                    state.selectedFilterIndex),
-              ))),
+    return Stack(
+      children: [
+        GestureDetector(
+          onTapUp: onTapPosition,
+          onLongPressMoveUpdate: onMoveFilter,
+          onLongPressStart: onLongPressStart,
+          child: InteractiveViewer(
+              transformationController: widget._transformationController,
+              maxScale: 10,
+              scaleEnabled: true,
+              panEnabled: true,
+              constrained: false,
+              boundaryMargin: boundaryMargin,
+              minScale: minScale / initialScale,
+              child: SizedBox(
+                width: widget.image.mainImage.width.toDouble(),
+                height: widget.image.mainImage.height.toDouble(),
+                child: CustomPaint(
+                  size: Size(widget.image.mainImage.height.toDouble(),
+                      widget.image.mainImage.width.toDouble()),
+                  isComplex: true,
+                  willChange: true,
+                  painter: ImgPainter(widget.image),
+                  foregroundPainter: ShapePainter(widget.state.positions,
+                      widget.state.selectedFilterIndex),
+                )))),
+        Positioned(
+          bottom: 0,
+          left: _transformationOffset.dx,
+          child: Container(
+            height: 5,
+            width: _scrollBarSize.width,
+            decoration: BoxDecoration(
+              color: Colors.blueGrey,
+              borderRadius: BorderRadius.all(Radius.circular(10))
+            ),
+          ),
+        ),
+        Positioned(
+          top: _transformationOffset.dy,
+          right: 0,
+          child: Container(
+            height: _scrollBarSize.height,
+            width: 5,
+            decoration: BoxDecoration(
+                color: Colors.blueGrey,
+                borderRadius: BorderRadius.all(Radius.circular(10))
+            ),
+          ),
+        ),
+      ]
     );
   }
 
+  void _calculateTransformationUpdates(Matrix4 matrix) {
+    double transformationScale = 1 - widget._transformationController.value.row0[0];
+    double horizontalSize = widget.width * (transformationScale);
+    double verticalSize = widget.height * (transformationScale);
+    double transformationX = widget._transformationController.value.row0[3].abs() * transformationScale;
+    double transformationY = widget._transformationController.value.row1[3].abs() * transformationScale;
+    print(transformationX);
+    print(transformationScale);
+    setState(() {
+      _scrollBarSize = Size(horizontalSize, verticalSize);
+      _transformationOffset = Offset(transformationX, transformationY);
+    });
+  }
+
   onTapPosition(TapUpDetails details) {
-    Offset offset = _transformationController.toScene(
+    Offset offset = widget._transformationController.toScene(
       details.localPosition,
     );
     var selected = _detectSelectedFilter(offset);
     if (selected >= 0) {
-      selectFilter(selected);
+      widget.selectFilter(selected);
     } else {
-      addFilterPosition(offset.dx, offset.dy);
+      widget.addFilterPosition(offset.dx, offset.dy);
     }
   }
 
   onMoveFilter(LongPressMoveUpdateDetails details) {
-    Offset offset = _transformationController.toScene(
+    Offset offset = widget._transformationController.toScene(
       details.localPosition,
     );
-    if (state.hasSelection) {
-      moveFilterPosition(offset.dx, offset.dy);
+    if (widget.state.hasSelection) {
+      widget.moveFilterPosition(offset.dx, offset.dy);
     }
   }
 
   onLongPressStart(LongPressStartDetails details) {
-    Offset offset = _transformationController.toScene(
+    Offset offset = widget._transformationController.toScene(
       details.localPosition,
     );
     var selected = _detectSelectedFilter(offset);
-    selectFilter(selected);
+    widget.selectFilter(selected);
     if (selected >= 0) {
-      moveFilterPosition(offset.dx, offset.dy);
+      widget.moveFilterPosition(offset.dx, offset.dy);
     }
   }
 
   int _detectSelectedFilter(Offset offset) {
     int index = -1;
     double dist = 10000000;
-    state.positions.asMap().forEach((key, value) {
-      var tmpRadius = state.maxRadius * value.radiusRatio;
+    widget.state.positions.asMap().forEach((key, value) {
+      var tmpRadius = widget.state.maxRadius * value.radiusRatio;
       var tmp =
           sqrt(pow(value.posX - offset.dx, 2) + pow(value.posY - offset.dy, 2));
       if ((value.isRounded && (tmp <= tmpRadius)) ||

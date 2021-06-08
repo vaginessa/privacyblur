@@ -126,8 +126,6 @@ class _ImageViewerState extends State<ImageViewer> {
     double verticalSize = widget.height * (transformationScale);
     double transformationX = widget._transformationController.value.row0[3].abs() * transformationScale;
     double transformationY = widget._transformationController.value.row1[3].abs() * transformationScale;
-    print(transformationX);
-    print(transformationScale);
     setState(() {
       _scrollBarSize = Size(horizontalSize, verticalSize);
       _transformationOffset = Offset(transformationX, transformationY);

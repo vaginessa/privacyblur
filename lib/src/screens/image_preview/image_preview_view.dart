@@ -29,10 +29,6 @@ class ImagePreviewScreen extends StatelessWidget {
       title: translate(Keys.App_Name),
       body: SafeArea(
         child: _buildPreview(context),
-        top: internalLayout.landscapeMode,
-        bottom: internalLayout.landscapeMode,
-        left: !internalLayout.landscapeMode,
-        right: !internalLayout.landscapeMode,
       ),
     );
   }

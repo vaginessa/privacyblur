@@ -37,9 +37,35 @@ class ImageViewer extends StatefulWidget {
 class _ImageViewerState extends State<ImageViewer> {
   late Size _scrollBarSize;
   late Offset _transformationOffset;
+  late double minScale;
+  late EdgeInsets boundaryMargin;
+  late double initialScale;
+  late double canvasViewportWidthRatio;
+  late double canvasViewportHeightRatio;
 
   @override
   void initState() {
+    var wScale = widget.width / widget.image.mainImage.width;
+    var hScale = widget.height / widget.image.mainImage.height;
+    minScale = min(wScale, hScale); //to fit image
+    ///initialScale
+    ///calculated in parent view once for transformationController
+    ///look _calculateInitialScaleAndOffset()
+    initialScale = max(wScale, hScale);
+    var imageMinWidth = widget.image.mainImage.width * minScale;
+    var imageMinHeight = widget.image.mainImage.height * minScale;
+    ///calculate margins for no-scaled image
+    var horizontalBorder = ((widget.width - imageMinWidth).abs() / (minScale));
+    var verticalBorder = ((widget.height - imageMinHeight).abs() / (minScale));
+    boundaryMargin =
+    EdgeInsets.fromLTRB(0, 0, horizontalBorder, verticalBorder);
+
+    canvasViewportWidthRatio = widget.width / (widget.image.mainImage.width + horizontalBorder);
+    canvasViewportHeightRatio = widget.height / (widget.image.mainImage.height + verticalBorder);
+
+    print('widthRatio: $canvasViewportWidthRatio');
+    print('heightRatio: $canvasViewportHeightRatio');
+
     widget._transformationController.addListener(() =>
         _calculateTransformationUpdates(
             widget._transformationController.value));
@@ -50,22 +76,6 @@ class _ImageViewerState extends State<ImageViewer> {
 
   @override
   Widget build(BuildContext context) {
-    var wScale = widget.width / widget.image.mainImage.width;
-    var hScale = widget.height / widget.image.mainImage.height;
-    var minScale = min(wScale, hScale); //to fit image
-    ///initialScale
-    ///calculated in parent view once for transformationController
-    ///look _calculateInitialScaleAndOffset()
-    var initialScale = max(wScale, hScale);
-    var imageMinWidth = widget.image.mainImage.width * minScale;
-    var imageMinHeight = widget.image.mainImage.height * minScale;
-
-    ///calculate margins for no-scaled image
-    var horizontalBorder = ((widget.width - imageMinWidth).abs() / (minScale));
-    var verticalBorder = ((widget.height - imageMinHeight).abs() / (minScale));
-    EdgeInsets boundaryMargin =
-        EdgeInsets.fromLTRB(0, 0, horizontalBorder, verticalBorder);
-
     return Stack(
       children: [
         GestureDetector(
@@ -122,10 +132,16 @@ class _ImageViewerState extends State<ImageViewer> {
 
   void _calculateTransformationUpdates(Matrix4 matrix) {
     double transformationScale = 1 - widget._transformationController.value.row0[0];
-    double horizontalSize = widget.width * (transformationScale);
-    double verticalSize = widget.height * (transformationScale);
-    double transformationX = widget._transformationController.value.row0[3].abs() * transformationScale;
-    double transformationY = widget._transformationController.value.row1[3].abs() * transformationScale;
+
+    /// If fully zoomed out then must equal full screen size
+    double horizontalSize = widget.width * (transformationScale + canvasViewportWidthRatio * transformationScale);
+    double verticalSize = widget.height * (transformationScale + canvasViewportHeightRatio * transformationScale);
+
+    double transformationX = (widget._transformationController.value.row0[3].abs()) * (transformationScale + canvasViewportWidthRatio * transformationScale);
+    double transformationY = (widget._transformationController.value.row1[3].abs()) * (transformationScale + canvasViewportHeightRatio * transformationScale);
+
+/*    print('sizes, w: $horizontalSize, v: $verticalSize');
+    print('transformations, x: $transformationX, y: $transformationY');*/
     setState(() {
       _scrollBarSize = Size(horizontalSize, verticalSize);
       _transformationOffset = Offset(transformationX, transformationY);

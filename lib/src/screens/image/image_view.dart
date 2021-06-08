@@ -202,6 +202,8 @@ class ImageScreen extends StatelessWidget with AppMessages {
   }
 
   void _onPreview(BuildContext context, ImageFilterResult image) {
+    /// Passing complex objects may prove inefficient or problematic
+    /// This may change in the future
     this._router.openImagePreview(context, _transformationController!, image);
   }
 

@@ -4,12 +4,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:privacyblur/src/screens/image/helpers/image_states.dart';
 import 'package:privacyblur/src/utils/image_filter/helpers/filter_result.dart';
+import 'package:privacyblur/src/widgets/interactive_view_scrollbar.dart';
 
 import 'custom_painter.dart';
 import 'custom_shape.dart';
 
 // ignore: must_be_immutable
-class ImageViewer extends StatefulWidget {
+class ImageViewer extends StatelessWidget {
   final ImageFilterResult image;
   final ImageStateScreen state;
   final double width; //available width for viewer
@@ -18,6 +19,7 @@ class ImageViewer extends StatefulWidget {
   final void Function(double, double) addFilterPosition;
   final void Function(int) selectFilter;
   late TransformationController _transformationController;
+  final double maxScale = 10;
 
   ImageViewer(
       this.image,
@@ -31,48 +33,22 @@ class ImageViewer extends StatefulWidget {
   );
 
   @override
-  _ImageViewerState createState() => _ImageViewerState();
-}
-
-class _ImageViewerState extends State<ImageViewer> {
-  final double maxScale = 10;
-  late Size _scrollBarSize;
-  late Offset _transformationOffset;
-  late double minScale;
-  late EdgeInsets boundaryMargin;
-  late double horizontalBorder;
-  late double verticalBorder;
-  late double initialScale;
-  late double canvasViewportWidthRatio;
-  late double canvasViewportHeightRatio;
-
-  @override
-  void initState() {
-    var wScale = widget.width / widget.image.mainImage.width;
-    var hScale = widget.height / widget.image.mainImage.height;
-    minScale = min(wScale, hScale); //to fit image
+  Widget build(BuildContext context) {
+    var wScale = width / image.mainImage.width;
+    var hScale = height / image.mainImage.height;
+    double minScale = min(wScale, hScale); //to fit image
     ///initialScale
     ///calculated in parent view once for transformationController
     ///look _calculateInitialScaleAndOffset()
-    initialScale = max(wScale, hScale);
-    var imageMinWidth = widget.image.mainImage.width * minScale;
-    var imageMinHeight = widget.image.mainImage.height * minScale;
+    double initialScale = max(wScale, hScale);
+    var imageMinWidth = image.mainImage.width * minScale;
+    var imageMinHeight = image.mainImage.height * minScale;
     ///calculate margins for no-scaled image
-    horizontalBorder = ((widget.width - imageMinWidth).abs() / (minScale));
-    verticalBorder = ((widget.height - imageMinHeight).abs() / (minScale));
-    boundaryMargin =
-    EdgeInsets.fromLTRB(0, 0, horizontalBorder, verticalBorder);
+    double horizontalBorder = ((width - imageMinWidth).abs() / (minScale));
+    double verticalBorder = ((height - imageMinHeight).abs() / (minScale));
+    EdgeInsets boundaryMargin =
+        EdgeInsets.fromLTRB(0, 0, horizontalBorder, verticalBorder);
 
-    widget._transformationController.addListener(() =>
-        _calculateTransformationUpdates(
-            widget._transformationController.value));
-    _calculateTransformationUpdates(widget._transformationController.value);
-    super.initState();
-  }
-
-
-  @override
-  Widget build(BuildContext context) {
     return Stack(
       children: [
         GestureDetector(
@@ -80,7 +56,7 @@ class _ImageViewerState extends State<ImageViewer> {
           onLongPressMoveUpdate: onMoveFilter,
           onLongPressStart: onLongPressStart,
           child: InteractiveViewer(
-              transformationController: widget._transformationController,
+              transformationController: _transformationController,
               maxScale: maxScale,
               scaleEnabled: true,
               panEnabled: true,
@@ -88,100 +64,66 @@ class _ImageViewerState extends State<ImageViewer> {
               boundaryMargin: boundaryMargin,
               minScale: minScale / initialScale,
               child: SizedBox(
-                width: widget.image.mainImage.width.toDouble(),
-                height: widget.image.mainImage.height.toDouble(),
+                width: image.mainImage.width.toDouble(),
+                height: image.mainImage.height.toDouble(),
                 child: CustomPaint(
-                  size: Size(widget.image.mainImage.height.toDouble(),
-                      widget.image.mainImage.width.toDouble()),
+                  size: Size(image.mainImage.height.toDouble(),
+                      image.mainImage.width.toDouble()),
                   isComplex: true,
                   willChange: true,
-                  painter: ImgPainter(widget.image),
-                  foregroundPainter: ShapePainter(widget.state.positions,
-                      widget.state.selectedFilterIndex),
+                  painter: ImgPainter(image),
+                  foregroundPainter: ShapePainter(state.positions,
+                      state.selectedFilterIndex),
                 )))),
-        Positioned(
-          bottom: 0,
-          left: _transformationOffset.dx,
-          child: Container(
-            height: 5,
-            width: _scrollBarSize.width,
-            decoration: BoxDecoration(
-              color: Colors.blueGrey,
-              borderRadius: BorderRadius.all(Radius.circular(10))
-            ),
-          ),
-        ),
-        Positioned(
-          top: _transformationOffset.dy,
-          right: 0,
-          child: Container(
-            height: _scrollBarSize.height,
-            width: 5,
-            decoration: BoxDecoration(
-                color: Colors.blueGrey,
-                borderRadius: BorderRadius.all(Radius.circular(10))
-            ),
-          ),
-        ),
+        InteractiveViewScrollBars(
+          controller: _transformationController,
+          minScale: minScale,
+          maxScale: maxScale,
+          initialScale: initialScale,
+          imageSize: Size(image.mainImage.width + horizontalBorder, image.mainImage.height + verticalBorder),
+          viewPortSize: Size(width, height)
+        )
       ]
     );
   }
 
-  void _calculateTransformationUpdates(Matrix4 matrix) {
-    double offsetX = widget._transformationController.value.row0[3];
-    double offsetY = widget._transformationController.value.row1[3];
-    double currentScale = widget._transformationController.value.row0[0];
-    double transformationScale = 1 - (((currentScale - minScale) * 0.9) / (maxScale * initialScale - minScale));
-
-    /// If fully zoomed out then must equal full screen size
-    double horizontalScrollbarSize = widget.width * transformationScale;
-    double verticalScrollbarSize = widget.height * transformationScale;
-
-    double scrollBarOffsetX = ((offsetX / currentScale) / ((widget.image.mainImage.width + horizontalBorder) - widget.width / currentScale)).abs() * (widget.width - horizontalScrollbarSize);
-    double scrollBarOffsetY = ((offsetY / currentScale) / ((widget.image.mainImage.height + verticalBorder) - widget.height / currentScale)).abs() * (widget.height - verticalScrollbarSize);
-    setState(() {
-      _scrollBarSize = Size(horizontalScrollbarSize, verticalScrollbarSize);
-      _transformationOffset = Offset(scrollBarOffsetX, scrollBarOffsetY);
-    });
-  }
-
   onTapPosition(TapUpDetails details) {
-    Offset offset = widget._transformationController.toScene(
+    Offset offset = _transformationController.toScene(
       details.localPosition,
     );
     var selected = _detectSelectedFilter(offset);
     if (selected >= 0) {
-      widget.selectFilter(selected);
+      selectFilter(selected);
     } else {
-      widget.addFilterPosition(offset.dx, offset.dy);
+      addFilterPosition(offset.dx, offset.dy);
     }
   }
 
   onMoveFilter(LongPressMoveUpdateDetails details) {
-    Offset offset = widget._transformationController.toScene(
+    Offset offset = _transformationController.toScene(
       details.localPosition,
     );
-    if (widget.state.hasSelection) {
-      widget.moveFilterPosition(offset.dx, offset.dy);
+    if (state.hasSelection) {
+      moveFilterPosition(offset.dx, offset.dy);
     }
   }
 
   onLongPressStart(LongPressStartDetails details) {
-    Offset offset = widget._transformationController.toScene(
+    Offset offset = _transformationController.toScene(
       details.localPosition,
     );
     var selected = _detectSelectedFilter(offset);
-    widget.selectFilter(selected);
+    selectFilter(selected);
     if (selected >= 0) {
-      widget.moveFilterPosition(offset.dx, offset.dy);
+      moveFilterPosition(offset.dx, offset.dy);
     }
   }
 
   int _detectSelectedFilter(Offset offset) {
     int index = -1;
     double dist = 10000000;
-    widget.state.positions.asMap().forEach((key, value) {
-      var tmpRadius = widget.state.maxRadius * value.radiusRatio;
+    state.positions.asMap().forEach((key, value) {
+      var tmpRadius = state.maxRadius * value.radiusRatio;
       var tmp =
           sqrt(pow(value.posX - offset.dx, 2) + pow(value.posY - offset.dy, 2));
       if ((value.isRounded && (tmp <= tmpRadius)) ||

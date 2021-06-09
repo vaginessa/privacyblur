@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:privacyblur/src/screens/image/helpers/image_states.dart';
 import 'package:privacyblur/src/utils/image_filter/helpers/filter_result.dart';
-import 'package:privacyblur/src/widgets/interactive_view_scrollbar.dart';
+import 'package:privacyblur/src/widgets/interactive_viewer_scrollbar.dart';
 
 import 'custom_painter.dart';
 import 'custom_shape.dart';
@@ -75,7 +75,7 @@ class ImageViewer extends StatelessWidget {
                   foregroundPainter: ShapePainter(state.positions,
                       state.selectedFilterIndex),
                 )))),
-        InteractiveViewScrollBars(
+        InteractiveViewerScrollBars(
           controller: _transformationController,
           minScale: minScale,
           maxScale: maxScale,

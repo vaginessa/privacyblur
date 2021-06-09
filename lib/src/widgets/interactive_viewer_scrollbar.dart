@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class InteractiveViewScrollBars extends StatefulWidget {
+class InteractiveViewerScrollBars extends StatefulWidget {
   final TransformationController controller;
   final double minScale;
   final double maxScale;
@@ -8,7 +8,7 @@ class InteractiveViewScrollBars extends StatefulWidget {
   final Size imageSize;
   final Size viewPortSize;
 
-  InteractiveViewScrollBars({
+  InteractiveViewerScrollBars({
     required this.controller,
     required this.minScale,
     required this.maxScale,
@@ -18,10 +18,10 @@ class InteractiveViewScrollBars extends StatefulWidget {
   });
 
   @override
-  _InteractiveViewScrollBarsState createState() => _InteractiveViewScrollBarsState();
+  _InteractiveViewerScrollBarsState createState() => _InteractiveViewerScrollBarsState();
 }
 
-class _InteractiveViewScrollBarsState extends State<InteractiveViewScrollBars> {
+class _InteractiveViewerScrollBarsState extends State<InteractiveViewerScrollBars> {
   late Size _scrollBarSize;
   late Offset _scrollBarOffset;
 
@@ -84,5 +84,11 @@ class _InteractiveViewScrollBarsState extends State<InteractiveViewScrollBars> {
       this._scrollBarSize = scrollBarSize;
       this._scrollBarOffset = scrollBarOffset;
     });
+  }
+
+  @override
+  void dispose() {
+    widget.controller.removeListener(() => _calculateTransformationUpdates());
+    super.dispose();
   }
 }

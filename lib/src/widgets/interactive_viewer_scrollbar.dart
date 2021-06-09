@@ -90,10 +90,12 @@ class _InteractiveViewerScrollBarsState
         _calculateScrollBarSize(transformationScale, widget.viewPortSize);
     Offset scrollBarOffset =
         _calulateScrollBarOffSet(currentScale, scrollBarSize);
-    setState(() {
-      this._scrollBarSize = scrollBarSize;
-      this._scrollBarOffset = scrollBarOffset;
-    });
+    if(mounted) {
+      setState(() {
+        this._scrollBarSize = scrollBarSize;
+        this._scrollBarOffset = scrollBarOffset;
+      });
+    }
   }
 
   @override

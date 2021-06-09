@@ -121,15 +121,14 @@ class ImageScreen extends StatelessWidget with AppMessages {
                   TransformationController(imageTransformMatrix);
             }
             return ImageViewer(
-                state.image,
-                state,
-                w,
-                h,
-                _transformationController!,
-                (posX, posY) =>
-                    _bloc.add(ImageEventPositionChanged(posX, posY)),
-                (posX, posY) => _bloc.add(ImageEventNewFilter(posX, posY)),
-                (index) => _bloc.add(ImageEventExistingFilterSelected(index)),
+              state.image,
+              state,
+              w,
+              h,
+              _transformationController!,
+              (posX, posY) => _bloc.add(ImageEventPositionChanged(posX, posY)),
+              (posX, posY) => _bloc.add(ImageEventNewFilter(posX, posY)),
+              (index) => _bloc.add(ImageEventExistingFilterSelected(index)),
             );
           },
           view2: (context, w, h, landscape) =>
@@ -202,8 +201,6 @@ class ImageScreen extends StatelessWidget with AppMessages {
               )),
     );
   }
-
-
 
   void _onPreview(BuildContext context, ImageFilterResult image) {
     /// Passing complex objects may prove inefficient or problematic

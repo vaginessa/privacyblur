@@ -29,8 +29,7 @@ class ImageViewer extends StatelessWidget {
       this._transformationController,
       this.moveFilterPosition,
       this.addFilterPosition,
-      this.selectFilter
-  );
+      this.selectFilter);
 
   @override
   Widget build(BuildContext context) {
@@ -43,15 +42,15 @@ class ImageViewer extends StatelessWidget {
     double initialScale = max(wScale, hScale);
     var imageMinWidth = image.mainImage.width * minScale;
     var imageMinHeight = image.mainImage.height * minScale;
+
     ///calculate margins for no-scaled image
     double horizontalBorder = ((width - imageMinWidth).abs() / (minScale));
     double verticalBorder = ((height - imageMinHeight).abs() / (minScale));
     EdgeInsets boundaryMargin =
         EdgeInsets.fromLTRB(0, 0, horizontalBorder, verticalBorder);
 
-    return Stack(
-      children: [
-        GestureDetector(
+    return Stack(children: [
+      GestureDetector(
           onTapUp: onTapPosition,
           onLongPressMoveUpdate: onMoveFilter,
           onLongPressStart: onLongPressStart,
@@ -64,27 +63,26 @@ class ImageViewer extends StatelessWidget {
               boundaryMargin: boundaryMargin,
               minScale: minScale / initialScale,
               child: SizedBox(
-                width: image.mainImage.width.toDouble(),
-                height: image.mainImage.height.toDouble(),
-                child: CustomPaint(
-                  size: Size(image.mainImage.height.toDouble(),
-                      image.mainImage.width.toDouble()),
-                  isComplex: true,
-                  willChange: true,
-                  painter: ImgPainter(image),
-                  foregroundPainter: ShapePainter(state.positions,
-                      state.selectedFilterIndex),
-                )))),
-        InteractiveViewerScrollBars(
+                  width: image.mainImage.width.toDouble(),
+                  height: image.mainImage.height.toDouble(),
+                  child: CustomPaint(
+                    size: Size(image.mainImage.height.toDouble(),
+                        image.mainImage.width.toDouble()),
+                    isComplex: true,
+                    willChange: true,
+                    painter: ImgPainter(image),
+                    foregroundPainter: ShapePainter(
+                        state.positions, state.selectedFilterIndex),
+                  )))),
+      InteractiveViewerScrollBars(
           controller: _transformationController,
           minScale: minScale,
           maxScale: maxScale,
           initialScale: initialScale,
-          imageSize: Size(image.mainImage.width + horizontalBorder, image.mainImage.height + verticalBorder),
-          viewPortSize: Size(width, height)
-        )
-      ]
-    );
+          imageSize: Size(image.mainImage.width + horizontalBorder,
+              image.mainImage.height + verticalBorder),
+          viewPortSize: Size(width, height))
+    ]);
   }
 
   onTapPosition(TapUpDetails details) {

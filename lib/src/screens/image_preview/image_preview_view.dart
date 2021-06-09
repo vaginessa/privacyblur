@@ -20,9 +20,8 @@ class ImagePreviewScreen extends StatelessWidget {
   final TransformationController transformationController;
   late InternalLayout internalLayout;
 
-  ImagePreviewScreen(this.di, this.router, this.transformationController, this.image);
-
-
+  ImagePreviewScreen(
+      this.di, this.router, this.transformationController, this.image);
 
   @override
   Widget build(BuildContext context) {
@@ -52,9 +51,8 @@ class ImagePreviewScreen extends StatelessWidget {
       EdgeInsets boundaryMargin =
           EdgeInsets.fromLTRB(0, 0, horizontalBorder, verticalBorder);
 
-      return Stack(
-        children: [
-          InteractiveViewer(
+      return Stack(children: [
+        InteractiveViewer(
             maxScale: maxScale,
             scaleEnabled: true,
             panEnabled: true,
@@ -72,16 +70,15 @@ class ImagePreviewScreen extends StatelessWidget {
                   willChange: true,
                   painter: ImgPainter(image),
                 ))),
-          InteractiveViewerScrollBars(
-              controller: transformationController,
-              minScale: minScale,
-              maxScale: maxScale,
-              initialScale: initialScale,
-              imageSize: Size(image.mainImage.width + horizontalBorder, image.mainImage.height + verticalBorder),
-              viewPortSize: Size(constraints.maxWidth, constraints.maxHeight)
-          )
-        ]
-      );
+        InteractiveViewerScrollBars(
+            controller: transformationController,
+            minScale: minScale,
+            maxScale: maxScale,
+            initialScale: initialScale,
+            imageSize: Size(image.mainImage.width + horizontalBorder,
+                image.mainImage.height + verticalBorder),
+            viewPortSize: Size(constraints.maxWidth, constraints.maxHeight))
+      ]);
     });
   }
 }

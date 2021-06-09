@@ -9,16 +9,19 @@ import 'package:privacyblur/src/screens/image/utils/internal_layout.dart';
 import 'package:privacyblur/src/screens/image/widgets/custom_painter.dart';
 import 'package:privacyblur/src/utils/image_filter/helpers/filter_result.dart';
 import 'package:privacyblur/src/widgets/adaptive_widgets_builder.dart';
+import 'package:privacyblur/src/widgets/interactive_viewer_scrollbar.dart';
 
 // ignore: must_be_immutable
 class ImagePreviewScreen extends StatelessWidget {
+  final double maxScale = 10;
   final DependencyInjection di;
   final AppRouter router;
   final ImageFilterResult image;
   final TransformationController transformationController;
   late InternalLayout internalLayout;
 
-  ImagePreviewScreen(this.di, this.router, this.transformationController, this.image);
+  ImagePreviewScreen(
+      this.di, this.router, this.transformationController, this.image);
 
   @override
   Widget build(BuildContext context) {
@@ -47,24 +50,35 @@ class ImagePreviewScreen extends StatelessWidget {
           ((constraints.maxHeight - imageMinHeight).abs() / (minScale));
       EdgeInsets boundaryMargin =
           EdgeInsets.fromLTRB(0, 0, horizontalBorder, verticalBorder);
-      return InteractiveViewer(
-          maxScale: 10,
-          scaleEnabled: true,
-          panEnabled: true,
-          constrained: false,
-          boundaryMargin: boundaryMargin,
-          minScale: minScale / initialScale,
-          transformationController: transformationController,
-          child: SizedBox(
-              width: image.mainImage.width.toDouble(),
-              height: image.mainImage.height.toDouble(),
-              child: CustomPaint(
-                size: Size(image.mainImage.height.toDouble(),
-                    image.mainImage.width.toDouble()),
-                isComplex: true,
-                willChange: true,
-                painter: ImgPainter(image),
-              )));
+
+      return Stack(children: [
+        InteractiveViewer(
+            maxScale: maxScale,
+            scaleEnabled: true,
+            panEnabled: true,
+            constrained: false,
+            boundaryMargin: boundaryMargin,
+            minScale: minScale / initialScale,
+            transformationController: transformationController,
+            child: SizedBox(
+                width: image.mainImage.width.toDouble(),
+                height: image.mainImage.height.toDouble(),
+                child: CustomPaint(
+                  size: Size(image.mainImage.height.toDouble(),
+                      image.mainImage.width.toDouble()),
+                  isComplex: true,
+                  willChange: true,
+                  painter: ImgPainter(image),
+                ))),
+        InteractiveViewerScrollBars(
+            controller: transformationController,
+            minScale: minScale,
+            maxScale: maxScale,
+            initialScale: initialScale,
+            imageSize: Size(image.mainImage.width + horizontalBorder,
+                image.mainImage.height + verticalBorder),
+            viewPortSize: Size(constraints.maxWidth, constraints.maxHeight))
+      ]);
     });
   }
 }

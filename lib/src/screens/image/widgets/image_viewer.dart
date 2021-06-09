@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:privacyblur/src/screens/image/helpers/image_states.dart';
 import 'package:privacyblur/src/utils/image_filter/helpers/filter_result.dart';
+import 'package:privacyblur/src/widgets/interactive_viewer_scrollbar.dart';
 
 import 'custom_painter.dart';
 import 'custom_shape.dart';
@@ -18,6 +19,7 @@ class ImageViewer extends StatelessWidget {
   final void Function(double, double) addFilterPosition;
   final void Function(int) selectFilter;
   late TransformationController _transformationController;
+  final double maxScale = 10;
 
   ImageViewer(
       this.image,
@@ -33,45 +35,54 @@ class ImageViewer extends StatelessWidget {
   Widget build(BuildContext context) {
     var wScale = width / image.mainImage.width;
     var hScale = height / image.mainImage.height;
-    var minScale = min(wScale, hScale); //to fit image
+    double minScale = min(wScale, hScale); //to fit image
     ///initialScale
     ///calculated in parent view once for transformationController
     ///look _calculateInitialScaleAndOffset()
-    var initialScale = max(wScale, hScale);
+    double initialScale = max(wScale, hScale);
     var imageMinWidth = image.mainImage.width * minScale;
     var imageMinHeight = image.mainImage.height * minScale;
 
     ///calculate margins for no-scaled image
-    var horizontalBorder = ((width - imageMinWidth).abs() / (minScale));
-    var verticalBorder = ((height - imageMinHeight).abs() / (minScale));
+    double horizontalBorder = ((width - imageMinWidth).abs() / (minScale));
+    double verticalBorder = ((height - imageMinHeight).abs() / (minScale));
     EdgeInsets boundaryMargin =
         EdgeInsets.fromLTRB(0, 0, horizontalBorder, verticalBorder);
 
-    return GestureDetector(
-      onTapUp: onTapPosition,
-      onLongPressMoveUpdate: onMoveFilter,
-      onLongPressStart: onLongPressStart,
-      child: InteractiveViewer(
-          transformationController: _transformationController,
-          maxScale: 10,
-          scaleEnabled: true,
-          panEnabled: true,
-          constrained: false,
-          boundaryMargin: boundaryMargin,
-          minScale: minScale / initialScale,
-          child: SizedBox(
-              width: image.mainImage.width.toDouble(),
-              height: image.mainImage.height.toDouble(),
-              child: CustomPaint(
-                size: Size(image.mainImage.height.toDouble(),
-                    image.mainImage.width.toDouble()),
-                isComplex: true,
-                willChange: true,
-                painter: ImgPainter(image),
-                foregroundPainter: ShapePainter(state.positions,
-                    state.selectedFilterIndex),
-              ))),
-    );
+    return Stack(children: [
+      GestureDetector(
+          onTapUp: onTapPosition,
+          onLongPressMoveUpdate: onMoveFilter,
+          onLongPressStart: onLongPressStart,
+          child: InteractiveViewer(
+              transformationController: _transformationController,
+              maxScale: maxScale,
+              scaleEnabled: true,
+              panEnabled: true,
+              constrained: false,
+              boundaryMargin: boundaryMargin,
+              minScale: minScale / initialScale,
+              child: SizedBox(
+                  width: image.mainImage.width.toDouble(),
+                  height: image.mainImage.height.toDouble(),
+                  child: CustomPaint(
+                    size: Size(image.mainImage.height.toDouble(),
+                        image.mainImage.width.toDouble()),
+                    isComplex: true,
+                    willChange: true,
+                    painter: ImgPainter(image),
+                    foregroundPainter: ShapePainter(
+                        state.positions, state.selectedFilterIndex),
+                  )))),
+      InteractiveViewerScrollBars(
+          controller: _transformationController,
+          minScale: minScale,
+          maxScale: maxScale,
+          initialScale: initialScale,
+          imageSize: Size(image.mainImage.width + horizontalBorder,
+              image.mainImage.height + verticalBorder),
+          viewPortSize: Size(width, height))
+    ]);
   }
 
   onTapPosition(TapUpDetails details) {

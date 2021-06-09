@@ -35,10 +35,13 @@ class ImageViewer extends StatefulWidget {
 }
 
 class _ImageViewerState extends State<ImageViewer> {
+  final double maxScale = 10;
   late Size _scrollBarSize;
   late Offset _transformationOffset;
   late double minScale;
   late EdgeInsets boundaryMargin;
+  late double horizontalBorder;
+  late double verticalBorder;
   late double initialScale;
   late double canvasViewportWidthRatio;
   late double canvasViewportHeightRatio;
@@ -55,16 +58,10 @@ class _ImageViewerState extends State<ImageViewer> {
     var imageMinWidth = widget.image.mainImage.width * minScale;
     var imageMinHeight = widget.image.mainImage.height * minScale;
     ///calculate margins for no-scaled image
-    var horizontalBorder = ((widget.width - imageMinWidth).abs() / (minScale));
-    var verticalBorder = ((widget.height - imageMinHeight).abs() / (minScale));
+    horizontalBorder = ((widget.width - imageMinWidth).abs() / (minScale));
+    verticalBorder = ((widget.height - imageMinHeight).abs() / (minScale));
     boundaryMargin =
     EdgeInsets.fromLTRB(0, 0, horizontalBorder, verticalBorder);
-
-    canvasViewportWidthRatio = widget.width / (widget.image.mainImage.width + horizontalBorder);
-    canvasViewportHeightRatio = widget.height / (widget.image.mainImage.height + verticalBorder);
-
-    print('widthRatio: $canvasViewportWidthRatio');
-    print('heightRatio: $canvasViewportHeightRatio');
 
     widget._transformationController.addListener(() =>
         _calculateTransformationUpdates(
@@ -84,7 +81,7 @@ class _ImageViewerState extends State<ImageViewer> {
           onLongPressStart: onLongPressStart,
           child: InteractiveViewer(
               transformationController: widget._transformationController,
-              maxScale: 10,
+              maxScale: maxScale,
               scaleEnabled: true,
               panEnabled: true,
               constrained: false,
@@ -131,20 +128,20 @@ class _ImageViewerState extends State<ImageViewer> {
   }
 
   void _calculateTransformationUpdates(Matrix4 matrix) {
-    double transformationScale = 1 - widget._transformationController.value.row0[0];
+    double offsetX = widget._transformationController.value.row0[3];
+    double offsetY = widget._transformationController.value.row1[3];
+    double currentScale = widget._transformationController.value.row0[0];
+    double transformationScale = 1 - (((currentScale - minScale) * 0.9) / (maxScale * initialScale - minScale));
 
     /// If fully zoomed out then must equal full screen size
-    double horizontalSize = widget.width * (transformationScale + canvasViewportWidthRatio * transformationScale);
-    double verticalSize = widget.height * (transformationScale + canvasViewportHeightRatio * transformationScale);
+    double horizontalScrollbarSize = widget.width * transformationScale;
+    double verticalScrollbarSize = widget.height * transformationScale;
 
-    double transformationX = (widget._transformationController.value.row0[3].abs()) * (transformationScale + canvasViewportWidthRatio * transformationScale);
-    double transformationY = (widget._transformationController.value.row1[3].abs()) * (transformationScale + canvasViewportHeightRatio * transformationScale);
-
-/*    print('sizes, w: $horizontalSize, v: $verticalSize');
-    print('transformations, x: $transformationX, y: $transformationY');*/
+    double scrollBarOffsetX = ((offsetX / currentScale) / ((widget.image.mainImage.width + horizontalBorder) - widget.width / currentScale)).abs() * (widget.width - horizontalScrollbarSize);
+    double scrollBarOffsetY = ((offsetY / currentScale) / ((widget.image.mainImage.height + verticalBorder) - widget.height / currentScale)).abs() * (widget.height - verticalScrollbarSize);
     setState(() {
-      _scrollBarSize = Size(horizontalSize, verticalSize);
-      _transformationOffset = Offset(transformationX, transformationY);
+      _scrollBarSize = Size(horizontalScrollbarSize, verticalScrollbarSize);
+      _transformationOffset = Offset(scrollBarOffsetX, scrollBarOffsetY);
     });
   }
 

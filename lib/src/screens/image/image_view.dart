@@ -211,20 +211,16 @@ class ImageScreen extends StatelessWidget with AppMessages {
   Matrix4 _calculateInitialScaleAndOffset(
       img_tools.Image image, double width, double height) {
     var imgScaleRate = width / image.width;
-
     ///if you want fit, but not Cover - replace 'max' to 'min'
     imgScaleRate = max(height / image.height, imgScaleRate);
-    var matrix = Matrix4.identity()
-      ..setEntry(0, 0, imgScaleRate)
-      ..setEntry(1, 1, imgScaleRate);
+    var matrix =
+    Matrix4.diagonal3Values(imgScaleRate, imgScaleRate, imgScaleRate);
     var newWidth = image.width * imgScaleRate;
     var newHeight = image.height * imgScaleRate;
-
     /// center image
     matrix
       ..setEntry(0, 3, (width - newWidth) / 2)
       ..setEntry(1, 3, (height - newHeight) / 2);
-
     return matrix;
   }
 }

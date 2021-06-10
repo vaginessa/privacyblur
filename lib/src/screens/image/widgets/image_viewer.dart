@@ -61,7 +61,7 @@ class ImageViewer extends StatelessWidget {
               panEnabled: true,
               constrained: false,
               boundaryMargin: boundaryMargin,
-              minScale: minScale / initialScale,
+              minScale: minScale,
               child: SizedBox(
                   width: image.mainImage.width.toDouble(),
                   height: image.mainImage.height.toDouble(),

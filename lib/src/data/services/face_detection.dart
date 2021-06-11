@@ -22,7 +22,7 @@ class FaceDetection {
     return _instance;
   }
 
-  Future<Faces> getSize(Uint8List rawImageData) async {
+  Future<Faces> getDetections(Uint8List rawImageData) async {
     try {
       return await _platform.invokeMethod('getFaceDetections', rawImageData);
     } catch(err) {

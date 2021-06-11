@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 import 'dart:ui' as img_tools;
 
 import 'package:privacyblur/src/utils/image_filter/helpers/range_checker.dart';
@@ -29,7 +30,7 @@ class ImageAppFilter {
   factory ImageAppFilter() => _instance;
 
   ImageAppMatrix _activeMatrix = MatrixAppPixelate(30);
-  final ImageRGB imgChannels = ImageRGB();
+  final ImageRGB _imgChannels = ImageRGB();
 
   void setFilter(ImageAppMatrix newMatrix) {
     _activeMatrix = newMatrix;
@@ -37,7 +38,7 @@ class ImageAppFilter {
 
   Future<ImageFilterResult> setImage(img_tools.Image image) async {
     transactionCancel();
-    await imgChannels.splitImage(image);
+    await _imgChannels.splitImage(image);
     needRebuild = true;
 
     /// here ALFA channel will be removed from PNG or GIF images
@@ -56,93 +57,109 @@ class ImageAppFilter {
     for (int y = range.y1; y <= range.y2; y++) {
       for (int x = range.x1; x <= range.x2; x++) {
         if (!range.checkPointInRange(x, y)) continue;
-        pointIndex = (y * imgChannels.imageWidth) + x;
-        if (!imgChannels.processed[pointIndex]) continue;
-        imgChannels.processed[pointIndex] = false;
-        imgChannels.tempImgArr[pointIndex] = 0xff000000 | // alfa
-            ((imgChannels.sourceRed[pointIndex] << 16) & 0xff0000) | //red
-            ((imgChannels.sourceGreen[pointIndex] << 8) & 0xff00) | //green
-            ((imgChannels.sourceBlue[pointIndex]) & 0xff); //blue*/
+        pointIndex = (y * _imgChannels.imageWidth) + x;
+        if (!_imgChannels.processed[pointIndex]) continue;
+        _imgChannels.processed[pointIndex] = false;
+        _imgChannels.tempImgArr[pointIndex] = 0xff000000 | // alfa
+            ((_imgChannels.sourceRed[pointIndex] << 16) & 0xff0000) | //red
+            ((_imgChannels.sourceGreen[pointIndex] << 8) & 0xff00) | //green
+            ((_imgChannels.sourceBlue[pointIndex]) & 0xff); //blue*/
       }
     }
-    imgChannels.resetSmallCacheAfterCancel();
+    _imgChannels.resetSmallCacheAfterCancel();
     needRebuild = true;
   }
 
   bool _allCanceled = true;
 
   void cancelAll() {
-    if (!imgChannels.transactionActive) return;
+    if (!_imgChannels.transactionActive) return;
     if (_allCanceled) return;
     _allCanceled = true;
-    imgChannels.resetRange();
-    _cancelArea(imgChannels.getChangedRange());
+    _imgChannels.resetRange();
+    _cancelArea(_imgChannels.getChangedRange());
   }
 
   void cancelArea(int centerX, int centerY, int radius, isCircle) {
-    if (!imgChannels.transactionActive) return;
+    if (!_imgChannels.transactionActive) return;
     if (_allCanceled) return;
     RangeHelper range = RangeHelper(centerX, centerY, radius, isCircle,
-        imgChannels.imageWidth, imgChannels.imageHeight, 0);
+        _imgChannels.imageWidth, _imgChannels.imageHeight, 0);
     _cancelArea(range);
   }
 
   void apply2Area(int centerX, int centerY, int radius, bool isCircle) {
-    if (!imgChannels.transactionActive) return;
+    if (!_imgChannels.transactionActive) return;
     RangeHelper range = RangeHelper(centerX, centerY, radius, isCircle,
-        imgChannels.imageWidth, imgChannels.imageHeight, 0);
-    _activeMatrix.calculateInRange(range, imgChannels);
+        _imgChannels.imageWidth, _imgChannels.imageHeight, 0);
+    _activeMatrix.calculateInRange(range, _imgChannels);
     _allCanceled = false;
-    imgChannels.collectRange(range);
+    _imgChannels.collectRange(range);
     needRebuild = true;
   }
 
   void transactionStart() {
-    if (imgChannels.transactionActive) return;
-    imgChannels.transactionActive = true;
+    if (_imgChannels.transactionActive) return;
+    _imgChannels.transactionActive = true;
     _allCanceled = true;
-    imgChannels.resetRange();
+    _imgChannels.resetRange();
   }
 
   void transactionCancel() {
-    if (!imgChannels.transactionActive) return;
+    if (!_imgChannels.transactionActive) return;
     cancelAll();
-    imgChannels.processed.fillRange(0, imgChannels.processed.length, false);
-    imgChannels.transactionActive = false;
+    _imgChannels.processed.fillRange(0, _imgChannels.processed.length, false);
+    _imgChannels.transactionActive = false;
     _allCanceled = true;
-    imgChannels.resetRange();
+    _imgChannels.resetRange();
     _response_cache.changedPart = null;
     needRebuild = false; //we dont need to rebuild image. use background
   }
 
   void transactionCommit() {
-    if (!imgChannels.transactionActive) return;
+    if (!_imgChannels.transactionActive) return;
     int colorValue = 0;
-    for (int i = 0; i < imgChannels.sourceRed.length; i++) {
-      if (imgChannels.processed[i]) {
-        colorValue = imgChannels.tempImgArr[i];
-        imgChannels.sourceRed[i] = (colorValue >> 16) & 0xff;
-        imgChannels.sourceGreen[i] = (colorValue >> 8) & 0xff;
-        imgChannels.sourceBlue[i] = colorValue & 0xff;
+    for (int i = 0; i < _imgChannels.sourceRed.length; i++) {
+      if (_imgChannels.processed[i]) {
+        colorValue = _imgChannels.tempImgArr[i];
+        _imgChannels.sourceRed[i] = (colorValue >> 16) & 0xff;
+        _imgChannels.sourceGreen[i] = (colorValue >> 8) & 0xff;
+        _imgChannels.sourceBlue[i] = colorValue & 0xff;
       }
     }
-    imgChannels.processed.fillRange(0, imgChannels.processed.length, false);
-    imgChannels.transactionActive = false;
+    _imgChannels.processed.fillRange(0, _imgChannels.processed.length, false);
+    _imgChannels.transactionActive = false;
     _allCanceled = true;
-    imgChannels.resetRange();
+    _imgChannels.resetRange();
     needRebuild = true;
   }
 
   bool needRebuild = true; //to force rebuild in calling getCurrentImageState()
   ImageFilterResult _response_cache = ImageFilterResult.empty();
 
+  Uint8List getImageARGB8() {
+    return _imgChannels.tempImgArr.buffer.asUint8List();
+  }
+
+  Uint32List getImageARGB32() {
+    return _imgChannels.tempImgArr;
+  }
+
+  int getImageWidth() {
+    return _imgChannels.imageWidth;
+  }
+
+  int getImageHeight() {
+    return _imgChannels.imageHeight;
+  }
+
   Future<ImageFilterResult> getImage() {
     if (!needRebuild) return Future.value(_response_cache);
     Completer<ImageFilterResult> _completer = new Completer();
-    if (imgChannels.transactionActive) {
-      var range = imgChannels.getChangedRange();
+    if (_imgChannels.transactionActive) {
+      var range = _imgChannels.getChangedRange();
       img_tools.decodeImageFromPixels(
-          imgChannels.getChangedData(),
+          _imgChannels.getChangedData(),
           range.rangeWidth,
           range.rangeHeight,
           img_tools.PixelFormat.rgba8888, (result) {
@@ -154,9 +171,9 @@ class ImageAppFilter {
       });
     } else {
       img_tools.decodeImageFromPixels(
-          imgChannels.tempImgArr.buffer.asUint8List(),
-          imgChannels.imageWidth,
-          imgChannels.imageHeight,
+          _imgChannels.tempImgArr.buffer.asUint8List(),
+          _imgChannels.imageWidth,
+          _imgChannels.imageHeight,
           img_tools.PixelFormat.rgba8888, (result) {
         _response_cache.mainImage = result;
         _response_cache.changedPart = null;

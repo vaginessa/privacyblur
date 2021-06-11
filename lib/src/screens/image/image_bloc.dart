@@ -139,9 +139,9 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
     _blocState.resetSelection();
     _blocState.image = await imageFilter.getImage();
     _blocState.isImageSaved = await imgTools.save2Gallery(
-        imageFilter.imgChannels.imageWidth,
-        imageFilter.imgChannels.imageHeight,
-        imageFilter.imgChannels.tempImgArr,
+        imageFilter.getImageWidth(),
+        imageFilter.getImageHeight(),
+        imageFilter.getImageARGB32(),
         event.needOverride);
     if (_blocState.isImageSaved) {
       _blocState.savedOnce = true;

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 class InteractiveViewerScrollBars extends StatefulWidget {
@@ -61,8 +63,8 @@ class _InteractiveViewerScrollBarsState
 
   Size _calculateScrollBarSize(double transformationScale, Size viewPortSize) {
     /// If fully zoomed out then must equal full screen size
-    double horizontalScrollbarSize = viewPortSize.width * transformationScale;
-    double verticalScrollbarSize = viewPortSize.height * transformationScale;
+    double horizontalScrollbarSize = min(max(viewPortSize.width * transformationScale, 5), widget.viewPortSize.width - 10);
+    double verticalScrollbarSize = min(max(viewPortSize.height * transformationScale, 5), widget.viewPortSize.height - 10);
     return Size(horizontalScrollbarSize, verticalScrollbarSize);
   }
 

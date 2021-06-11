@@ -10,6 +10,7 @@ import 'package:privacyblur/resources/localization/keys.dart';
 import 'package:privacyblur/src/data/services/local_storage.dart';
 import 'package:privacyblur/src/di.dart';
 import 'package:privacyblur/src/router.dart';
+import 'package:privacyblur/src/screens/main/widgets/version_number.dart';
 import 'package:privacyblur/src/utils/layout_config.dart';
 import 'package:privacyblur/src/widgets/adaptive_widgets_builder.dart';
 import 'package:privacyblur/src/widgets/message_bar.dart';
@@ -106,7 +107,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                       if (!havePermission) _showPermissionWarning(),
                     ],
                   ),
-                  sectionHeight: screenInnerHeight * 0.3),
+                  sectionHeight: screenInnerHeight * 0.2),
               Section(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -121,6 +122,10 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                     ),
                   ],
                 ),
+                sectionHeight: screenInnerHeight * 0.1,
+              ),
+              Section(
+                child: VersionNumber(),
                 sectionHeight: screenInnerHeight * 0.1,
               ),
             ],

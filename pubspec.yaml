@@ -61,7 +61,8 @@ flutter:
   assets:
     - lib/resources/images/
     - lib/resources/i18n/
-
+    - pubspec.yaml
+      
   fonts:
     - family: PrivacyBlur
       fonts:

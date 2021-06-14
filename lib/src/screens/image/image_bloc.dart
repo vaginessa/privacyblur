@@ -284,6 +284,7 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
     detectionResult.forEach((face) {
       _blocState.addFace(face);
     });
+    _blocState.isImageSaved = false;
     _blocState.positionsUpdateOrder();
     _applyCurrentFilter();
 

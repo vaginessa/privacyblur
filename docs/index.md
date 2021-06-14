@@ -24,14 +24,20 @@ No in-app purchases. No ads. No watermark. No hassle. Free forever because priva
 
 The App is available on Google Playstore  and the the Appstore now!
 
-<p float="left" align="left">
-  <a href='https://play.google.com/store/apps/details?id=de.mathema.privacyblur&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img width="150px" alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png'/></a>
-  <a href="https://apps.apple.com/us/app/privacyblur/id1536274106?itsct=apps_box_badge&amp;itscg=30200" style="width: 120px;margin-bottom: 10px;">
-    <object data="assets/black.png" type="image/png">
-      <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83&amp;releaseDate=1619827200&h=9d23d850d1506bbe56180b2aa8ee51f7" alt="PrivacyBlur" style="width: 120px;margin-bottom: 10px;">
-    </object>
-  </a>
-</p>
+
+<div style="display:table-row;">
+    <div style="width:250px;display:table-cell;text-align:right;">
+        <a href='https://play.google.com/store/apps/details?id=de.mathema.privacyblur&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img width="150px" alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png'/></a>
+    </div>
+    <div style="display:table-cell;width:250px;vertical-align:bottom;text-align:left;">
+        <a href="https://apps.apple.com/us/app/privacyblur/id1536274106?itsct=apps_box_badge&amp;itscg=30200" style="width: 120px;margin-bottom: 10px;">
+          <object data="assets/black.png" type="image/png">
+            <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83&amp;releaseDate=1619827200&h=9d23d850d1506bbe56180b2aa8ee51f7" alt="PrivacyBlur" style="width: 120px; margin-bottom: 10px;">
+          </object>
+        </a>
+    </div>
+</div>
+
 
 </td>
 </tr>

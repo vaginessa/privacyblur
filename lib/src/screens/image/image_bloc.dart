@@ -277,8 +277,9 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
     _blocState.image = await imageFilter.setImage(tmpImage);
     yield _blocState.clone();
     await _repo.removeLastPath();
-    var result = faceDetection.detectFaces(imageFilter.getImageARGB8(),
+    var result = faceDetection.detectFaces(imageFilter.getImageNV21(),
         imageFilter.getImageWidth(), imageFilter.getImageHeight());
+    print(result);
   }
 
   Stream<ImageStateFeedback> _yieldCriticalException(String title) async* {

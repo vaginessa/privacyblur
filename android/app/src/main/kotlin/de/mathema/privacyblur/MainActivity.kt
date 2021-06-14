@@ -31,9 +31,9 @@ class MainActivity : FlutterActivity() {
         ).setMethodCallHandler { call, result ->
             if (call.method == "detectFaces") {
                 try {
-                    var srcImage = call.argument<ByteArray>("argb8")
-                    var width = call.argument<Int>("width")
-                    var height = call.argument<Int>("height")
+                    val srcImageNV21: ByteArray = call.argument<ByteArray>("nv21")!!
+                    val width: Int = call.argument<Int>("width")!!
+                    val height: Int = call.argument<Int>("height")!!
                     // Real-time contour detection
                     val realTimeOpts = FaceDetectorOptions.Builder()
                         .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
@@ -42,9 +42,9 @@ class MainActivity : FlutterActivity() {
                         .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_NONE)
                         .build()
                     var processedImage = InputImage.fromByteArray(
-                        srcImage,
-                        width!!,
-                        height!!,
+                        srcImageNV21,
+                        width,
+                        height,
                         0,
                         InputImage.IMAGE_FORMAT_NV21
                     )

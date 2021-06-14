@@ -24,11 +24,11 @@ class FaceDetection {
     return _instance;
   }
 
-  Future<Faces> detectFaces(
-      Uint8List rawImageData, int width, int height) async {
+  Future<dynamic> detectFaces(
+      Uint8List nv21ImageData, int width, int height) async {
     try {
       var result = await _platform.invokeMethod('detectFaces',
-          {'argb8': rawImageData, 'width': width, 'height': height});
+          {'nv21': nv21ImageData, 'width': width, 'height': height});
       return Future.value([]);
     } catch (err) {
       return Future.value([]);

@@ -5,9 +5,9 @@ layout: home
 
 <table style="width: 100%; border: none">
 <tr>
-<td valign="top" style="width: 35%; border: none">
+<td valign="top" style="width: 40%; border: none">
 
-![Screenshot](assets/case_2.png)
+![Screenshot](assets/preview.png)
 
 </td>
 <td valign="top" style="border: none">

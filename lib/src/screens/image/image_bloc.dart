@@ -142,8 +142,8 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
     _blocState.resetSelection();
     _blocState.image = await imageFilter.getImage();
     _blocState.isImageSaved = await imgTools.save2Gallery(
-        imageFilter.getImageWidth(),
-        imageFilter.getImageHeight(),
+        imageFilter.imageWidth(),
+        imageFilter.imageHeight(),
         imageFilter.getImageARGB32(),
         event.needOverride);
     if (_blocState.isImageSaved) {
@@ -275,11 +275,20 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
 
     /// VERY IMPORTANT TO USE AWAIT HERE!!!
     _blocState.image = await imageFilter.setImage(tmpImage);
+
+    /// ------ face detection part -------
+    var detectionResult = await faceDetection.detectFaces(
+        imageFilter.getImageNV21(),
+        imageFilter.imageWidth(),
+        imageFilter.imageHeight());
+    detectionResult.forEach((face) {
+      _blocState.addFace(face);
+    });
+
+    /// ------ face detection part -------
+
     yield _blocState.clone();
     await _repo.removeLastPath();
-    var result = faceDetection.detectFaces(imageFilter.getImageNV21(),
-        imageFilter.getImageWidth(), imageFilter.getImageHeight());
-    print(result);
   }
 
   Stream<ImageStateFeedback> _yieldCriticalException(String title) async* {

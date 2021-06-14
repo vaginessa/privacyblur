@@ -51,7 +51,16 @@ class MainActivity : FlutterActivity() {
                     val detector = FaceDetection.getClient(realTimeOpts)
                     val detectionProcess = detector.process(processedImage)
                         .addOnSuccessListener { faces ->
-                            result.success(faces)
+                            val arr: IntArray = IntArray(faces.size * 4)
+                            var arrIndex: Int = 0
+                            for (i in 0 until faces.size) {
+                                val face = faces[i];
+                                arr[arrIndex++] = face.boundingBox.left //x1
+                                arr[arrIndex++] = face.boundingBox.top //x1
+                                arr[arrIndex++] = face.boundingBox.right //x1
+                                arr[arrIndex++] = face.boundingBox.bottom //x1
+                            }
+                            result.success(arr)
                         }
                         .addOnFailureListener { e ->
                             result.error(e.stackTrace.toString(), e.localizedMessage, e)

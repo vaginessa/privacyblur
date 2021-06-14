@@ -140,8 +140,8 @@ class ImageAppFilter {
   Uint8List yuv = Uint8List(0);
 
   Uint8List getImageNV21() {
-    final int width = getImageWidth();
-    final int height = getImageHeight();
+    final int width = imageWidth();
+    final int height = imageHeight();
     final int frameSize = width * height;
     int yIndex = 0;
     int uvIndex = frameSize;
@@ -187,11 +187,11 @@ class ImageAppFilter {
     return _imgChannels.tempImgArr;
   }
 
-  int getImageWidth() {
+  int imageWidth() {
     return _imgChannels.imageWidth;
   }
 
-  int getImageHeight() {
+  int imageHeight() {
     return _imgChannels.imageHeight;
   }
 

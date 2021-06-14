@@ -29,7 +29,7 @@ class FaceDetection {
       Uint8List nv21ImageData, int width, int height) async {
     try {
       final Faces list = List.empty(growable: true);
-      Int64List result = await _platform.invokeMethod('detectFaces',
+      Int32List result = await _platform.invokeMethod('detectFaces',
           {'nv21': nv21ImageData, 'width': width, 'height': height});
       for (int i = 0; i < result.length; i += 4) {
         int x1 = result[i];

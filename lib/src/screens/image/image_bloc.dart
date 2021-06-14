@@ -4,6 +4,7 @@ import 'dart:ui' as img_tools;
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:privacyblur/resources/localization/keys.dart';
+import 'package:privacyblur/src/data/services/face_detection.dart';
 import 'package:privacyblur/src/screens/image/helpers/constants.dart';
 import 'package:privacyblur/src/utils/image_filter/helpers/matrix_blur.dart';
 import 'package:privacyblur/src/utils/image_filter/helpers/matrix_pixelate.dart';
@@ -23,10 +24,12 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
   final ImageStateScreen _blocState = ImageStateScreen();
   final ImageRepository _repo;
   final ImgTools imgTools; //for mocking saving operations in future tests
+  final FaceDetection faceDetection;
+
   Timer? _deferedFuture;
   Duration _defered = Duration(milliseconds: ImgConst.applyDelayDuration);
 
-  ImageBloc(this._repo, this.imgTools) : super(null);
+  ImageBloc(this._repo, this.imgTools, this.faceDetection) : super(null);
 
   @override
   Stream<ImageStateBase> mapEventToState(ImageEventBase event) async* {
@@ -274,6 +277,8 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
     _blocState.image = await imageFilter.setImage(tmpImage);
     yield _blocState.clone();
     await _repo.removeLastPath();
+    var result = faceDetection.detectFaces(imageFilter.getImageARGB8(),
+        imageFilter.getImageWidth(), imageFilter.getImageHeight());
   }
 
   Stream<ImageStateFeedback> _yieldCriticalException(String title) async* {

@@ -5,6 +5,8 @@ import 'package:privacyblur/src/screens/image/image_bloc.dart';
 import 'package:privacyblur/src/screens/image/image_repo.dart';
 import 'package:privacyblur/src/screens/image/utils/image_tools.dart';
 
+import 'data/services/face_detection.dart';
+
 class DependencyInjection {
   late String appName;
   static final DependencyInjection _instance = DependencyInjection._internal();
@@ -22,5 +24,5 @@ class DependencyInjection {
 
   BlocProvider<ImageBloc> getImageBloc() => BlocProvider<ImageBloc>(
       create: (context) => ImageBloc(
-          RepositoryProvider.of<ImageRepository>(context), ImgTools()));
+          RepositoryProvider.of<ImageRepository>(context), ImgTools(), FaceDetection()));
 }

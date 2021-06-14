@@ -1,11 +1,12 @@
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
 
 class Face {
-  final double x;
-  final double y;
-  final double radius;
+  final int x;
+  final int y;
+  final int radius;
 
   Face(this.x, this.y, this.radius);
 }
@@ -24,12 +25,21 @@ class FaceDetection {
     return _instance;
   }
 
-  Future<dynamic> detectFaces(
+  Future<Faces> detectFaces(
       Uint8List nv21ImageData, int width, int height) async {
     try {
-      var result = await _platform.invokeMethod('detectFaces',
+      final Faces list = List.empty(growable: true);
+      Int64List result = await _platform.invokeMethod('detectFaces',
           {'nv21': nv21ImageData, 'width': width, 'height': height});
-      return Future.value([]);
+      for (int i = 0; i < result.length; i += 4) {
+        int x1 = result[i];
+        int y1 = result[i + 1];
+        int x2 = result[i + 2];
+        int y2 = result[i + 3];
+        list.add(Face((x1 + x2) ~/ 2, (y1 + y2) ~/ 2,
+            max((x1 - x2).abs(), (y1 - y2).abs()) ~/ 2));
+      }
+      return Future.value(list);
     } catch (err) {
       return Future.value([]);
     }

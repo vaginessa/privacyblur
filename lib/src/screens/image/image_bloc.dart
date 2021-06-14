@@ -4,6 +4,7 @@ import 'dart:ui' as img_tools;
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:privacyblur/resources/localization/keys.dart';
+import 'package:privacyblur/src/data/services/face_detection.dart';
 import 'package:privacyblur/src/screens/image/helpers/constants.dart';
 import 'package:privacyblur/src/utils/image_filter/helpers/matrix_blur.dart';
 import 'package:privacyblur/src/utils/image_filter/helpers/matrix_pixelate.dart';
@@ -23,10 +24,12 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
   final ImageStateScreen _blocState = ImageStateScreen();
   final ImageRepository _repo;
   final ImgTools imgTools; //for mocking saving operations in future tests
+  final FaceDetection faceDetection;
+
   Timer? _deferedFuture;
   Duration _defered = Duration(milliseconds: ImgConst.applyDelayDuration);
 
-  ImageBloc(this._repo, this.imgTools) : super(null);
+  ImageBloc(this._repo, this.imgTools, this.faceDetection) : super(null);
 
   @override
   Stream<ImageStateBase> mapEventToState(ImageEventBase event) async* {
@@ -139,8 +142,8 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
     _blocState.resetSelection();
     _blocState.image = await imageFilter.getImage();
     _blocState.isImageSaved = await imgTools.save2Gallery(
-        imageFilter.getImageWidth(),
-        imageFilter.getImageHeight(),
+        imageFilter.imageWidth(),
+        imageFilter.imageHeight(),
         imageFilter.getImageARGB32(),
         event.needOverride);
     if (_blocState.isImageSaved) {
@@ -265,13 +268,27 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
       yield* _yieldCriticalException(Keys.Messages_Errors_Img_Not_Readable);
       return;
     }
-    _blocState.maxRadius = (max(tmpImage.width, tmpImage.height) ~/ 6);
-    _blocState.maxPower = (max(tmpImage.width, tmpImage.height) ~/ 30);
+    _blocState.maxRadius = (max(tmpImage.width, tmpImage.height) ~/ 4);
+    _blocState.maxPower = (max(tmpImage.width, tmpImage.height) ~/ 25);
     _blocState.resetSelection();
     ImageAppFilter.setMaxProcessedWidth(_blocState.maxRadius * 3);
 
     /// VERY IMPORTANT TO USE AWAIT HERE!!!
     _blocState.image = await imageFilter.setImage(tmpImage);
+
+    /// ------ face detection part -------
+    var detectionResult = await faceDetection.detectFaces(
+        imageFilter.getImageNV21(),
+        imageFilter.imageWidth(),
+        imageFilter.imageHeight());
+    detectionResult.forEach((face) {
+      _blocState.addFace(face);
+    });
+    _blocState.positionsUpdateOrder();
+    _applyCurrentFilter();
+
+    /// ------ face detection part -------
+
     yield _blocState.clone();
     await _repo.removeLastPath();
   }

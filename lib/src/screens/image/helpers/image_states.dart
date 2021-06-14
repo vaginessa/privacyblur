@@ -1,3 +1,4 @@
+import 'package:privacyblur/src/data/services/face_detection.dart';
 import 'package:privacyblur/src/screens/image/utils/positions_utils.dart';
 import 'package:privacyblur/src/utils/image_filter/helpers/filter_result.dart';
 import 'package:privacyblur/src/widgets/message_bar.dart';
@@ -62,6 +63,15 @@ class ImageStateScreen extends ImageStateBase {
         positions[selectedFilterIndex].posY > ImgConst.undefinedPosValue;
     if (!canGetPosition) return null;
     return positions[selectedFilterIndex];
+  }
+
+  void addFace(Face face) {
+    if (PositionsUtils.checkNewFace(positions, face)) {
+      positions.add(FilterPosition(maxRadius)
+        ..posX = face.x
+        ..posY = face.y
+        ..radiusRatio = face.radius / maxRadius);
+    }
   }
 
   ImageStateScreen clone() {

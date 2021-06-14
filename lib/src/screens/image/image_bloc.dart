@@ -269,7 +269,7 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
       return;
     }
     _blocState.maxRadius = (max(tmpImage.width, tmpImage.height) ~/ 4);
-    _blocState.maxPower = (max(tmpImage.width, tmpImage.height) ~/ 25);
+    _blocState.maxPower = (max(tmpImage.width, tmpImage.height) ~/ 35);
     _blocState.resetSelection();
     ImageAppFilter.setMaxProcessedWidth(_blocState.maxRadius * 3);
 

@@ -44,6 +44,16 @@ import Foundation
   }
 
   private func detectFaces(call: FlutterMethodCall, result: FlutterResult) throws {
+    let options = FaceDetectorOptions()
+      options.performanceMode = .accurate
+      options.landmarkMode = .all
+      options.classificationMode = .all
+    var srcImageNV21 = call.argument("nv21")
+    var width = call.argument("width")
+    var height = call.argument("height")
+    /* TODO */
+/*     let image = VisionImage(image: UIImage) */
+
 
   }
 

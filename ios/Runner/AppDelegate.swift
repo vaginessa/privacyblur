@@ -10,8 +10,12 @@ import Foundation
   ) -> Bool {
     GeneratedPluginRegistrant.register(with: self)
 
+    let HEAP_SIZE_CHANNEL = "de.mathema.privacyblur/memory";
+    let FACE_DETECTION_CHANNEL = "de.mathema.privacyblur/face_detection";
+
     let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
-    let heapSizeChannel = FlutterMethodChannel(name: "de.mathema.privacyblur/memory", binaryMessenger: controller.binaryMessenger)
+    let heapSizeChannel = FlutterMethodChannel(name: HEAP_SIZE_CHANNEL, binaryMessenger: controller.binaryMessenger)
+    let faceDetectionChannel = FlutterMethodChannel(name: FACE_DETECTION_CHANNEL, binaryMessenger: controller.binaryMessenger)
 
     heapSizeChannel.setMethodCallHandler({
       [weak self] (call: FlutterMethodCall, result: FlutterResult) -> Void in
@@ -22,8 +26,21 @@ import Foundation
       self?.getHeapSize(result: result)
     })
 
+    faceDetectionChannel.setMethodCallHandler({
+      [weak self] (call: FlutterMethodCall, result: FlutterResult) -> Void in
+      guard call.method == "detectFaces" else {
+        result(FlutterMethodNotImplemented)
+        return
+      }
+      self?.detectFaces(call: call, result: result)
+    })
+
 
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+  }
+
+  private func detectFaces(call: FlutterMethodCall, result: FlutterResult) {
+    // TODO
   }
 
   private func getHeapSize(result: FlutterResult) {

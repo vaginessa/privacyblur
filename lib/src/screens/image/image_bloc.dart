@@ -276,6 +276,7 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
   }
 
   Stream<ImageStateScreen> detectFaces() async* {
+    imageFilter.transactionStart();
     var detectionResult = await faceDetection.detectFaces(
         imageFilter.getImageNV21(),
         imageFilter.imageWidth(),

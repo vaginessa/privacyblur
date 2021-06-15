@@ -32,15 +32,19 @@ import Foundation
         result(FlutterMethodNotImplemented)
         return
       }
-      self?.detectFaces(call: call, result: result)
+      do {
+        try self?.detectFaces(call: call, result: result)
+      } catch {
+        result.error("Unexpected error: \(error).")
+      }
     })
 
 
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
-  private func detectFaces(call: FlutterMethodCall, result: FlutterResult) {
-    // TODO
+  private func detectFaces(call: FlutterMethodCall, result: FlutterResult) throws {
+
   }
 
   private func getHeapSize(result: FlutterResult) {

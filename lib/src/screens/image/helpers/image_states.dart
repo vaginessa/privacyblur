@@ -77,10 +77,11 @@ class ImageStateScreen extends ImageStateBase {
     }
   }
 
-  void addPosition(double x, double y){
+  void addPosition(double x, double y) {
     positions.add(FilterPosition(maxRadius)
       ..posX = x.toInt()
       ..posY = y.toInt());
+    positionsUpdateOrder();
   }
 
   void removePositionObject(FilterPosition pos) {

@@ -1,6 +1,8 @@
 import UIKit
 import Flutter
 import Foundation
+import MLKitFaceDetection
+import MLKitVision
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
@@ -27,7 +29,7 @@ import Foundation
     })
 
     faceDetectionChannel.setMethodCallHandler({
-      [weak self] (call: FlutterMethodCall, result: FlutterResult) -> Void in
+      [weak self] (call: FlutterMethodCall, result: @escaping FlutterResult) -> Void in
       guard call.method == "detectFaces" else {
         result(FlutterMethodNotImplemented)
         return
@@ -35,26 +37,63 @@ import Foundation
       do {
         try self?.detectFaces(call: call, result: result)
       } catch {
-        result.error("Unexpected error: \(error).")
+        result(FlutterError(code: "UNAVAILABLE", message: "Unexpected error.", details: nil))
+        return
       }
     })
 
 
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
+    
+    
+  private struct PixelData {
+    var a: UInt8 = 255
+    var r: UInt8
+    var g: UInt8
+    var b: UInt8
+  }
 
-  private func detectFaces(call: FlutterMethodCall, result: FlutterResult) throws {
-    let options = FaceDetectorOptions()
-      options.performanceMode = .accurate
-      options.landmarkMode = .all
-      options.classificationMode = .all
-    var srcImageNV21 = call.argument("nv21")
-    var width = call.argument("width")
-    var height = call.argument("height")
-    /* TODO */
-/*     let image = VisionImage(image: UIImage) */
+  private func detectFaces(call: FlutterMethodCall, result: @escaping FlutterResult) {
+    if let args = call.arguments as? Dictionary<String, Any>,
+       let srcImage = args["nv21"] as? FlutterStandardTypedData,
+       let width = args["width"] as? Int,
+       let height = args["height"] as? Int {
 
+        let options = FaceDetectorOptions()
+         options.performanceMode = .fast
+         options.landmarkMode = .none
+         options.classificationMode = .none
+        let image : UIImage = UIImage(data: srcImage.data)!
+        let visionImage = VisionImage(image: image)
+        visionImage.orientation = image.imageOrientation
+        let faceDetector = FaceDetector.faceDetector(options: options)
 
+        weak var weakSelf = self
+        faceDetector.process(visionImage) { faces, error in
+          guard let strongSelf = weakSelf else {
+              print("Self is nil!")
+              return
+          }
+        var arr: Array<Int> = Array()
+        var arrIndex: Int = 0
+
+        for face in faces! {
+            arrIndex += 1
+            arr[arrIndex] = Int(face.frame.minX)
+            arrIndex += 1
+            arr[arrIndex] = Int(face.frame.minY)
+            arrIndex += 1
+            arr[arrIndex] = Int(face.frame.maxX)
+            arrIndex += 1
+            arr[arrIndex] = Int(face.frame.maxY)
+        }
+          result(arr)
+            return
+        }
+    } else {
+        result(FlutterError.init(code: "BAD ARGS", message: nil, details: nil))
+    }
   }
 
   private func getHeapSize(result: FlutterResult) {

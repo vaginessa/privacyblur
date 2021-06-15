@@ -65,13 +65,43 @@ class ImageStateScreen extends ImageStateBase {
     return positions[selectedFilterIndex];
   }
 
-  void addFace(Face face) {
+  bool _addFace(Face face) {
     if (PositionsUtils.checkNewFace(positions, face)) {
       positions.add(FilterPosition(maxRadius)
         ..posX = face.x
         ..posY = face.y
         ..radiusRatio = face.radius / maxRadius);
+      return true;
+    } else {
+      return false;
     }
+  }
+
+  void addPosition(double x, double y){
+    positions.add(FilterPosition(maxRadius)
+      ..posX = x.toInt()
+      ..posY = y.toInt());
+  }
+
+  void removePositionObject(FilterPosition pos) {
+    var index = positions.indexWhere((element) => element == pos);
+    positions.remove(pos);
+    index--;
+    if (index < 0) {
+      index = positions.length - 1;
+    }
+    selectedFilterIndex = index;
+  }
+
+  bool addFaces(Faces arr) {
+    bool added = false;
+    arr.forEach((face) {
+      if (_addFace(face)) {
+        added = true;
+      }
+    });
+    if (added) positionsUpdateOrder();
+    return added;
   }
 
   ImageStateScreen clone() {

@@ -190,8 +190,8 @@ class ImageScreen extends StatelessWidget with AppMessages {
                 onCircleSelected: () => _bloc.add(ImageEventShapeRounded(true)),
                 onSquareSelected: () =>
                     _bloc.add(ImageEventShapeRounded(false)),
-                onFilterDelete: () => _bloc.add(
-                    ImageEventExistingFilterDelete(state.selectedFilterIndex)),
+                onFilterDelete: () =>
+                    _bloc.add(ImageEventCurrentFilterDelete()),
                 isRounded: position.isRounded,
                 isPixelate: position.isPixelate,
                 curPower: position.granularityRatio,
@@ -211,12 +211,14 @@ class ImageScreen extends StatelessWidget with AppMessages {
   Matrix4 _calculateInitialScaleAndOffset(
       img_tools.Image image, double width, double height) {
     var imgScaleRate = width / image.width;
+
     ///if you want fit, but not Cover - replace 'max' to 'min'
     imgScaleRate = max(height / image.height, imgScaleRate);
     var matrix =
-    Matrix4.diagonal3Values(imgScaleRate, imgScaleRate, imgScaleRate);
+        Matrix4.diagonal3Values(imgScaleRate, imgScaleRate, imgScaleRate);
     var newWidth = image.width * imgScaleRate;
     var newHeight = image.height * imgScaleRate;
+
     /// center image
     matrix
       ..setEntry(0, 3, (width - newWidth) / 2)

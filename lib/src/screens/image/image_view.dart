@@ -172,7 +172,7 @@ class ImageScreen extends StatelessWidget with AppMessages {
       decoration: BoxDecoration(color: AppTheme.barColor(context)),
       //AppTheme.barColor(context)
       child: (position == null)
-          ? HelpWidget(height, width)
+          ? HelpWidget(height, width, () => _bloc.add(ImageEventDetectFaces()))
           : RotatedBox(
               quarterTurns: isLandscape ? 3 : 0,
               child: ImageToolsWidget(

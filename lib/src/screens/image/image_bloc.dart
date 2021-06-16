@@ -254,10 +254,8 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
     try {
       tmpImage = await imgTools.scaleFile(_blocState.filename, maxImageSize);
       if (imgTools.scaled) {
-        String origRes =
-            imgTools.srcWidth.toString() + 'x' + imgTools.srcHeight.toString();
-        String newRes =
-            tmpImage.width.toString() + 'x' + tmpImage.height.toString();
+        String origRes = '${imgTools.srcWidth} x ${imgTools.srcHeight}';
+        String newRes = '${tmpImage.width} x ${tmpImage.height}';
         yield ImageStateFeedback(Keys.Messages_Errors_Image_Scale_Down,
             positionalArgs: {"origRes": origRes, "newRes": newRes});
       }
@@ -279,7 +277,9 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
   Stream<ImageStateScreen> detectFaces() async* {
     imageFilter.transactionStart();
     var detectionResult = await faceDetection.detectFaces(
-        Platform.isIOS ? imageFilter.getImageARGB8() : imageFilter.getImageNV21(),
+        Platform.isIOS
+            ? imageFilter.getImageARGB8()
+            : imageFilter.getImageNV21(),
         imageFilter.imageWidth(),
         imageFilter.imageHeight());
     if (_blocState.addFaces(detectionResult)) _blocState.isImageSaved = false;

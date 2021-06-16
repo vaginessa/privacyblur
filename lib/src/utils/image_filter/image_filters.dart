@@ -137,6 +137,48 @@ class ImageAppFilter {
   bool needRebuild = true; //to force rebuild in calling getCurrentImageState()
   ImageFilterResult _response_cache = ImageFilterResult.empty();
 
+  Uint8List yuv = Uint8List(0);
+
+  Uint8List getImageNV21() {
+    final int width = imageWidth();
+    final int height = imageHeight();
+    final int frameSize = width * height;
+    int yIndex = 0;
+    int uvIndex = frameSize;
+    final int newSize = ((width * height * 7) ~/ 4);
+    if (yuv.length != newSize) {
+      yuv = new Uint8List(newSize);
+    }
+    var argb = getImageARGB32();
+    int a, R, G, B, Y, U, V;
+    int index = 0;
+    for (int j = 0; j < height; j++) {
+      for (int i = 0; i < width; i++) {
+        //a = (argb[index] & 0xff000000) >> 24; // a is not used obviously
+        R = (argb[index] & 0xff0000) >> 16;
+        G = (argb[index] & 0xff00) >> 8;
+        B = (argb[index] & 0xff) >> 0;
+
+        // well known RGB to YUV algorithm
+        Y = ((66 * R + 129 * G + 25 * B + 128) >> 8) + 16;
+        U = ((-38 * R - 74 * G + 112 * B + 128) >> 8) + 128;
+        V = ((112 * R - 94 * G - 18 * B + 128) >> 8) + 128;
+
+        // NV21 has a plane of Y and interleaved planes of VU each sampled by a factor of 2
+        //    meaning for every 4 Y pixels there are 1 V and 1 U.  Note the sampling is every other
+        //    pixel AND every other scanline.
+        yuv[yIndex++] = ((Y < 0) ? 0 : ((Y > 255) ? 255 : Y));
+        if ((j % 2 == 0) && (index % 2 == 0)) {
+          yuv[uvIndex++] = ((V < 0) ? 0 : ((V > 255) ? 255 : V));
+          yuv[uvIndex++] = ((U < 0) ? 0 : ((U > 255) ? 255 : U));
+        }
+
+        index++;
+      }
+    }
+    return yuv;
+  }
+
   Uint8List getImageARGB8() {
     return _imgChannels.tempImgArr.buffer.asUint8List();
   }
@@ -145,11 +187,11 @@ class ImageAppFilter {
     return _imgChannels.tempImgArr;
   }
 
-  int getImageWidth() {
+  int imageWidth() {
     return _imgChannels.imageWidth;
   }
 
-  int getImageHeight() {
+  int imageHeight() {
     return _imgChannels.imageHeight;
   }
 

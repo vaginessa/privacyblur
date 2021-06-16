@@ -15,6 +15,7 @@ import 'package:privacyblur/src/screens/image/widgets/image_viewer.dart';
 import 'package:privacyblur/src/utils/image_filter/helpers/filter_result.dart';
 import 'package:privacyblur/src/widgets/adaptive_widgets_builder.dart';
 import 'package:privacyblur/src/widgets/message_bar.dart';
+import 'package:privacyblur/src/widgets/theme/icons_provider.dart';
 import 'package:privacyblur/src/widgets/theme/theme_provider.dart';
 
 import 'image_bloc.dart';
@@ -74,6 +75,7 @@ class ImageScreen extends StatelessWidget with AppMessages {
               },
               builder: (BuildContext context, ImageStateBase? state) {
                 _bloc = BlocProvider.of<ImageBloc>(context);
+
                 if (state == null) {
                   _bloc.add(ImageEventSelected(filename));
                 }
@@ -81,15 +83,31 @@ class ImageScreen extends StatelessWidget with AppMessages {
                     (state is ImageStateScreen && (!state.isImageSaved));
                 bool imgSavedOnce =
                     (state is ImageStateScreen && state.savedOnce);
+                bool noSelectedPosition = (state is ImageStateScreen &&
+                    state.getSelectedPosition() == null);
+                final offsetBottom = internalLayout.offsetBottom;
                 return ScaffoldWithAppBar.build(
-                  onBackPressed: () => _onBack(context, state),
-                  context: context,
-                  title: translate(Keys.App_Name),
-                  actions: _actionsIcon(context, imgNotSaved, imgSavedOnce),
-                  body: SafeArea(
-                    child: _buildHomeBody(context, state),
-                  ),
-                );
+                    onBackPressed: () => _onBack(context, state),
+                    context: context,
+                    title: translate(Keys.App_Name),
+                    actions: _actionsIcon(context, imgNotSaved, imgSavedOnce),
+                    body: SafeArea(
+                      child: _buildHomeBody(context, state),
+                    ),
+                    floatingActionButton: noSelectedPosition
+                        ? Padding(
+                            padding: EdgeInsets.fromLTRB(0, 0, 0, offsetBottom),
+                            child: FloatingActionButton(
+                              onPressed: () =>
+                                  _bloc.add(ImageEventDetectFaces()),
+                              child: Icon(
+                                AppIcons.face,
+                                size: 35,
+                              ),
+                              backgroundColor: AppTheme.primaryColor,
+                            ),
+                          )
+                        : null);
               })),
     );
   }
@@ -190,8 +208,9 @@ class ImageScreen extends StatelessWidget with AppMessages {
                 onCircleSelected: () => _bloc.add(ImageEventShapeRounded(true)),
                 onSquareSelected: () =>
                     _bloc.add(ImageEventShapeRounded(false)),
-                onFilterDelete: () => _bloc.add(
-                    ImageEventExistingFilterDelete(state.selectedFilterIndex)),
+                onFilterDelete: () =>
+                    _bloc.add(ImageEventCurrentFilterDelete()),
+                onDetectFace: () => _bloc.add(ImageEventDetectFaces()),
                 isRounded: position.isRounded,
                 isPixelate: position.isPixelate,
                 curPower: position.granularityRatio,
@@ -211,12 +230,14 @@ class ImageScreen extends StatelessWidget with AppMessages {
   Matrix4 _calculateInitialScaleAndOffset(
       img_tools.Image image, double width, double height) {
     var imgScaleRate = width / image.width;
+
     ///if you want fit, but not Cover - replace 'max' to 'min'
     imgScaleRate = max(height / image.height, imgScaleRate);
     var matrix =
-    Matrix4.diagonal3Values(imgScaleRate, imgScaleRate, imgScaleRate);
+        Matrix4.diagonal3Values(imgScaleRate, imgScaleRate, imgScaleRate);
     var newWidth = image.width * imgScaleRate;
     var newHeight = image.height * imgScaleRate;
+
     /// center image
     matrix
       ..setEntry(0, 3, (width - newWidth) / 2)

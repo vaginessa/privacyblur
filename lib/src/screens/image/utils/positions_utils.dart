@@ -1,3 +1,4 @@
+import 'package:privacyblur/src/data/services/face_detection.dart';
 import 'package:privacyblur/src/screens/image/helpers/image_classes_helper.dart';
 
 class PositionsUtils {
@@ -29,6 +30,24 @@ class PositionsUtils {
     currentIndex = arr.indexWhere((element) => identical(element, position));
     return currentIndex;
   }
+
+  static bool checkNewFace(List<FilterPosition> arr, Face face) {
+    for(int i=0;i<arr.length;i++){
+      var pos=arr[i];
+      var radiusRatio=face.radius/pos.getVisibleRadius();
+      if(radiusRatio>0.85&&radiusRatio<1.15) {
+        if(pos.isInnerPoint(face.x,face.y)){
+          var diffX=(face.x-pos.posX).abs();
+          var diffY=(face.y-pos.posY).abs();
+          if((diffX+diffY)<(face.radius*0.5)){
+            return false;
+          }
+        }
+      }
+    }
+    return true;
+  }
+
 
   static bool _checkCross(
       FilterPosition oneFilter, FilterPosition anotherFilter) {

@@ -4,7 +4,7 @@ import 'image_states.dart';
 
 class ImgConst {
   static const undefinedPosValue = -999999;
-  static const startGranularityRatio = 0.25;
+  static const startGranularityRatio = 0.35;
   static const startRadiusRatio = 0.35;
   static const defaultImageSize = 2400;
   static const imgQuality = 80; //[0..100]

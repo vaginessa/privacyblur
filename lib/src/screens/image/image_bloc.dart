@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 import 'dart:ui' as img_tools;
 
@@ -278,7 +279,7 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
   Stream<ImageStateScreen> detectFaces() async* {
     imageFilter.transactionStart();
     var detectionResult = await faceDetection.detectFaces(
-        imageFilter.getImageNV21(),
+        Platform.isIOS ? imageFilter.getImageARGB8() : imageFilter.getImageNV21(),
         imageFilter.imageWidth(),
         imageFilter.imageHeight());
     if (_blocState.addFaces(detectionResult)) _blocState.isImageSaved = false;

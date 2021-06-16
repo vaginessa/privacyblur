@@ -45,14 +45,6 @@ import MLKitVision
 
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
-    
-    
-  private struct PixelData {
-    var a: UInt8 = 255
-    var r: UInt8
-    var g: UInt8
-    var b: UInt8
-  }
 
   private func detectFaces(call: FlutterMethodCall, result: @escaping FlutterResult) {
     if let args = call.arguments as? Dictionary<String, Any>,
@@ -94,6 +86,20 @@ import MLKitVision
     } else {
         result(FlutterError.init(code: "BAD ARGS", message: nil, details: nil))
     }
+  }
+
+  func imageFromARGB32Bitmap(argb: [], width: UInt, height: UInt) -> UIImage? {
+      let bitsPerComponent: UInt = 8
+      let bitsPerPixel: UInt = 32
+      let rgbColorSpace = CGColorSpaceCreateDeviceRGB()
+      let bitmapInfo:CGBitmapInfo = CGBitmapInfo(CGImageAlphaInfo.PremultipliedFirst.rawValue)
+
+      var data = argb
+      let providerRef = CGDataProviderCreateWithCFData(NSData(bytes: &data, length: data.count * sizeof(PixelData)))
+      let providerRefthing: CGDataProvider = providerRef
+      let cgImage = CGImageCreate(width, height, bitsPerComponent, bitsPerPixel, width * 4, rgbColorSpace, bitmapInfo, providerRef, nil, true, kCGRenderingIntentDefault)
+      let cgiimagething: CGImage = cgImage
+      return UIImage(CGImage: cgImage)
   }
 
   private func getHeapSize(result: FlutterResult) {

@@ -42,21 +42,21 @@ import MLKitVision
       }
     })
 
-
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
   private func detectFaces(call: FlutterMethodCall, result: @escaping FlutterResult) {
     if let args = call.arguments as? Dictionary<String, Any>,
-       let srcImage = args["nv21"] as? FlutterStandardTypedData,
-       let width = args["width"] as? Int,
-       let height = args["height"] as? Int {
+       let srcImage : FlutterStandardTypedData = args["nv21"] as? FlutterStandardTypedData,
+       let width = args["width"] as? NSNumber,
+       let height = args["height"] as? NSNumber {
+        
+        let image : UIImage = imageFromARGB32Bitmap(argb: srcImage.data, width: Int(width), height: Int(height))!
 
         let options = FaceDetectorOptions()
          options.performanceMode = .fast
          options.landmarkMode = .none
          options.classificationMode = .none
-        let image : UIImage = UIImage(data: srcImage.data)!
         let visionImage = VisionImage(image: image)
         visionImage.orientation = image.imageOrientation
         let faceDetector = FaceDetector.faceDetector(options: options)
@@ -64,42 +64,43 @@ import MLKitVision
         weak var weakSelf = self
         faceDetector.process(visionImage) { faces, error in
           guard let strongSelf = weakSelf else {
-              print("Self is nil!")
               return
           }
-        var arr: Array<Int> = Array()
-        var arrIndex: Int = 0
+            var arr: Array<UInt32> = Array.init(repeating: 0, count: Int(faces!.count) * 4)
+            var arrIndex: Int = 0
 
         for face in faces! {
+            arr[arrIndex] = UInt32(face.frame.minX)
             arrIndex += 1
-            arr[arrIndex] = Int(face.frame.minX)
+            arr[arrIndex] = UInt32(face.frame.minY)
             arrIndex += 1
-            arr[arrIndex] = Int(face.frame.minY)
+            arr[arrIndex] = UInt32(face.frame.maxX)
             arrIndex += 1
-            arr[arrIndex] = Int(face.frame.maxX)
+            arr[arrIndex] = UInt32(face.frame.maxY)
             arrIndex += 1
-            arr[arrIndex] = Int(face.frame.maxY)
         }
-          result(arr)
-            return
+          result(FlutterStandardTypedData(int32: arr.withUnsafeBufferPointer {Data(buffer: $0)}))
+          return
         }
     } else {
-        result(FlutterError.init(code: "BAD ARGS", message: nil, details: nil))
+      result(FlutterError.init(code: "BAD ARGS", message: nil, details: nil))
     }
   }
 
-  func imageFromARGB32Bitmap(argb: [], width: UInt, height: UInt) -> UIImage? {
+  func imageFromARGB32Bitmap(argb: Data, width: Int, height: Int) -> UIImage? {
       let bitsPerComponent: UInt = 8
       let bitsPerPixel: UInt = 32
       let rgbColorSpace = CGColorSpaceCreateDeviceRGB()
-      let bitmapInfo:CGBitmapInfo = CGBitmapInfo(CGImageAlphaInfo.PremultipliedFirst.rawValue)
+    let bitmapInfo:CGBitmapInfo = CGBitmapInfo.init(rawValue: CGImageAlphaInfo.premultipliedFirst.rawValue)
 
-      var data = argb
-      let providerRef = CGDataProviderCreateWithCFData(NSData(bytes: &data, length: data.count * sizeof(PixelData)))
-      let providerRefthing: CGDataProvider = providerRef
-      let cgImage = CGImageCreate(width, height, bitsPerComponent, bitsPerPixel, width * 4, rgbColorSpace, bitmapInfo, providerRef, nil, true, kCGRenderingIntentDefault)
-      let cgiimagething: CGImage = cgImage
-      return UIImage(CGImage: cgImage)
+    var nsData = argb as NSData
+    let rawPtr = nsData.bytes
+    let providerRef = CGDataProvider.init(data: NSData(bytes: rawPtr, length: 4 * Int(width) * Int(height) ))
+      let providerRefthing: CGDataProvider = providerRef!
+    let cgImage = CGImage.init( width: width, height: height, bitsPerComponent: Int(bitsPerComponent), bitsPerPixel: Int(bitsPerPixel), bytesPerRow: width * 4, space: rgbColorSpace, bitmapInfo: bitmapInfo, provider: providerRef!, decode: nil, shouldInterpolate: false, intent: .defaultIntent)
+   
+      let cgiimagething: CGImage = cgImage!
+      return UIImage(cgImage: cgImage!)
   }
 
   private func getHeapSize(result: FlutterResult) {

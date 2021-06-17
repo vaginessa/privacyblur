@@ -58,7 +58,7 @@ class ImagePreviewScreen extends StatelessWidget {
             panEnabled: true,
             constrained: false,
             boundaryMargin: boundaryMargin,
-            minScale: minScale / initialScale,
+            minScale: minScale,
             transformationController: transformationController,
             child: SizedBox(
                 width: image.mainImage.width.toDouble(),

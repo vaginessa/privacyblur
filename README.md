@@ -68,6 +68,7 @@ You can find all requirements in the [CONTRIBUTING](CONTRIBUTING.md#code-style)
 
 ## Features
 
+- Face detection
 - Blur / Pixelate effect
 - Fine / coarse grain effect
 - Round / Square area

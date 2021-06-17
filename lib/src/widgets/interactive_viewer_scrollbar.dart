@@ -46,25 +46,34 @@ class _InteractiveViewerScrollBarsState
 
   Widget _buildScrollBar(bool isHorizontal,
       [double size = 0, double offset = 0]) {
-    return Positioned(
-      top: isHorizontal ? null : offset,
-      right: isHorizontal ? null : 0,
-      bottom: isHorizontal ? 0 : null,
-      left: isHorizontal ? offset : null,
-      child: Container(
-        height: isHorizontal ? 5 : size,
-        width: isHorizontal ? size : 5,
-        decoration: BoxDecoration(
-            color: Colors.blueGrey,
-            borderRadius: BorderRadius.all(Radius.circular(10))),
-      ),
-    );
+    bool shouldBuild =
+        (isHorizontal && size <= 0.95 * widget.viewPortSize.width) ||
+            (!isHorizontal && size <= 0.95 * widget.viewPortSize.height);
+    return shouldBuild
+        ? Positioned(
+            top: isHorizontal ? null : offset,
+            right: isHorizontal ? null : 0,
+            bottom: isHorizontal ? 0 : null,
+            left: isHorizontal ? offset : null,
+            child: Container(
+              height: isHorizontal ? 5 : size,
+              width: isHorizontal ? size : 5,
+              decoration: BoxDecoration(
+                  color: Colors.blueGrey,
+                  borderRadius: BorderRadius.all(Radius.circular(10))),
+            ),
+          )
+        : SizedBox();
   }
 
   Size _calculateScrollBarSize(double transformationScale, Size viewPortSize) {
     /// If fully zoomed out then must equal full screen size
-    double horizontalScrollbarSize = min(max(viewPortSize.width * transformationScale, 5), widget.viewPortSize.width - 10);
-    double verticalScrollbarSize = min(max(viewPortSize.height * transformationScale, 5), widget.viewPortSize.height - 10);
+    double horizontalScrollbarSize = min(
+        max(viewPortSize.width * transformationScale, 5),
+        widget.viewPortSize.width - 10);
+    double verticalScrollbarSize = min(
+        max(viewPortSize.height * transformationScale, 5),
+        widget.viewPortSize.height - 10);
     return Size(horizontalScrollbarSize, verticalScrollbarSize);
   }
 

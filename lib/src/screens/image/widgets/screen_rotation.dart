@@ -23,34 +23,37 @@ class ScreenRotation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var config = LayoutConfig(context);
-
-    if (config.landscapeMode) {
-      double view2Width = view2Landscape;
-      double view1Width = baseWidth - view2Landscape;
-      return Row(
-        children: [
-          SizedBox(
-              width: view1Width.toDouble(),
-              child: view1(context, view1Width, baseHeight, true)),
-          SizedBox(
-              width: view2Width.toDouble(),
-              child: view2(context, view2Width, baseHeight, true))
-        ],
-      );
-    } else {
-      double view2Height = view2Portrait;
-      double view1Height = (baseHeight - view2Height);
-      return Column(
-        children: [
-          SizedBox(
-              height: view1Height.toDouble(),
-              child: view1(context, baseWidth, view1Height, false)),
-          SizedBox(
-              height: view2Height.toDouble(),
-              child: view2(context, baseWidth, view2Height, false))
-        ],
-      );
-    }
+    return OrientationBuilder(
+      builder: (context, orientation) {
+        var config = LayoutConfig(context);
+        if (config.landscapeMode) {
+          double view2Width = view2Landscape;
+          double view1Width = baseWidth - view2Landscape;
+          return Row(
+            children: [
+              SizedBox(
+                  width: view1Width.toDouble(),
+                  child: view1(context, view1Width, baseHeight, true)),
+              SizedBox(
+                  width: view2Width.toDouble(),
+                  child: view2(context, view2Width, baseHeight, true))
+            ],
+          );
+        } else {
+          double view2Height = view2Portrait;
+          double view1Height = (baseHeight - view2Height);
+          return Column(
+            children: [
+              SizedBox(
+                  height: view1Height.toDouble(),
+                  child: view1(context, baseWidth, view1Height, false)),
+              SizedBox(
+                  height: view2Height.toDouble(),
+                  child: view2(context, baseWidth, view2Height, false))
+            ],
+          );
+        }
+      },
+    );
   }
 }

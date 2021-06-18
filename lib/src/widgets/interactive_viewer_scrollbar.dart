@@ -69,10 +69,10 @@ class _InteractiveViewerScrollBarsState
   Size _calculateScrollBarSize(double transformationScale, Size viewPortSize) {
     /// If fully zoomed out then must equal full screen size
     double horizontalScrollbarSize = min(
-        max(viewPortSize.width * transformationScale, 5),
+        max(viewPortSize.width * transformationScale, 25),
         widget.viewPortSize.width - 10);
     double verticalScrollbarSize = min(
-        max(viewPortSize.height * transformationScale, 5),
+        max(viewPortSize.height * transformationScale, 25),
         widget.viewPortSize.height - 10);
     return Size(horizontalScrollbarSize, verticalScrollbarSize);
   }

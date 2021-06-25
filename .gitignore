@@ -10,6 +10,9 @@
 .svn/
 **/.DS_Store
 
+# Jekyll
+docs/.jekyll-cache/
+
 # IntelliJ related
 *.iml
 *.ipr

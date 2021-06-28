@@ -75,9 +75,8 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
           imageFilter.setFilter(MatrixAppBlur(
               (_blocState.maxPower * position.granularityRatio).toInt()));
         }
-        var radius = position.getVisibleRadius();
-        imageFilter.apply2Area(
-            position.posX, position.posY, radius, position.isRounded);
+        imageFilter.apply2Area(position.posX, position.posY,
+            position.getVisibleRadius(), position.isRounded);
         position.canceled = false;
         position.forceRedraw = false;
       }
@@ -263,7 +262,7 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
       yield* _yieldCriticalException(Keys.Messages_Errors_Img_Not_Readable);
       return;
     }
-    _blocState.maxRadius = (max(tmpImage.width, tmpImage.height) ~/ 4);
+    _blocState.maxRadius = (max(tmpImage.width, tmpImage.height) ~/ 2);
     _blocState.maxPower = (max(tmpImage.width, tmpImage.height) ~/ 35);
     _blocState.resetSelection();
     ImageAppFilter.setMaxProcessedWidth(_blocState.maxRadius * 3);

@@ -119,7 +119,7 @@ class ImageToolsWidget extends StatelessWidget {
       case EditTool.EditSize:
         return Slider.adaptive(
             activeColor: AppTheme.fontColor(context),
-            value: curRadius,
+            value: curRadius > 1.0 ? 1.0 : curRadius,
             min: 0.0,
             max: 1.0,
             onChanged: (double radius) => onRadiusChanged(radius));

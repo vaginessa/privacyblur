@@ -75,9 +75,8 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
           imageFilter.setFilter(MatrixAppBlur(
               (_blocState.maxPower * position.granularityRatio).toInt()));
         }
-        var radius = position.getVisibleRadius();
-        imageFilter.apply2Area(
-            position.posX, position.posY, radius, position.isRounded);
+        imageFilter.apply2Area(position.posX, position.posY,
+            position.getVisibleRadius(), position.isRounded);
         position.canceled = false;
         position.forceRedraw = false;
       }

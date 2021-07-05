@@ -7,7 +7,7 @@ layout: home
 <tr>
 
 <td valign="top" style="width: 40%; border: none">
-<img src="assets/preview.png" alt="Preview Screenshot">
+<img style="-webkit-filter: drop-shadow(5px 5px 5px #222); filter: drop-shadow(5px 5px 5px #222);" src="assets/preview.png" alt="Preview Screenshot">
 </td>
 
 <td valign="top" style="border: none">
@@ -17,10 +17,27 @@ Obfuscate sensitive areas in your pictures before sharing them online.
 <br/>
 <br/>
 <strong>PrivacyBlur</strong> does one thing only and does it well: <strong>blur</strong> or <strong>pixelate</strong> areas of your images with a few finger taps.
- - Hide kids, faces, documents, numbers, names, etc., from your pictures in mere seconds.<br/>With <strong>PrivacyBlur</strong> at your side, you can share your pictures online without second thoughts.
+
 <br/>
 <br/>
-No in-app purchases. No ads. No watermark. No hassle. <strong>Free forever</strong> because privacy shouldn't cost anything. Free because we care!
+
+Hide kids, faces, documents, numbers, names, etc., from your pictures in mere seconds.
+<br/>
+<br/>
+ 
+ With <strong>PrivacyBlur</strong> at your side, you can share your pictures online without second thoughts.
+
+<p>
+<ul>
+<li>No in-app purchases</li>
+<li>No ads</li>
+<li>No watermark</li>
+<li>No need to unlock anything</li>
+<li><a href="https://github.com/MATHEMA-GmbH/privacyblur">Completely open source</a></li>
+</ul>
+</p>
+
+<strong>Free forever</strong> because privacy shouldn't cost anything. Free because we care!
 <p style="text-align:center;"><img src="assets/ic_launcher_round.png" alt="PrivacyBlur Logo"></p>
 Download now!
 </p>
@@ -46,9 +63,5 @@ Download now!
 </td>
 </tr>
 </table>
-
-<p style="text-align: center;">
-Want to contribute? You can find the source code at&nbsp;<a href="https://github.com/MATHEMA-GmbH/privacyblur">https://github.com/MATHEMA-GmbH/privacyblur</a>
-</p>
 
 <p style="text-align: center;">Made with <span style="color: red;">&#160;❤&#160;</span> by <a href="https://www.mathema.de/">MATHEMA</a></p>

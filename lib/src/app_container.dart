@@ -1,8 +1,8 @@
 import 'package:flutter_translate/flutter_translate.dart';
 
-import 'src/app.dart';
-import 'src/di.dart';
-import 'src/router.dart';
+import 'app.dart';
+import 'di.dart';
+import 'router.dart';
 
 class AppContainer {
   LocalizationDelegate? _localizationDelegate;
@@ -11,7 +11,6 @@ class AppContainer {
   late DependencyInjection _di;
   late ScreenNavigator _navigator;
   late AppRouter _router;
-
 
   static final AppContainer _singleton = AppContainer._internal();
 
@@ -32,7 +31,7 @@ class AppContainer {
   }
 
   Future _createLocalizedAppConfig() async {
-    if(_localizationDelegate != null) return;
+    if (_localizationDelegate != null) return;
     _localizationDelegate = await LocalizationDelegate.create(
         basePath: 'lib/resources/i18n/',
         fallbackLocale: 'en_US',
@@ -41,7 +40,7 @@ class AppContainer {
   }
 
   _createLocalizedApp() {
-    if(_app != null) return;
+    if (_app != null) return;
     _app = LocalizedApp(_localizationDelegate!, PixelMonsterApp(_router));
   }
 }

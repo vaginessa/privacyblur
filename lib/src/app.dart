@@ -4,6 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:privacyblur/resources/localization/keys.dart';
 import 'package:privacyblur/src/router.dart';
+import 'package:privacyblur/src/utils/flavors.dart';
 
 import 'widgets/adaptive_widgets_builder.dart';
 
@@ -24,7 +25,7 @@ class PixelMonsterApp extends StatelessWidget {
           return _router.onGenerateInitialRoutes(routeName);
         },
         initialRoute: _router.selectInitialRoute(),
-        debugShowCheckedModeBanner: false,
+        debugShowCheckedModeBanner: BuildFlavor.isFoss,
         localizationsDelegates: [
           GlobalCupertinoLocalizations.delegate,
           GlobalMaterialLocalizations.delegate,

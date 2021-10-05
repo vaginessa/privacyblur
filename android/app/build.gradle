@@ -34,8 +34,30 @@ if (keystorePropertiesFile.exists()) {
 android {
     compileSdkVersion 30
 
+    flavorDimensions "flavor-type"
+    productFlavors {
+        production {
+            dimension "flavor-type"
+            applicationId "de.mathema.privacyblur"
+            versionNameSuffix "-prod"
+            resValue "string", "app_name", "PrivacyBlur Production"
+        }
+        foss {
+            dimension "flavor-type"
+            applicationId "de.mathema.privacyblur"
+            versionNameSuffix "-foss"
+            resValue "string", "app_name", "PrivacyBlur Foss"
+        }
+    }
+
     sourceSets {
-        main.java.srcDirs += 'src/main/kotlin'
+        main.java.srcDirs += 'src/foss/kotlin'
+/*        production {
+            java.srcDirs += 'src/main/kotlin'
+        }*/
+/*        foss {
+            java.srcDirs += 'src/foss/kotlin'
+        }*/
     }
 
     lintOptions {
@@ -75,5 +97,5 @@ flutter {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'com.google.mlkit:face-detection:16.1.1'
+    productionImplementation 'com.google.mlkit:face-detection:16.1.1'
 }

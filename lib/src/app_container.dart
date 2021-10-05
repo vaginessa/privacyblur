@@ -26,7 +26,7 @@ class AppContainer {
 
   Future<LocalizedApp> get app async {
     await _createLocalizedAppConfig();
-    await _createLocalizedApp();
+    _createLocalizedApp();
     return _app!;
   }
 

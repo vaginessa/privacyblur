@@ -189,13 +189,14 @@ class ImageToolsWidget extends StatelessWidget {
               onPressed: () => onEditToolSelected(EditTool.EditShape),
               iconSize: _internalLayout.iconSize,
             ),
-            if(!BuildFlavor.isFoss) IconButtonBuilder.build(
-              rotateIconQuarter: isLandscape ? 1 : 0,
-              icon: AppIcons.face,
-              color: AppTheme.fontColor(context),
-              onPressed: onDetectFace,
-              iconSize: _internalLayout.iconSize,
-            ),
+            if (!BuildFlavor.isFoss)
+              IconButtonBuilder.build(
+                rotateIconQuarter: isLandscape ? 1 : 0,
+                icon: AppIcons.face,
+                color: AppTheme.fontColor(context),
+                onPressed: onDetectFace,
+                iconSize: _internalLayout.iconSize,
+              ),
             IconButtonBuilder.build(
               rotateIconQuarter: isLandscape ? 1 : 0,
               icon: AppIcons.delete,

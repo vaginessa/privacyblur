@@ -78,8 +78,8 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
           return Column(
             children: [
               Section(
-                  child:
-                      Image.asset('lib/resources/images/launch_image.png', height: min(screenInnerHeight * 0.3, 360)),
+                  child: Image.asset('lib/resources/images/launch_image.png',
+                      height: min(screenInnerHeight * 0.3, 360)),
                   sectionHeight: screenInnerHeight * 0.4),
               Section(
                   child: Text(

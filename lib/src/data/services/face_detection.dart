@@ -14,13 +14,15 @@ class Face {
 typedef Faces = List<Face>;
 
 abstract class FaceDetectionService {
-  Future<Faces> detectFaces(Uint8List nv21ImageData, int width, int height) async {
+  Future<Faces> detectFaces(
+      Uint8List nv21ImageData, int width, int height) async {
     return Future.value(Faces.empty());
   }
 }
 
 class FaceDetection extends FaceDetectionService {
-  static const _platform = const MethodChannel('de.mathema.privacyblur/face_detection');
+  static const _platform =
+      const MethodChannel('de.mathema.privacyblur/face_detection');
 
   FaceDetection._privateConstructor();
 

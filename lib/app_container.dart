@@ -5,11 +5,13 @@ import 'src/di.dart';
 import 'src/router.dart';
 
 class AppContainer {
-  late LocalizationDelegate? _localizationDelegate;
+  LocalizationDelegate? _localizationDelegate;
+  LocalizedApp? _app;
+
   late DependencyInjection _di;
   late ScreenNavigator _navigator;
   late AppRouter _router;
-  late LocalizedApp _app;
+
 
   static final AppContainer _singleton = AppContainer._internal();
 
@@ -26,11 +28,11 @@ class AppContainer {
   Future<LocalizedApp> get app async {
     await _createLocalizedAppConfig();
     await _createLocalizedApp();
-    return _app;
+    return _app!;
   }
 
   Future _createLocalizedAppConfig() async {
-    if(_localizationDelegate is LocalizationDelegate) return;
+    if(_localizationDelegate != null) return;
     _localizationDelegate = await LocalizationDelegate.create(
         basePath: 'lib/resources/i18n/',
         fallbackLocale: 'en_US',
@@ -39,7 +41,7 @@ class AppContainer {
   }
 
   _createLocalizedApp() {
-    if(_app is LocalizedApp) return;
+    if(_app != null) return;
     _app = LocalizedApp(_localizationDelegate!, PixelMonsterApp(_router));
   }
 }

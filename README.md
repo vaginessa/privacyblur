@@ -117,16 +117,36 @@ No further requirements for building an android version.
 
 For deployment information visit: [Deployment Guide Android](https://flutter.dev/docs/deployment/android)
 
+### Flavors
+
+In order to upload to different Platforms/Stores we implemented build flavors.
+
+- foss (for FDroid)
+- production (for all other Platforms)
+
+#### Building with Flavors
+
+For Debugging:
+````bash
+flutter run --flavor [flavor_name] -t lib/[entry_flavor_file].dart
+````
+For Deployment:
+````bash
+flutter build [platform] --flavor [flavor_name] -t lib/[entry_flavor_file].dart
+````
+
 ## Structure
 
 ```
 lib/--+--main.dart (entry point)
+      +--main_foss.dart (entry point for foss flavor)
       |
       +--resources/--- images, fonts, strings, etc...
       |
-      +--------src/--+----- app.dart (some inital code)
-                     +---router.dart (navigation handling)
-                     +-------di.dart (dependency injection) 
+      +--------src/--+------app.dart (some inital code)
+                     +------app_container.dart (app dependency initialization)
+                     +------router.dart (navigation handling)
+                     +------di.dart (dependency injection) 
                      |
                      |
                      +--screens/--screen_name/

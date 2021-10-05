@@ -43,6 +43,7 @@ dependencies:
   cupertino_icons: ^1.0.3
   flutter_translate_gen: ^2.0.0
   build_runner: ^2.0.3
+  flutter_flavorizr: ^2.0.0
 
 dev_dependencies:
   flutter_test:
@@ -66,3 +67,18 @@ flutter:
     - family: PrivacyBlur
       fonts:
         - asset: lib/resources/fonts/PrivacyBlur.ttf
+
+flavorizr:
+  ide: "idea"
+  app:
+    android:
+      flavorDimensions: "flavor-type"
+
+  flavors:
+    foss:
+      app:
+        name: "Open Source Version"
+      macOS:
+        bundleId: "de.mathema.pixelmonster"
+      android:
+        applicationId: "de.mathema.privacyblur"

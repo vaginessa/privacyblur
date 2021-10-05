@@ -25,7 +25,7 @@ class PixelMonsterApp extends StatelessWidget {
           return _router.onGenerateInitialRoutes(routeName);
         },
         initialRoute: _router.selectInitialRoute(),
-        debugShowCheckedModeBanner: BuildFlavor.isFoss,
+        debugShowCheckedModeBanner: false,
         localizationsDelegates: [
           GlobalCupertinoLocalizations.delegate,
           GlobalMaterialLocalizations.delegate,

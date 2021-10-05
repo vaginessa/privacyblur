@@ -6,6 +6,7 @@ import 'package:privacyblur/resources/localization/keys.dart';
 import 'package:privacyblur/src/screens/image/helpers/image_states.dart';
 import 'package:privacyblur/src/screens/image/utils/internal_layout.dart';
 import 'package:privacyblur/src/screens/image/widgets/segmented_control.dart';
+import 'package:privacyblur/src/utils/flavors.dart';
 import 'package:privacyblur/src/widgets/adaptive_widgets_builder.dart';
 import 'package:privacyblur/src/widgets/theme/icons_provider.dart';
 import 'package:privacyblur/src/widgets/theme/theme_provider.dart';
@@ -188,7 +189,7 @@ class ImageToolsWidget extends StatelessWidget {
               onPressed: () => onEditToolSelected(EditTool.EditShape),
               iconSize: _internalLayout.iconSize,
             ),
-            IconButtonBuilder.build(
+            if(!BuildFlavor.isFoss) IconButtonBuilder.build(
               rotateIconQuarter: isLandscape ? 1 : 0,
               icon: AppIcons.face,
               color: AppTheme.fontColor(context),

@@ -132,7 +132,7 @@ flutter run --flavor [flavor_name] -t lib/[entry_flavor_file].dart
 ````
 For Deployment:
 ````bash
-flutter build [platform] --flavor [flavor_name]
+flutter build [platform] --flavor [flavor_name] -t lib/[entry_flavor_file].dart
 ````
 
 ## Structure

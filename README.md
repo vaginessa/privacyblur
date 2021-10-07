@@ -1,4 +1,4 @@
-# Privacy Blur
+# PrivacyBlur
 
 ![Logo](./android/app/src/main/res/mipmap-hdpi/ic_launcher.png)
 
@@ -32,7 +32,8 @@ The App is available on Google Playstore  and the the Appstore now!
   - [Setup](#flutter-sdk-setup)
     - [windows](#windows)
     - [macOS](#macos)
-  - [Building](#building)
+  - [Building](#Building)
+    - [Flavors](#flavors)
     - [iOS](#ios-building)
     - [Android](#android-building)
   - [Structure](#structure)
@@ -87,36 +88,8 @@ click here:
 click here:
 [Installation Guide on MacOS](https://flutter.dev/docs/get-started/install/macos)
 
-## Building
-
-The app is targeted for iOS and Android on Phones and Tablets.
-Desktop and Web Platform may cause issues and are currently not planned.
-
-It's recommended to run:
-```bash
-flutter clean
-flutter pub get
-```
-as soon as building issues appear.
-
-
-### iOS-Building
-
-[Flutter guide for building on iOS](https://flutter.dev/docs/deployment/ios)
-
-You will need an MacOS Machine to be able to run a Flutter iOS application.
-Please also make sure you installed the correct version of cocoapods and Xcode on your machine.
-
-For deployment information visit: [Deployment Guide iOS](https://flutter.dev/docs/deployment/ios)
-
-### Android-Building
-
-[Flutter guide for building on Android](https://flutter.dev/docs/deployment/android)
-
-No further requirements for building an android version.
-
-For deployment information visit: [Deployment Guide Android](https://flutter.dev/docs/deployment/android)
-
+## Building 
+:warning: :bangbang:
 ### Flavors
 
 In order to upload to different Platforms/Stores we implemented build flavors.
@@ -154,6 +127,34 @@ For Deployment:
 ````bash
 flutter build [platform] --flavor [flavor_name] -t lib/[entry_flavor_file].dart
 ````
+
+The app is targeted for iOS and Android on Phones and Tablets.
+Desktop and Web Platform may cause issues and are currently not planned.
+
+It's recommended to run:
+```bash
+flutter clean
+flutter pub get
+```
+as soon as building issues appear.
+
+
+### iOS-Building
+
+[Flutter guide for building on iOS](https://flutter.dev/docs/deployment/ios)
+
+You will need an MacOS Machine to be able to run a Flutter iOS application.
+Please also make sure you installed the correct version of cocoapods and Xcode on your machine.
+
+For deployment information visit: [Deployment Guide iOS](https://flutter.dev/docs/deployment/ios)
+
+### Android-Building
+
+[Flutter guide for building on Android](https://flutter.dev/docs/deployment/android)
+
+No further requirements for building an android version.
+
+For deployment information visit: [Deployment Guide Android](https://flutter.dev/docs/deployment/android)
 
 ## Structure
 

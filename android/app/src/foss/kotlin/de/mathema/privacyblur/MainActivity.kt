@@ -20,5 +20,6 @@ class MainActivity : FlutterActivity() {
                 result.notImplemented()
             }
         }
+
     }
 }

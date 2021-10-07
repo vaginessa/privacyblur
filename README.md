@@ -126,6 +126,26 @@ In order to upload to different Platforms/Stores we implemented build flavors.
 
 #### Building with Flavors
 
+**This section is very important if you´re trying to run the project on you own!**
+The application is available in different flavors:
+
+- foss (version without MLKit - FaceDetection)
+- full (self-explanatory)
+
+Running with default commands: ```flutter run``` and ```flutter build``` wont work anymore here.
+Make sure to read this section and configure your build-types according to the flavors.
+
+More on how to configure build-types in you IDE:
+
+- Click in the top bar of your IDE on the corresponding Build-Configuration tile
+- Click "Edit Configurations" (IntelliJ)
+- Click "+"-Button to add a configuration
+- Enter the entry point - e.g.: ``[PROJECT_PATH]/lib/main-[flavor_name].dart``
+- Enter the build flavor
+
+![Instructions](docs/assets/blur1633609294856.jpg)
+
+
 For Debugging:
 ````bash
 flutter run --flavor [flavor_name] -t lib/[entry_flavor_file].dart

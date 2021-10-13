@@ -32,9 +32,19 @@ platform :android do
 
   desc "Deploy a new version to the Google Play"
   lane :deploy do
-    gradle(task: "clean assembleRelease", project_dir: 'android/')
+    gradle(task: "clean assembleRelease", project_dir: 'android/', flavor: "full", flags: "-t lib/main-full.dart")
     upload_to_play_store(
       skip_upload_changelogs: true
     )
+  end
+
+  desc "Build APK with flavor foss"
+  lane :build_foss do
+    gradle(task: "clean assembleFossRelease", project_dir: 'android/', flags: "-t lib/main-foss.dart")
+  end
+
+  desc "Build APK with flavor full"
+  lane :build_full do
+    gradle(task: "clean assembleFullRelease", project_dir: 'android/', flags: "-t lib/main-full.dart")
   end
 end

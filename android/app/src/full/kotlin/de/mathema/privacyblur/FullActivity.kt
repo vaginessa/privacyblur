@@ -8,7 +8,7 @@ import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
-class MainActivity : FlutterActivity() {
+class FullActivity : FlutterActivity() {
     private val CHANNEL = "de.mathema.privacyblur/memory"
     private val FACEDETECTION = "de.mathema.privacyblur/face_detection"
 

@@ -51,7 +51,7 @@ android {
     }
 
     sourceSets {
-        main.java.srcDirs += 'src/foss/kotlin'
+        main.java.srcDirs += 'src/main/kotlin'
     }
 
     lintOptions {

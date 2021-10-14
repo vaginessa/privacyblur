@@ -218,6 +218,7 @@ class _AppBarBuilder {
         leadingWidth: 80,
         brightness: Brightness.dark,
         centerTitle: true,
+        backgroundColor: _isIOS ? AppTheme.barColor(context) : Theme.of(context).primaryColor,
       );
     }
   }

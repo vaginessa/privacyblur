@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'dart:ui' as img_tools;
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
@@ -14,6 +13,7 @@ import 'package:privacyblur/src/screens/image/utils/internal_layout.dart';
 import 'package:privacyblur/src/screens/image/widgets/image_viewer.dart';
 import 'package:privacyblur/src/utils/flavors.dart';
 import 'package:privacyblur/src/utils/image_filter/helpers/filter_result.dart';
+import 'package:privacyblur/src/utils/layout_config.dart';
 import 'package:privacyblur/src/widgets/adaptive_widgets_builder.dart';
 import 'package:privacyblur/src/widgets/message_bar.dart';
 import 'package:privacyblur/src/widgets/theme/icons_provider.dart';
@@ -79,6 +79,7 @@ class ImageScreen extends StatelessWidget with AppMessages {
 
                 if (state == null) {
                   _bloc.add(ImageEventSelected(filename));
+                  LayoutConfig.desktop.updateMenu(key: UniqueKey());
                 }
                 final imgNotSaved =
                     (state is ImageStateScreen && (!state.isImageSaved));
@@ -94,13 +95,13 @@ class ImageScreen extends StatelessWidget with AppMessages {
                 return ScaffoldWithAppBar.build(
                     onBackPressed: () => _onBack(context, state),
                     context: context,
-                    title: translate(Keys.App_Name),
+                    title: '',
                     actions: _actionsIcon(context, imgNotSaved, imgSavedOnce),
                     body: SafeArea(
                       child: _buildHomeBody(context, state),
                     ),
                     floatingActionButton: (noSelectedPosition &&
-                            !BuildFlavor.isFoss)
+                            !BuildFlavor.isFoss && !AppTheme.isDesktop)
                         ? Padding(
                             padding:
                                 EdgeInsets.fromLTRB(0, 0, fabRight, fabBottom),

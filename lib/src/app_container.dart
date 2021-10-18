@@ -1,8 +1,14 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 
 import 'app.dart';
 import 'di.dart';
 import 'router.dart';
+import 'constants.dart';
+import 'utils/layout_config.dart';
+import 'widgets/theme/theme_provider.dart';
 
 class AppContainer {
   LocalizationDelegate? _localizationDelegate;
@@ -33,14 +39,20 @@ class AppContainer {
   Future _createLocalizedAppConfig() async {
     if (_localizationDelegate != null) return;
     _localizationDelegate = await LocalizationDelegate.create(
-        basePath: 'lib/resources/i18n/',
-        fallbackLocale: 'en_US',
+        basePath: LOCALIZATION_RESOURCES_PATH + "/",
+        fallbackLocale: DEFAULT_LOCALE,
         supportedLocales: ['en_US', 'de']);
+    if(AppTheme.isDesktop) _setupDesktopConfigs();
     return;
   }
 
-  _createLocalizedApp() {
+  void _createLocalizedApp() {
     if (_app != null) return;
     _app = LocalizedApp(_localizationDelegate!, PixelMonsterApp(_router));
+  }
+
+  void _setupDesktopConfigs() {
+    LayoutConfig.desktop.setupDesktopScreenBoundaries();
+    LayoutConfig.desktop.updateMenu(key: UniqueKey());
   }
 }

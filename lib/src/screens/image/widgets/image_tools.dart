@@ -31,23 +31,22 @@ class ImageToolsWidget extends StatelessWidget {
   final Function() onFilterDelete;
   final Function() onDetectFace;
 
-  ImageToolsWidget(
-      {required this.onRadiusChanged,
-      required this.onPowerChanged,
-      required this.onPreview,
-      required this.isLandscape,
-      required this.curRadius,
-      required this.curPower,
-      required this.onBlurSelected,
-      required this.onPixelateSelected,
-      required this.onCircleSelected,
-      required this.onSquareSelected,
-      required this.isPixelate,
-      required this.isRounded,
-      required this.onEditToolSelected,
-      required this.activeTool,
-      required this.onFilterDelete,
-      required this.onDetectFace});
+  ImageToolsWidget({required this.onRadiusChanged,
+    required this.onPowerChanged,
+    required this.onPreview,
+    required this.isLandscape,
+    required this.curRadius,
+    required this.curPower,
+    required this.onBlurSelected,
+    required this.onPixelateSelected,
+    required this.onCircleSelected,
+    required this.onSquareSelected,
+    required this.isPixelate,
+    required this.isRounded,
+    required this.onEditToolSelected,
+    required this.activeTool,
+    required this.onFilterDelete,
+    required this.onDetectFace});
 
   late Map<int, Widget> shapes;
   late Map<int, Widget> types;
@@ -189,7 +188,7 @@ class ImageToolsWidget extends StatelessWidget {
               onPressed: () => onEditToolSelected(EditTool.EditShape),
               iconSize: _internalLayout.iconSize,
             ),
-            if (!BuildFlavor.isFoss)
+            if (!BuildFlavor.isFoss && !AppTheme.isDesktop)
               IconButtonBuilder.build(
                 rotateIconQuarter: isLandscape ? 1 : 0,
                 icon: AppIcons.face,

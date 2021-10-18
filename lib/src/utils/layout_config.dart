@@ -1,6 +1,13 @@
 import 'dart:math';
 
+import 'package:desktop_window/desktop_window.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_translate/flutter_translate.dart';
+import 'package:menubar/menubar.dart';
+import 'package:privacyblur/resources/localization/keys.dart';
+
+import 'desktop_config.dart';
 
 class LayoutConfig {
   final double minScale = 0.8;
@@ -24,6 +31,8 @@ class LayoutConfig {
   late bool landscapeMode;
   late bool isTablet;
   late bool isNeedSafeArea;
+
+  static DesktopWindowConfig get desktop => DesktopWindowConfig();
 
   LayoutConfig(BuildContext context) {
     _mediaQueryData = MediaQuery.of(context);

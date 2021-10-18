@@ -3,13 +3,16 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:menubar/menubar.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:privacyblur/resources/localization/keys.dart';
 import 'package:privacyblur/src/data/services/local_storage.dart';
 import 'package:privacyblur/src/di.dart';
 import 'package:privacyblur/src/router.dart';
+import 'package:privacyblur/src/screens/main/utils/image_picking.dart';
 import 'package:privacyblur/src/screens/main/widgets/version_number.dart';
 import 'package:privacyblur/src/utils/layout_config.dart';
 import 'package:privacyblur/src/widgets/adaptive_widgets_builder.dart';
@@ -30,12 +33,10 @@ class MainScreen extends StatefulWidget with AppMessages {
 }
 
 class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
-  final _picker = ImagePicker();
-  late LayoutConfig _layoutConfig;
+  final _picker = ImagePicking();
   late Color primaryColor;
   final String websiteURL = 'https://mathema-apps.de/';
-  bool havePermission = true;
-  bool userAlreadyClickButton = false;
+  final menuKey = UniqueKey();
 
   void initState() {
     super.initState();
@@ -51,18 +52,20 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      _updatePermissionState();
+    if (state == AppLifecycleState.resumed && !AppTheme.isDesktop) {
+      setState(() {
+        _picker.updatePermissionState();
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    if(AppTheme.isDesktop && LayoutConfig.desktop.currentMenu != menuKey.hashCode) _loadDesktopMenu();
     primaryColor = AppTheme.primaryColor;
-    _layoutConfig = LayoutConfig(context);
     return ScaffoldWithAppBar.build(
         context: context,
-        title: translate(Keys.App_Name),
+        title: translate(Keys.Main_Screen_Title),
         body: buildPageBody(context),
         actions: []);
   }
@@ -104,7 +107,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                           padding: EdgeInsets.symmetric(
                               vertical: 10, horizontal: 20),
                           color: Colors.white),
-                      if (!havePermission) _showPermissionWarning(),
+                      if (!_picker.permissionsGranted) _showPermissionWarning(),
                     ],
                   ),
                   sectionHeight: screenInnerHeight * 0.2),
@@ -135,6 +138,20 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     );
   }
 
+  void _loadDesktopMenu() {
+    LayoutConfig.desktop.updateMenu(
+      key: menuKey,
+      menus: [
+        Submenu(label: translate(Keys.Main_Screen_Menu_Title), children: [
+          MenuItem(
+              label: translate(Keys.Main_Screen_Select_Image),
+              onClicked: () => openImageAction(context, ImageSource.gallery),
+              shortcut: LogicalKeySet(LogicalKeyboardKey.keyO)
+          )
+        ])
+    ]);
+  }
+
   Widget _showPermissionWarning() {
     return Column(
       children: [
@@ -153,31 +170,6 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     );
   }
 
-  Future<bool> _requestPermission(Permission permission) async {
-    if (await permission.isGranted || await permission.isLimited) {
-      return true;
-    } else {
-      return ((await permission.request()) == PermissionStatus.granted ||
-          (await permission.request()) == PermissionStatus.limited);
-    }
-  }
-
-  void _updatePermissionState() async {
-    if (!userAlreadyClickButton) return;
-    bool resultPermission = false;
-    if (Platform.isIOS) {
-      resultPermission = (await Permission.photos.isGranted ||
-          await Permission.photos.isLimited);
-    } else {
-      resultPermission = (await Permission.storage.isGranted);
-    }
-    if (havePermission != resultPermission) {
-      setState(() {
-        havePermission = resultPermission;
-      });
-    }
-  }
-
   void _showLastImageDialog(BuildContext context) async {
     var path = await widget.localStorage.getLastPath();
     if (path.length > 0) {
@@ -194,37 +186,35 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   }
 
   void openImageAction(BuildContext context, ImageSource type) async {
-    PickedFile? pickedFile;
-    bool status = Platform.isIOS
-        ? await _requestPermission(Permission.photos)
-        : await _requestPermission(Permission.storage);
-    if (status) {
+    if (await _picker.requestLibraryPermissionStatus()) {
       try {
-        pickedFile = await _picker.getImage(source: type);
-      } catch (e) {
+        File? pickedFile = await _picker.pickFile(type);
+        if (pickedFile != null && await pickedFile.exists()) {
+          widget.router.openImageRoute(context, pickedFile.path).then((value) => setState(() {}));
+        } else {
+          widget.showMessage(
+              context: context,
+              message: translate(Keys.Messages_Errors_No_Image));
+        }
+      } catch (err) {
         widget.showMessage(
             context: context,
             message: translate(Keys.Messages_Errors_Image_Library),
             type: MessageBarType.Failure);
         return;
       }
-      if (pickedFile != null && await File(pickedFile.path).exists()) {
-        widget.router.openImageRoute(context, pickedFile.path);
-      } else {
-        widget.showMessage(
-            context: context,
-            message: translate(Keys.Messages_Errors_No_Image));
-      }
     } else {
       var goSettings = await AppConfirmationBuilder.build(context,
           message: translate(Keys.Messages_Errors_Photo_Permissions),
           acceptTitle: translate(Keys.Buttons_Settings),
           rejectTitle: translate(Keys.Buttons_Cancel));
-      userAlreadyClickButton = true;
+      _picker.settingsHasBeenVisited = true;
       if (goSettings) {
         await openAppSettings();
       } else {
-        _updatePermissionState();
+        setState(() {
+          _picker.updatePermissionState();
+        });
       }
     }
   }

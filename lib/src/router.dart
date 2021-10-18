@@ -25,6 +25,15 @@ class ScreenNavigator {
     return Navigator.pushNamed<T?>(context, route, arguments: arguments);
   }
 
+  // TODO: implement this method for opening image on image screen
+  Future<T?> pushNamedAndRemoveUntil<T extends Object>(
+      BuildContext context, String route, String predicateRoute,
+      {Map<String, dynamic>? arguments}) {
+    return Navigator.pushNamedAndRemoveUntil<T?>(
+        context, route, ModalRoute.withName(predicateRoute),
+        arguments: arguments);
+  }
+
   void pop(BuildContext context, [Object? result]) {
     Navigator.pop(context, result);
   }
@@ -132,8 +141,8 @@ class AppRouter {
     }
   }
 
-  void openImageRoute(context, String path) {
-    _navigator.pushNamed(context, _imageRoute, arguments: {imagePathArg: path});
+  Future openImageRoute(context, String path) {
+    return _navigator.pushNamed(context, _imageRoute, arguments: {imagePathArg: path});
   }
 
   void openImagePreview(

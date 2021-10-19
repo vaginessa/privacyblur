@@ -51,13 +51,18 @@ Download now!
 
 <table style="width: 100%; border: none">
 <tr>
-<td style="border: none; text-align: right;">
+<td style="border: none; padding: 0px; text-align: right;">
+      <a href='https://f-droid.org/packages/de.mathema.privacyblur'>
+      <img style='height: 72px; object-fit: cover' alt='Get it on F-Droid' src='https://fdroid.gitlab.io/artwork/badge/get-it-on.png'/>
+      </a>
+</td>
+<td style="border: none; padding: 0px; text-align: center;">
       <a href='https://play.google.com/store/apps/details?id=de.mathema.privacyblur&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
       <img style='height: 72px; object-fit: cover' alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png'/>
       </a>
 </td>
-<td style="border: none; text-align: left;">
-<a href="https://apps.apple.com/us/app/privacyblur/id1536274106?itsct=apps_box_badge&amp;itscg=30200">
+<td style="border: none;  text-align: left;">
+      <a href="https://apps.apple.com/us/app/privacyblur/id1536274106?itsct=apps_box_badge&amp;itscg=30200">
       <img style='height: 50px; object-fit: cover' src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83&amp;releaseDate=1619827200&h=9d23d850d1506bbe56180b2aa8ee51f7" alt="PrivacyBlur">
       </a>
 </td>

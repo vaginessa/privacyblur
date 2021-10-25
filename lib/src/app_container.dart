@@ -41,7 +41,7 @@ class AppContainer {
     _localizationDelegate = await LocalizationDelegate.create(
         basePath: LOCALIZATION_RESOURCES_PATH + "/",
         fallbackLocale: DEFAULT_LOCALE,
-        supportedLocales: ['en_US', 'de']);
+        supportedLocales: ['en_US', 'de', 'zh_TW']);
     if(AppTheme.isDesktop) _setupDesktopConfigs();
     return;
   }

@@ -1,12 +1,10 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 
 import 'app.dart';
+import 'constants.dart';
 import 'di.dart';
 import 'router.dart';
-import 'constants.dart';
 import 'utils/layout_config.dart';
 import 'widgets/theme/theme_provider.dart';
 
@@ -39,8 +37,8 @@ class AppContainer {
   Future _createLocalizedAppConfig() async {
     if (_localizationDelegate != null) return;
     _localizationDelegate = await LocalizationDelegate.create(
-        basePath: LOCALIZATION_RESOURCES_PATH + "/",
-        fallbackLocale: DEFAULT_LOCALE,
+        basePath: localizationResourcesPath + "/",
+        fallbackLocale: defaultLocale,
         supportedLocales: ['en_US', 'de', 'zh_TW']);
     if(AppTheme.isDesktop) _setupDesktopConfigs();
     return;

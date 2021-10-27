@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_translate/flutter_translate.dart';
@@ -26,7 +27,7 @@ class MainScreen extends StatefulWidget with AppMessages {
   final AppRouter router;
   final localStorage = LocalStorage();
 
-  MainScreen(this.di, this.router);
+  MainScreen(this.di, this.router, {Key? key}) : super(key: key);
 
   @override
   _MainScreenState createState() => _MainScreenState();
@@ -38,6 +39,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   final String websiteURL = 'https://mathema-apps.de/';
   final menuKey = UniqueKey();
 
+  @override
   void initState() {
     super.initState();
     WidgetsBinding.instance?.addObserver(this);
@@ -61,7 +63,10 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    if(AppTheme.isDesktop && LayoutConfig.desktop.currentMenu != menuKey.hashCode) _loadDesktopMenu();
+    if (AppTheme.isDesktop &&
+        LayoutConfig.desktop.currentMenu != menuKey.hashCode) {
+      _loadDesktopMenu();
+    }
     primaryColor = AppTheme.primaryColor;
     return ScaffoldWithAppBar.build(
         context: context,
@@ -75,7 +80,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
 
     return SafeArea(
       child: Container(
-        constraints: BoxConstraints.expand(),
+        constraints: const BoxConstraints.expand(),
         child: LayoutBuilder(builder: (context, BoxConstraints constraints) {
           double screenInnerHeight = constraints.minHeight;
           return Column(
@@ -104,7 +109,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                               openImageAction(context, ImageSource.gallery),
                           backgroundColor: AppTheme.buttonColor,
                           rounded: true,
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                               vertical: 10, horizontal: 20),
                           color: Colors.white),
                       if (!_picker.permissionsGranted) _showPermissionWarning(),
@@ -128,7 +133,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                 sectionHeight: screenInnerHeight * 0.1,
               ),
               Section(
-                child: VersionNumber(),
+                child: const VersionNumber(),
                 sectionHeight: screenInnerHeight * 0.1,
               ),
             ],
@@ -139,23 +144,20 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   }
 
   void _loadDesktopMenu() {
-    LayoutConfig.desktop.updateMenu(
-      key: menuKey,
-      menus: [
-        Submenu(label: translate(Keys.Main_Screen_Menu_Title), children: [
-          MenuItem(
-              label: translate(Keys.Main_Screen_Select_Image),
-              onClicked: () => openImageAction(context, ImageSource.gallery),
-              shortcut: LogicalKeySet(LogicalKeyboardKey.keyO)
-          )
-        ])
+    LayoutConfig.desktop.updateMenu(key: menuKey, menus: [
+      Submenu(label: translate(Keys.Main_Screen_Menu_Title), children: [
+        MenuItem(
+            label: translate(Keys.Main_Screen_Select_Image),
+            onClicked: () => openImageAction(context, ImageSource.gallery),
+            shortcut: LogicalKeySet(LogicalKeyboardKey.keyO))
+      ])
     ]);
   }
 
   Widget _showPermissionWarning() {
     return Column(
       children: [
-        SizedBox(
+        const SizedBox(
           height: 10,
         ),
         SizedBox(
@@ -163,7 +165,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
           child: Text(
             translate(Keys.Main_Screen_Photo_Permissions),
             textAlign: TextAlign.center,
-            style: TextStyle(fontStyle: FontStyle.italic),
+            style: const TextStyle(fontStyle: FontStyle.italic),
           ),
         ),
       ],
@@ -172,7 +174,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
 
   void _showLastImageDialog(BuildContext context) async {
     var path = await widget.localStorage.getLastPath();
-    if (path.length > 0) {
+    if (path.isNotEmpty) {
       var canDownscale = await AppConfirmationBuilder.build(context,
           message: translate(Keys.Messages_Errors_Image_Crash),
           acceptTitle: translate(Keys.Buttons_Ok),
@@ -190,7 +192,9 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
       try {
         File? pickedFile = await _picker.pickFile(type);
         if (pickedFile != null && await pickedFile.exists()) {
-          widget.router.openImageRoute(context, pickedFile.path).then((value) => setState(() {}));
+          widget.router
+              .openImageRoute(context, pickedFile.path)
+              .then((value) => setState(() {}));
         } else {
           widget.showMessage(
               context: context,
@@ -200,7 +204,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
         widget.showMessage(
             context: context,
             message: translate(Keys.Messages_Errors_Image_Library),
-            type: MessageBarType.Failure);
+            type: MessageBarType.failure);
         return;
       }
     } else {
@@ -222,6 +226,10 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   void launchLink(String url) async {
     try {
       launch(Uri.encodeFull(url));
-    } catch (e) {}
+    } catch (e) {
+      if (kDebugMode) {
+        print("Url cant be opened");
+      }
+    }
   }
 }

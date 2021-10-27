@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:privacyblur/resources/localization/keys.dart';
 import 'package:privacyblur/src/screens/image/helpers/image_states.dart';
@@ -31,22 +29,25 @@ class ImageToolsWidget extends StatelessWidget {
   final Function() onFilterDelete;
   final Function() onDetectFace;
 
-  ImageToolsWidget({required this.onRadiusChanged,
-    required this.onPowerChanged,
-    required this.onPreview,
-    required this.isLandscape,
-    required this.curRadius,
-    required this.curPower,
-    required this.onBlurSelected,
-    required this.onPixelateSelected,
-    required this.onCircleSelected,
-    required this.onSquareSelected,
-    required this.isPixelate,
-    required this.isRounded,
-    required this.onEditToolSelected,
-    required this.activeTool,
-    required this.onFilterDelete,
-    required this.onDetectFace});
+  ImageToolsWidget(
+      {Key? key,
+      required this.onRadiusChanged,
+      required this.onPowerChanged,
+      required this.onPreview,
+      required this.isLandscape,
+      required this.curRadius,
+      required this.curPower,
+      required this.onBlurSelected,
+      required this.onPixelateSelected,
+      required this.onCircleSelected,
+      required this.onSquareSelected,
+      required this.isPixelate,
+      required this.isRounded,
+      required this.onEditToolSelected,
+      required this.activeTool,
+      required this.onFilterDelete,
+      required this.onDetectFace})
+      : super(key: key);
 
   late Map<int, Widget> shapes;
   late Map<int, Widget> types;
@@ -69,7 +70,7 @@ class ImageToolsWidget extends StatelessWidget {
 
     return Container(
       alignment: Alignment.topCenter,
-      padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+      padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
       child: Row(children: [
         if (isLandscape)
           Expanded(
@@ -77,7 +78,7 @@ class ImageToolsWidget extends StatelessWidget {
             child: TextButtonBuilder.build(
                 color: AppTheme.fontColor(context),
                 text: translate(Keys.Buttons_Preview),
-                onPressed: this.onPreview,
+                onPressed: onPreview,
                 rotateIconQuarter: isLandscape ? 1 : 0),
           ),
         Expanded(
@@ -100,13 +101,13 @@ class ImageToolsWidget extends StatelessWidget {
                         child: TextButtonBuilder.build(
                             color: AppTheme.fontColor(context),
                             text: translate(Keys.Buttons_Preview),
-                            onPressed: this.onPreview,
+                            onPressed: onPreview,
                             rotateIconQuarter: isLandscape ? 1 : 0))
                 ],
               ),
               (_internalLayout.isNeedSafeArea || isLandscape)
                   ? SizedBox(height: _internalLayout.spacer)
-                  : SizedBox(height: 0),
+                  : const SizedBox(height: 0),
             ],
           ),
         )
@@ -115,7 +116,7 @@ class ImageToolsWidget extends StatelessWidget {
   }
 
   Widget _buildControl(BuildContext context) {
-    switch (this.activeTool) {
+    switch (activeTool) {
       case EditTool.EditSize:
         return Slider.adaptive(
             activeColor: AppTheme.fontColor(context),
@@ -145,7 +146,7 @@ class ImageToolsWidget extends StatelessWidget {
   }
 
   Widget _listParameters(context) {
-    return Container(
+    return SizedBox(
       height: _internalLayout.iconSize * 2,
       child: Scrollbar(
         isAlwaysShown: false,
@@ -156,7 +157,7 @@ class ImageToolsWidget extends StatelessWidget {
             IconButtonBuilder.build(
               rotateIconQuarter: isLandscape ? 1 : 0,
               icon: AppIcons.resize,
-              color: this.activeTool == EditTool.EditSize
+              color: activeTool == EditTool.EditSize
                   ? AppTheme.primaryColor
                   : AppTheme.fontColor(context),
               onPressed: () => onEditToolSelected(EditTool.EditSize),
@@ -164,7 +165,7 @@ class ImageToolsWidget extends StatelessWidget {
             ),
             IconButtonBuilder.build(
               icon: AppIcons.granularity,
-              color: this.activeTool == EditTool.EditGranularity
+              color: activeTool == EditTool.EditGranularity
                   ? AppTheme.primaryColor
                   : AppTheme.fontColor(context),
               onPressed: () => onEditToolSelected(EditTool.EditGranularity),
@@ -173,7 +174,7 @@ class ImageToolsWidget extends StatelessWidget {
             IconButtonBuilder.build(
               rotateIconQuarter: isLandscape ? 1 : 0,
               icon: AppIcons.type,
-              color: this.activeTool == EditTool.EditType
+              color: activeTool == EditTool.EditType
                   ? AppTheme.primaryColor
                   : AppTheme.fontColor(context),
               onPressed: () => onEditToolSelected(EditTool.EditType),
@@ -182,7 +183,7 @@ class ImageToolsWidget extends StatelessWidget {
             IconButtonBuilder.build(
               rotateIconQuarter: isLandscape ? 1 : 0,
               icon: AppIcons.shape,
-              color: this.activeTool == EditTool.EditShape
+              color: activeTool == EditTool.EditShape
                   ? AppTheme.primaryColor
                   : AppTheme.fontColor(context),
               onPressed: () => onEditToolSelected(EditTool.EditShape),

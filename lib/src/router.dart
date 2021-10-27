@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:privacyblur/src/di.dart';
 import 'package:privacyblur/src/screens/image/image_view.dart';
@@ -16,7 +15,7 @@ class NoTransitionRoute extends MaterialPageRoute {
 class ScreenNavigator {
   Future<Object?> pushReplacementNamed(BuildContext context, String route,
       {Map<String, dynamic>? arguments}) {
-    return Navigator.pushReplacementNamed<Object?, Null>(context, route,
+    return Navigator.pushReplacementNamed<Object?, void>(context, route,
         arguments: arguments);
   }
 
@@ -41,15 +40,15 @@ class ScreenNavigator {
 
 class AppRouter {
   String _initialRoute = _mainRoute;
-  DependencyInjection _di;
+  final DependencyInjection _di;
 
-  static final String _mainRoute = '/main_route';
-  static final String _imageRoute = '/image_route';
-  static final String _imagePreviewRoute = '/image_preview_route';
+  static const String _mainRoute = '/main_route';
+  static const String _imageRoute = '/image_route';
+  static const String _imagePreviewRoute = '/image_preview_route';
 
-  static final String imagePathArg = 'image_path';
-  static final String controllerArg = 'transformationController';
-  static final String imageArg = 'image';
+  static const String imagePathArg = 'image_path';
+  static const String controllerArg = 'transformationController';
+  static const String imageArg = 'image';
 
   final ScreenNavigator _navigator;
 
@@ -108,7 +107,7 @@ class AppRouter {
   }
 
   ImageFilterResult _getImageFromArgs(dynamic args) {
-    var result;
+    dynamic result;
     if (args != null && (args is Map) && args.containsKey(imageArg)) {
       result = args[imageArg];
     }
@@ -142,7 +141,8 @@ class AppRouter {
   }
 
   Future openImageRoute(context, String path) {
-    return _navigator.pushNamed(context, _imageRoute, arguments: {imagePathArg: path});
+    return _navigator
+        .pushNamed(context, _imageRoute, arguments: {imagePathArg: path});
   }
 
   void openImagePreview(

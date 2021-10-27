@@ -4,14 +4,15 @@ class Section extends StatelessWidget {
   final Widget child;
   final double? sectionHeight;
 
-  Section({required this.child, required this.sectionHeight});
+  const Section({Key? key, required this.child, required this.sectionHeight})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-        height: this.sectionHeight!,
+        height: sectionHeight!,
         child: Center(
-          child: this.child,
+          child: child,
         ));
   }
 }

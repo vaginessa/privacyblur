@@ -29,7 +29,9 @@ class ImageViewer extends StatelessWidget {
       this._transformationController,
       this.moveFilterPosition,
       this.addFilterPosition,
-      this.selectFilter);
+      this.selectFilter,
+      {Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {

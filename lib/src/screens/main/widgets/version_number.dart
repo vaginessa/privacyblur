@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:yaml/yaml.dart';
 
 class VersionNumber extends StatelessWidget {
-  const VersionNumber();
+  const VersionNumber({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -14,8 +14,9 @@ class VersionNumber extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.hasData) {
               var yaml = loadYaml(snapshot.data.toString());
-              if (yaml != null)
+              if (yaml != null) {
                 version = yaml["version"].replaceAll(RegExp(r'(\+)\w+'), "");
+              }
             }
           }
           return Text(version);

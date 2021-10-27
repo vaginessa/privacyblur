@@ -10,13 +10,15 @@ class InteractiveViewerScrollBars extends StatefulWidget {
   final Size imageSize;
   final Size viewPortSize;
 
-  InteractiveViewerScrollBars(
-      {required this.controller,
+  const InteractiveViewerScrollBars(
+      {Key? key,
+      required this.controller,
       required this.minScale,
       required this.maxScale,
       required this.initialScale,
       required this.imageSize,
-      required this.viewPortSize});
+      required this.viewPortSize})
+      : super(key: key);
 
   @override
   _InteractiveViewerScrollBarsState createState() =>
@@ -27,7 +29,8 @@ class _InteractiveViewerScrollBarsState
     extends State<InteractiveViewerScrollBars> {
   late Size _scrollBarSize;
   late Offset _scrollBarOffset;
-  late void Function() _listener = () => _calculateTransformationUpdates();
+  late final void Function() _listener =
+      () => _calculateTransformationUpdates();
 
   @override
   void initState() {
@@ -58,12 +61,12 @@ class _InteractiveViewerScrollBarsState
             child: Container(
               height: isHorizontal ? 5 : size,
               width: isHorizontal ? size : 5,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                   color: Colors.blueGrey,
                   borderRadius: BorderRadius.all(Radius.circular(10))),
             ),
           )
-        : SizedBox();
+        : const SizedBox();
   }
 
   Size _calculateScrollBarSize(double transformationScale, Size viewPortSize) {
@@ -103,8 +106,8 @@ class _InteractiveViewerScrollBarsState
     Offset scrollBarOffset =
         _calulateScrollBarOffSet(currentScale, scrollBarSize);
     setState(() {
-      this._scrollBarSize = scrollBarSize;
-      this._scrollBarOffset = scrollBarOffset;
+      _scrollBarSize = scrollBarSize;
+      _scrollBarOffset = scrollBarOffset;
     });
   }
 

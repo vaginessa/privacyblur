@@ -45,14 +45,17 @@ class ShapePainter extends CustomPainter {
     canvas.drawCircle(Offset(x.toDouble(), y.toDouble()), r.toDouble(), paint);
   }
 
-  void _drawRect(Canvas canvas, int x, int y, int r, Color color) {
+  void _drawRect(
+      Canvas canvas, int x, int y, int width, int height, Color color) {
     var paint = Paint();
     paint.color = color;
     paint.style = PaintingStyle.stroke;
     paint.strokeWidth = 2;
     canvas.drawRect(
-        Rect.fromCircle(
-            center: Offset(x.toDouble(), y.toDouble()), radius: r.toDouble()),
+        Rect.fromCenter(
+            center: Offset(x.toDouble(), y.toDouble()),
+            width: width.toDouble(),
+            height: height.toDouble()),
         paint);
   }
 
@@ -85,16 +88,23 @@ class ShapePainter extends CustomPainter {
         _drawCircle(
             canvas, position.posX, position.posY, radius - 2, colorBorderInner);
       } else {
-        _drawRect(canvas, position.posX, position.posY, radius, colorBorder);
         _drawRect(
-            canvas, position.posX, position.posY, radius - 2, colorBorderInner);
+            canvas,
+            position.posX,
+            position.posY,
+            position.getVisibleWidth(),
+            position.getVisibleHeight(),
+            colorBorder);
+        _drawRect(
+            canvas,
+            position.posX,
+            position.posY,
+            position.getVisibleWidth() - 2,
+            position.getVisibleHeight() - 2,
+            colorBorderInner);
         if (index == selectedPosition) {
-          var squareRect = Rect.fromCircle(
-              center:
-                  Offset(position.posX.toDouble(), position.posY.toDouble()),
-              radius: radius.toDouble());
-          var topRightOffset = squareRect.topRight;
-          _drawSmallRect(canvas, topRightOffset, radius / 7, colorBorder);
+          _drawSmallRect(canvas, position.getResizingAreaPosition(), radius / 7,
+              colorBorder);
         }
       }
     });

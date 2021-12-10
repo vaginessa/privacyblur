@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer' as debug;
 import 'dart:io';
 import 'dart:math';
 import 'dart:ui' as img_tools;
@@ -45,6 +46,7 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
     on<ImageEventFilterPixelate>(filterTypeChanged);
     on<ImageEventShapeRounded>(filterShapeChanged);
     on<ImageEventDetectFaces>(detectFaces);
+    on<ImageEventTopRight>(resizeCurrentFilter);
     on<_yieldStateInternally>((state, emit) => emit(_blocState.clone()));
   }
 
@@ -60,8 +62,13 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
           imageFilter.setFilter(MatrixAppBlur(
               (_blocState.maxPower * position.granularityRatio).toInt()));
         }
-        imageFilter.apply2Area(position.posX, position.posY,
-            position.getVisibleRadius(), position.isRounded);
+        if (position.isRounded) {
+          imageFilter.apply2Circle(
+              position.posX, position.posY, position.getVisibleRadius());
+        } else {
+          imageFilter.apply2Square(position.posX, position.posY,
+              position.getVisibleWidth(), position.getVisibleHeight());
+        }
         position.canceled = false;
         position.forceRedraw = false;
       }
@@ -80,8 +87,13 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
   void _cancelPosition(FilterPosition position) {
     if (position.canceled) return;
     position.canceled = true;
-    imageFilter.cancelArea(position.posX, position.posY,
-        position.getVisibleRadius(), position.isRounded);
+    if (position.isRounded) {
+      imageFilter.cancelCircle(
+          position.posX, position.posY, position.getVisibleRadius());
+    } else {
+      imageFilter.cancelSquare(position.posX, position.posY,
+          position.getVisibleWidth(), position.getVisibleHeight());
+    }
   }
 
   void _cancelCurrentFilters(FilterPosition position) {
@@ -145,9 +157,10 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
     emit(_blocState.clone());
   }
 
-  void selectFilterIndex(ImageEventExistingFilterSelected event,
-      Emitter<ImageStateBase?> emit) {
+  void selectFilterIndex(
+      ImageEventExistingFilterSelected event, Emitter<ImageStateBase?> emit) {
     _blocState.selectedFilterIndex = event.index;
+    _blocState.resizeFilterMode = false;
     emit(_blocState.clone()); //needed
   }
 
@@ -169,11 +182,11 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
     }
   }
 
-  void addFilter(
-      ImageEventNewFilter event, Emitter<ImageStateBase?> emit) {
+  void addFilter(ImageEventNewFilter event, Emitter<ImageStateBase?> emit) {
     imageFilter.transactionStart();
     _blocState.addPosition(event.x, event.y);
     _blocState.selectedFilterIndex = _blocState.positions.length - 1;
+    _blocState.resizeFilterMode = false;
     _blocState.isImageSaved = false;
     _applyCurrentFilter();
     emit(_blocState.clone()); //needed
@@ -273,8 +286,17 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
         imageFilter.imageHeight());
     if (_blocState.addFaces(detectionResult)) _blocState.isImageSaved = false;
     _blocState.selectedFilterIndex = _blocState.positions.length - 1;
+    _blocState.resizeFilterMode = false;
     _applyCurrentFilter();
     emit(_blocState.clone());
+  }
+
+  void resizeCurrentFilter(
+      ImageEventTopRight event, Emitter<ImageStateBase?> emit) {
+    _blocState.resizeFilterMode = true;
+    _applyCurrentFilter();
+    emit(_blocState.clone());
+    debug.log("resizing");
   }
 
   Future<ImageStateFeedback> _yieldCriticalException(String title) async {

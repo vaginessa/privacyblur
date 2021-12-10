@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:privacyblur/src/screens/image/helpers/image_classes_helper.dart';
 import 'package:privacyblur/src/screens/image/helpers/image_states.dart';
 import 'package:privacyblur/src/utils/image_filter/helpers/filter_result.dart';
 import 'package:privacyblur/src/widgets/interactive_viewer_scrollbar.dart';
@@ -19,18 +20,19 @@ class ImageViewer extends StatelessWidget {
   final double height; //available height for viewer
   final void Function(double, double) moveFilterPosition;
   final void Function(double, double) addFilterPosition;
+  final void Function(double, double) changeTopRightOffset;
   final void Function(int) selectFilter;
   late TransformationController _transformationController;
   final double maxScale = 10;
 
-  ImageViewer(
-      this.image,
+  ImageViewer(this.image,
       this.state,
       this.width,
       this.height,
       this._transformationController,
       this.moveFilterPosition,
       this.addFilterPosition,
+      this.changeTopRightOffset,
       this.selectFilter,
       {Key? key})
       : super(key: key);
@@ -51,12 +53,12 @@ class ImageViewer extends StatelessWidget {
     double horizontalBorder = ((width - imageMinWidth).abs() / (minScale));
     double verticalBorder = ((height - imageMinHeight).abs() / (minScale));
     EdgeInsets boundaryMargin =
-        EdgeInsets.fromLTRB(0, 0, horizontalBorder, verticalBorder);
+    EdgeInsets.fromLTRB(0, 0, horizontalBorder, verticalBorder);
 
     return Stack(children: [
       GestureDetector(
           onTapUp: onTapPosition,
-          onLongPressMoveUpdate: onMoveFilter,
+          onLongPressMoveUpdate: onLongMove,
           onLongPressStart: onLongPressStart,
           child: InteractiveViewer(
               transformationController: _transformationController,
@@ -89,7 +91,7 @@ class ImageViewer extends StatelessWidget {
     ]);
   }
 
-  onDragPoint(DragUpdateDetails details){
+  onDragPoint(DragUpdateDetails details) {
     debug.log(details.toString());
   }
 
@@ -105,12 +107,17 @@ class ImageViewer extends StatelessWidget {
     }
   }
 
-  onMoveFilter(LongPressMoveUpdateDetails details) {
+  onLongMove(LongPressMoveUpdateDetails details) {
     Offset offset = _transformationController.toScene(
       details.localPosition,
     );
+    if(state.resizeFilterMode){
+      changeTopRightOffset(offset.dx, offset.dy);
+      return;
+    }
     if (state.hasSelection) {
       moveFilterPosition(offset.dx, offset.dy);
+      return;
     }
   }
 
@@ -118,6 +125,13 @@ class ImageViewer extends StatelessWidget {
     Offset offset = _transformationController.toScene(
       details.localPosition,
     );
+    int curIndex = state.selectedFilterIndex;
+    if (curIndex > -1) {
+      if (_detectDragAreaClick(state.getSelectedPosition())){
+        changeTopRightOffset(offset.dx, offset.dy);
+        return;//if we in resize mode, don't change selected index
+      }
+    }
     var selected = _detectSelectedFilter(offset);
     selectFilter(selected);
     if (selected >= 0) {
@@ -131,7 +145,7 @@ class ImageViewer extends StatelessWidget {
     state.positions.asMap().forEach((key, value) {
       var tmpRadius = state.maxRadius * value.radiusRatio;
       var tmp =
-          sqrt(pow(value.posX - offset.dx, 2) + pow(value.posY - offset.dy, 2));
+      sqrt(pow(value.posX - offset.dx, 2) + pow(value.posY - offset.dy, 2));
       if ((value.isRounded && (tmp <= tmpRadius)) ||
           ((!value.isRounded) &&
               ((value.posX - offset.dx).abs() <= tmpRadius) &&
@@ -143,5 +157,10 @@ class ImageViewer extends StatelessWidget {
       }
     });
     return index;
+  }
+
+  bool _detectDragAreaClick(FilterPosition? filter) {
+    bool result = false;
+    return result;
   }
 }

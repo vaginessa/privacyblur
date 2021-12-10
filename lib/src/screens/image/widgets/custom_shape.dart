@@ -56,6 +56,18 @@ class ShapePainter extends CustomPainter {
         paint);
   }
 
+  void _drawSmallRect(Canvas canvas, Offset center, double r, Color color) {
+    var paint = Paint();
+    paint.color = color;
+    paint.style = PaintingStyle.fill;
+    paint.strokeWidth = 1;
+    canvas.drawRRect(
+        RRect.fromRectAndRadius(
+            Rect.fromCircle(center: Offset(center.dx, center.dy), radius: r),
+            Radius.circular(r / 3)),
+        paint);
+  }
+
   @override
   void paint(Canvas canvas, Size size) {
     positions.asMap().forEach((index, position) {
@@ -76,6 +88,14 @@ class ShapePainter extends CustomPainter {
         _drawRect(canvas, position.posX, position.posY, radius, colorBorder);
         _drawRect(
             canvas, position.posX, position.posY, radius - 2, colorBorderInner);
+        if (index == selectedPosition) {
+          var squareRect = Rect.fromCircle(
+              center:
+                  Offset(position.posX.toDouble(), position.posY.toDouble()),
+              radius: radius.toDouble());
+          var topRightOffset = squareRect.topRight;
+          _drawSmallRect(canvas, topRightOffset, radius / 7, colorBorder);
+        }
       }
     });
     if (selectedPosition < 0 || selectedPosition >= positions.length) {

@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
@@ -8,6 +9,7 @@ import 'package:privacyblur/src/widgets/interactive_viewer_scrollbar.dart';
 
 import 'custom_painter.dart';
 import 'custom_shape.dart';
+import 'dart:developer' as debug;
 
 // ignore: must_be_immutable
 class ImageViewer extends StatelessWidget {
@@ -85,6 +87,10 @@ class ImageViewer extends StatelessWidget {
               image.mainImage.height + verticalBorder),
           viewPortSize: Size(width, height))
     ]);
+  }
+
+  onDragPoint(DragUpdateDetails details){
+    debug.log(details.toString());
   }
 
   onTapPosition(TapUpDetails details) {

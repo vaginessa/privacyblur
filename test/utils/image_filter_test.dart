@@ -33,7 +33,7 @@ void main() {
     await filter.setImage(image);
     filter.setFilter(MatrixAppBlur(3));
     filter.transactionStart();
-    filter.apply2Square(3, 3, 3, 3);
+    filter.apply2Square(3, 3, 6, 6);
     filter.transactionCommit();
     image = (await filter.getImage()).mainImage;
     var imgData = (await image.toByteData())!.buffer.asUint32List();
@@ -53,18 +53,18 @@ void main() {
     expect(imgData[11] & 0xff, 33);
     expect(imgData[12] & 0xff, 63);
     expect(imgData[13] & 0xff, 98);
-    expect(imgData[14] & 0xff, 78);
+    expect(imgData[14] & 0xff, 55);
 
-    expect(imgData[15] & 0xff, 46);
-    expect(imgData[16] & 0xff, 41);
-    expect(imgData[17] & 0xff, 81);
+    expect(imgData[15] & 0xff, 31);
+    expect(imgData[16] & 0xff, 33);
+    expect(imgData[17] & 0xff, 63);
     expect(imgData[18] & 0xff, 128);
-    expect(imgData[19] & 0xff, 78);
+    expect(imgData[19] & 0xff, 55);
 
-    expect(imgData[20] & 0xff, 46);
-    expect(imgData[21] & 0xff, 41);
-    expect(imgData[22] & 0xff, 81);
-    expect(imgData[23] & 0xff, 128);
-    expect(imgData[24] & 0xff, 78);
+    expect(imgData[20] & 0xff, 31);
+    expect(imgData[21] & 0xff, 33);
+    expect(imgData[22] & 0xff, 63);
+    expect(imgData[23] & 0xff, 158);
+    expect(imgData[24] & 0xff, 55);
   });
 }

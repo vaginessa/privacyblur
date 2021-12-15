@@ -27,18 +27,6 @@ class FilterPosition {
   int posX = ImgConst.undefinedPosValue;
   int posY = ImgConst.undefinedPosValue;
 
-  void setCosinus(double mcos) {
-    _cos = mcos;
-    if (_cos > 1.0 || _cos < -1.0) {
-      _cos = cos(pi / 4);
-    }
-    _sin = sqrt(1 - pow(_cos, 2));
-  }
-
-  double get cosinus => _cos;
-
-  double get sinus => _sin;
-
   set granularityRatio(double value) {
     _granularity = value;
     _sGranularityRatio = value;
@@ -85,10 +73,10 @@ class FilterPosition {
   }
 
   Offset getResizingAreaPosition() {
-      var radius = getVisibleRadius();
-      var eX = posX + (radius * _cos);
-      var eY = posY - (radius * _sin);
-      return Offset(eX, eY);
+    var radius = getVisibleRadius();
+    var eX = posX + (radius * _cos);
+    var eY = posY - (radius * _sin);
+    return Offset(eX, eY);
   }
 
   bool isResizingAreaPoint(double x, double y) {
@@ -100,5 +88,15 @@ class FilterPosition {
         x >= eX - clickRadius &&
         y <= eY + clickRadius &&
         y >= eY - clickRadius);
+  }
+
+  void rebuildRadiusFromClick(double x2, double y2) {
+    var diffx = x2 - posX;
+    var diffy = posY - y2;
+    var dist = sqrt(pow(diffx, 2) + pow(diffy, 2));
+    _cos = diffx / dist;
+    _sin = diffy / dist;
+    radiusRatio = dist / maxRadius;
+    if (radiusRatio > 1.0) radiusRatio = 1.0;
   }
 }

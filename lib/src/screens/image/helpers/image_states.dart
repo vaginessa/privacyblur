@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:privacyblur/src/data/services/face_detection.dart';
 import 'package:privacyblur/src/screens/image/utils/positions_utils.dart';
 import 'package:privacyblur/src/utils/image_filter/helpers/filter_result.dart';
@@ -91,12 +89,7 @@ class ImageStateScreen extends ImageStateBase {
   void resizeSelectedToPoint(double x2, double y2) {
     var pos = getSelectedPosition();
     if (pos == null) return;
-    var diffx = pos.posX - x2;
-    var diffy = pos.posY - y2;
-    var dist = sqrt(pow(diffx, 2) + pow(diffy, 2));
-    pos.setCosinus(diffx / dist);
-    pos.radiusRatio = dist / maxRadius;
-    if (pos.radiusRatio > 1.0) pos.radiusRatio = 1.0;
+    pos.rebuildRadiusFromClick(x2, y2);
   }
 
   void removePositionObject(FilterPosition pos) {

@@ -297,7 +297,6 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
     _blocState.resizeSelectedToPoint(event.x, event.y);
     _delayedApplyFilter();
     emit(_blocState.clone());
-    debug.log("resizing");
   }
 
   Future<ImageStateFeedback> _yieldCriticalException(String title) async {

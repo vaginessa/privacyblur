@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer' as debug;
 import 'dart:io';
 import 'dart:math';
 import 'dart:ui' as img_tools;
@@ -294,9 +293,13 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
   void resizeCurrentFilter(
       ImageEventTopRight event, Emitter<ImageStateBase?> emit) {
     _blocState.resizeFilterMode = true;
-    _blocState.resizeSelectedToPoint(event.x, event.y);
-    _delayedApplyFilter();
-    emit(_blocState.clone());
+    var position = _blocState.getSelectedPosition();
+    if (position != null) {
+      _cancelCurrentFilters(position);
+      position.rebuildRadiusFromClick(event.x, event.y);
+      _delayedApplyFilter();
+      emit(_blocState.clone());
+    }
   }
 
   Future<ImageStateFeedback> _yieldCriticalException(String title) async {

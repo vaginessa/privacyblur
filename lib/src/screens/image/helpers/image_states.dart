@@ -86,12 +86,6 @@ class ImageStateScreen extends ImageStateBase {
     positionsUpdateOrder();
   }
 
-  void resizeSelectedToPoint(double x2, double y2) {
-    var pos = getSelectedPosition();
-    if (pos == null) return;
-    pos.rebuildRadiusFromClick(x2, y2);
-  }
-
   void removePositionObject(FilterPosition pos) {
     var index = positions.indexWhere((element) => element == pos);
     positions.remove(pos);

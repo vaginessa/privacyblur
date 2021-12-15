@@ -1,4 +1,4 @@
-import 'dart:developer';
+import 'dart:developer' as debug;
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
@@ -10,7 +10,6 @@ import 'package:privacyblur/src/widgets/interactive_viewer_scrollbar.dart';
 
 import 'custom_painter.dart';
 import 'custom_shape.dart';
-import 'dart:developer' as debug;
 
 // ignore: must_be_immutable
 class ImageViewer extends StatelessWidget {
@@ -25,7 +24,8 @@ class ImageViewer extends StatelessWidget {
   late TransformationController _transformationController;
   final double maxScale = 10;
 
-  ImageViewer(this.image,
+  ImageViewer(
+      this.image,
       this.state,
       this.width,
       this.height,
@@ -53,7 +53,7 @@ class ImageViewer extends StatelessWidget {
     double horizontalBorder = ((width - imageMinWidth).abs() / (minScale));
     double verticalBorder = ((height - imageMinHeight).abs() / (minScale));
     EdgeInsets boundaryMargin =
-    EdgeInsets.fromLTRB(0, 0, horizontalBorder, verticalBorder);
+        EdgeInsets.fromLTRB(0, 0, horizontalBorder, verticalBorder);
 
     return Stack(children: [
       GestureDetector(
@@ -111,7 +111,7 @@ class ImageViewer extends StatelessWidget {
     Offset offset = _transformationController.toScene(
       details.localPosition,
     );
-    if(state.resizeFilterMode){
+    if (state.resizeFilterMode) {
       changeTopRightOffset(offset.dx, offset.dy);
       return;
     }
@@ -127,9 +127,12 @@ class ImageViewer extends StatelessWidget {
     );
     int curIndex = state.selectedFilterIndex;
     if (curIndex > -1) {
-      if (_detectDragAreaClick(offset, state.getSelectedPosition())){
+      var curFilter = state.getSelectedPosition();
+      if ((curFilter != null) &&
+          (!curFilter.isRounded) &&
+          _detectDragAreaClick(offset, curFilter)) {
         changeTopRightOffset(offset.dx, offset.dy);
-        return;//if we in resize mode, don't change selected index
+        return; //if we in resize mode, don't change selected index
       }
     }
     var selected = _detectSelectedFilter(offset);
@@ -145,7 +148,7 @@ class ImageViewer extends StatelessWidget {
     state.positions.asMap().forEach((key, value) {
       var tmpRadius = state.maxRadius * value.radiusRatio;
       var tmp =
-      sqrt(pow(value.posX - offset.dx, 2) + pow(value.posY - offset.dy, 2));
+          sqrt(pow(value.posX - offset.dx, 2) + pow(value.posY - offset.dy, 2));
       if ((value.isRounded && (tmp <= tmpRadius)) ||
           ((!value.isRounded) &&
               ((value.posX - offset.dx).abs() <= tmpRadius) &&
@@ -160,7 +163,7 @@ class ImageViewer extends StatelessWidget {
   }
 
   bool _detectDragAreaClick(Offset click, FilterPosition? filter) {
-    if(filter==null) return false;
+    if (filter == null) return false;
     return filter.isResizingAreaPoint(click.dx, click.dy);
   }
 }

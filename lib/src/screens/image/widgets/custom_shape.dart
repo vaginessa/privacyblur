@@ -69,6 +69,7 @@ class ShapePainter extends CustomPainter {
             Rect.fromCircle(center: Offset(center.dx, center.dy), radius: r),
             Radius.circular(r / 3)),
         paint);
+    //additional drawing for resizing rect is here.
   }
 
   @override
@@ -102,10 +103,10 @@ class ShapePainter extends CustomPainter {
             position.getVisibleWidth() - 2,
             position.getVisibleHeight() - 2,
             colorBorderInner);
-        if (index == selectedPosition) {
-          _drawSmallRect(canvas, position.getResizingAreaPosition(), radius / 7,
-              colorBorder);
-        }
+      }
+      if (index == selectedPosition) {
+        _drawSmallRect(canvas, position.getResizingAreaPosition(), radius / 7,
+            colorBorder);
       }
     });
     if (selectedPosition < 0 || selectedPosition >= positions.length) {

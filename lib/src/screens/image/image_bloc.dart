@@ -294,6 +294,7 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
   void resizeCurrentFilter(
       ImageEventTopRight event, Emitter<ImageStateBase?> emit) {
     _blocState.resizeFilterMode = true;
+    _blocState.resizeSelectedToPoint(event.x, event.y);
     _delayedApplyFilter();
     emit(_blocState.clone());
     debug.log("resizing");

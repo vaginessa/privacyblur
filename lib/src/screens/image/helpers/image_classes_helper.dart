@@ -27,7 +27,7 @@ class FilterPosition {
   int posX = ImgConst.undefinedPosValue;
   int posY = ImgConst.undefinedPosValue;
 
-  set setCosinus(double mcos) {
+  void setCosinus(double mcos) {
     _cos = mcos;
     if (_cos > 1.0 || _cos < -1.0) {
       _cos = cos(pi / 4);
@@ -85,17 +85,10 @@ class FilterPosition {
   }
 
   Offset getResizingAreaPosition() {
-    if (isRounded) {
       var radius = getVisibleRadius();
       var eX = posX + (radius * _cos);
       var eY = posY - (radius * _sin);
       return Offset(eX, eY);
-    } else {
-      var radius = getVisibleRadius();
-      var eX = posX + (radius * _cos);
-      var eY = posY - (radius * _sin);
-      return Offset(eX, eY);
-    }
   }
 
   bool isResizingAreaPoint(double x, double y) {

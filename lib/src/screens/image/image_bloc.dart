@@ -25,7 +25,8 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
   final ImageRepository _repo;
   final ImgTools imgTools; //for mocking saving operations in future tests
   final FaceDetection faceDetection;
-  final ImageOperationsHelper imageOperationsHelper = ImageOperationsHelper(); // move to DI ?
+  final ImageOperationsHelper imageOperationsHelper =
+      ImageOperationsHelper(); // move to DI ?
 
   Timer? _deferredFuture;
   final Duration _deferred =
@@ -51,7 +52,8 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
   void _delayedApplyFilter() {
     _deferredFuture?.cancel();
     _deferredFuture = Timer(_deferred, () async {
-      imageOperationsHelper.filterInArea(_blocState.positions, _blocState.maxPower);
+      imageOperationsHelper.filterInArea(
+          _blocState.positions, _blocState.maxPower);
       _blocState.image = await imageOperationsHelper.getImage();
       add(_yieldStateInternally());
     });
@@ -83,7 +85,8 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
 
   FutureOr<void> saveImage(
       ImageEventSave2Disk event, Emitter<ImageStateBase?> emit) async {
-    await imageOperationsHelper.saveImage(_blocState, imgTools, event.needOverride);
+    await imageOperationsHelper.saveImage(
+        _blocState, imgTools, event.needOverride);
     if (_blocState.isImageSaved) {
       _blocState.savedOnce = true;
       emit(ImageStateFeedback(Keys.Messages_Infos_Success_Saved,
@@ -218,7 +221,9 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
       ImageEventDetectFaces event, Emitter<ImageStateBase?> emit) async {
     imageOperationsHelper.transactionStart();
     var detectionResult = await faceDetection.detectFaces(
-        Platform.isIOS ? imageOperationsHelper.getImageARGB8() : imageOperationsHelper.getImageNV21(),
+        Platform.isIOS
+            ? imageOperationsHelper.getImageARGB8()
+            : imageOperationsHelper.getImageNV21(),
         imageOperationsHelper.imageWidth(),
         imageOperationsHelper.imageHeight());
     if (_blocState.addFaces(detectionResult)) _blocState.isImageSaved = false;

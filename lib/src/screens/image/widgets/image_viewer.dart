@@ -129,7 +129,7 @@ class ImageViewer extends StatelessWidget {
     if (curIndex > -1) {
       var curFilter = state.getSelectedPosition();
       if ((curFilter != null) &&
-          (!curFilter.isRounded) &&
+          (!curFilter.isRounded) && // for resizing circles just remove this condition
           _detectDragAreaClick(offset, curFilter)) {
         changeTopRightOffset(offset.dx, offset.dy);
         return; //if we in resize mode, don't change selected index

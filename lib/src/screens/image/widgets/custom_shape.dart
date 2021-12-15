@@ -104,6 +104,7 @@ class ShapePainter extends CustomPainter {
             position.getVisibleHeight() - 2,
             colorBorderInner);
       }
+      // for resizing circles just remove this condition - (!position.isRounded)
       if ((!position.isRounded) && (index == selectedPosition)) {
         _drawSmallRect(canvas, position.getResizingAreaPosition(), radius / 7,
             colorBorder);

@@ -7,13 +7,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:privacyblur/resources/localization/keys.dart';
 import 'package:privacyblur/src/data/services/face_detection.dart'
     if (BuildFlavor.isFoss) 'package:privacyblur/src/data/services/face_detection_foss.dart';
+import 'package:privacyblur/src/screens/image/bloc_helpers/non_emit_functions.dart';
 import 'package:privacyblur/src/screens/image/helpers/constants.dart';
-import 'package:privacyblur/src/utils/image_filter/helpers/matrix_blur.dart';
-import 'package:privacyblur/src/utils/image_filter/helpers/matrix_pixelate.dart';
 import 'package:privacyblur/src/utils/image_filter/image_filters.dart';
 import 'package:privacyblur/src/widgets/message_bar.dart';
 
-import 'helpers/image_classes_helper.dart';
 import 'helpers/image_events.dart';
 import 'helpers/image_states.dart';
 import 'image_repo.dart';
@@ -27,6 +25,7 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
   final ImageRepository _repo;
   final ImgTools imgTools; //for mocking saving operations in future tests
   final FaceDetection faceDetection;
+  final ImageOperationsHelper imageOperationsHelper = ImageOperationsHelper(); // move to DI ?
 
   Timer? _deferredFuture;
   final Duration _deferred =
@@ -49,66 +48,13 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
     on<_yieldStateInternally>((state, emit) => emit(_blocState.clone()));
   }
 
-  var imageFilter = ImageAppFilter();
-
-  void _filterInArea() {
-    for (var position in _blocState.positions) {
-      if (position.canceled || position.forceRedraw) {
-        if (position.isPixelate) {
-          imageFilter.setFilter(MatrixAppPixelate(
-              (_blocState.maxPower * position.granularityRatio).toInt()));
-        } else {
-          imageFilter.setFilter(MatrixAppBlur(
-              (_blocState.maxPower * position.granularityRatio).toInt()));
-        }
-        if (position.isRounded) {
-          imageFilter.apply2Circle(
-              position.posX, position.posY, position.getVisibleRadius());
-        } else {
-          imageFilter.apply2Square(position.posX, position.posY,
-              position.getVisibleWidth(), position.getVisibleHeight());
-        }
-        position.canceled = false;
-        position.forceRedraw = false;
-      }
-    }
-  }
-
   void _delayedApplyFilter() {
     _deferredFuture?.cancel();
     _deferredFuture = Timer(_deferred, () async {
-      _filterInArea();
-      _blocState.image = await imageFilter.getImage();
+      imageOperationsHelper.filterInArea(_blocState.positions, _blocState.maxPower);
+      _blocState.image = await imageOperationsHelper.getImage();
       add(_yieldStateInternally());
     });
-  }
-
-  void _cancelPosition(FilterPosition position) {
-    if (position.canceled) return;
-    position.canceled = true;
-    if (position.isRounded) {
-      imageFilter.cancelCircle(
-          position.posX, position.posY, position.getVisibleRadius());
-    } else {
-      imageFilter.cancelSquare(position.posX, position.posY,
-          position.getVisibleWidth(), position.getVisibleHeight());
-    }
-  }
-
-  void _cancelCurrentFilters(FilterPosition position) {
-    if (position.canceled) return;
-    _cancelPosition(position);
-    _blocState.positionsMark2Redraw();
-    for (var pos in _blocState.positions) {
-      if (pos.forceRedraw) {
-        _cancelPosition(pos);
-      }
-    }
-  }
-
-  ImageStateFeedback _showFilterState() {
-    String message = editToolMessage[_blocState.activeTool]!;
-    return ImageStateFeedback(message, messageType: MessageBarType.information);
   }
 
   void filterShapeChanged(
@@ -116,7 +62,7 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
     var position = _blocState.getSelectedPosition();
     if (position != null) {
       if (event.isRounded == position.isRounded) return;
-      _cancelCurrentFilters(position);
+      imageOperationsHelper.cancelCurrentFilters(position, _blocState);
       position.isRounded = event.isRounded;
       _delayedApplyFilter();
       emit(_blocState.clone()); //needed
@@ -128,7 +74,7 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
     var position = _blocState.getSelectedPosition();
     if (position != null) {
       if (event.isPixelate == position.isPixelate) return;
-      _cancelCurrentFilters(position);
+      imageOperationsHelper.cancelCurrentFilters(position, _blocState);
       position.isPixelate = event.isPixelate;
       _blocState.positionsUpdateOrder();
       _delayedApplyFilter(); //yield _blocState.clone(); not needed here
@@ -137,14 +83,7 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
 
   FutureOr<void> saveImage(
       ImageEventSave2Disk event, Emitter<ImageStateBase?> emit) async {
-    imageFilter.transactionCommit();
-    _blocState.resetSelection();
-    _blocState.image = await imageFilter.getImage();
-    _blocState.isImageSaved = await imgTools.save2Gallery(
-        imageFilter.imageWidth(),
-        imageFilter.imageHeight(),
-        imageFilter.getImageARGB32(),
-        event.needOverride);
+    await imageOperationsHelper.saveImage(_blocState, imgTools, event.needOverride);
     if (_blocState.isImageSaved) {
       _blocState.savedOnce = true;
       emit(ImageStateFeedback(Keys.Messages_Infos_Success_Saved,
@@ -166,23 +105,23 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
   FutureOr<void> deleteFilterIndex(ImageEventCurrentFilterDelete event,
       Emitter<ImageStateBase?> emit) async {
     if (_blocState.positions.length <= 1) {
-      imageFilter.transactionCancel();
+      imageOperationsHelper.transactionCancel();
       _blocState.resetSelection();
-      _blocState.image = await imageFilter.getImage();
+      _blocState.image = await imageOperationsHelper.getImage();
       if (_blocState.positions.isEmpty) _blocState.isImageSaved = true;
       emit(_blocState.clone()); //needed
       return;
     }
     var position = _blocState.getSelectedPosition();
     if (position != null) {
-      _cancelCurrentFilters(position);
+      imageOperationsHelper.cancelCurrentFilters(position, _blocState);
       _blocState.removePositionObject(position);
       _delayedApplyFilter(); //yield _blocState.clone(); - not needed here
     }
   }
 
   void addFilter(ImageEventNewFilter event, Emitter<ImageStateBase?> emit) {
-    imageFilter.transactionStart();
+    imageOperationsHelper.transactionStart();
     _blocState.addPosition(event.x, event.y);
     _blocState.selectedFilterIndex = _blocState.positions.length - 1;
     _blocState.resizeFilterMode = false;
@@ -195,7 +134,7 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
       ImageEventPositionChanged event, Emitter<ImageStateBase?> emit) {
     var position = _blocState.getSelectedPosition();
     if (position != null) {
-      _cancelCurrentFilters(position);
+      imageOperationsHelper.cancelCurrentFilters(position, _blocState);
       position.posX = event.x.toInt();
       position.posY = event.y.toInt();
       _delayedApplyFilter();
@@ -207,7 +146,7 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
       ImageEventShapeSize event, Emitter<ImageStateBase?> emit) {
     var position = _blocState.getSelectedPosition();
     if (position != null) {
-      _cancelCurrentFilters(position);
+      imageOperationsHelper.cancelCurrentFilters(position, _blocState);
       position.radiusRatio = event.radius;
       _delayedApplyFilter();
       emit(_blocState.clone()); //needed
@@ -218,7 +157,7 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
       ImageEventFilterGranularity event, Emitter<ImageStateBase?> emit) {
     var position = _blocState.getSelectedPosition();
     if (position != null) {
-      _cancelCurrentFilters(position);
+      imageOperationsHelper.cancelCurrentFilters(position, _blocState);
       position.granularityRatio = event.power;
       _blocState.positionsUpdateOrder();
       _delayedApplyFilter();
@@ -229,7 +168,8 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
   void imageToolSelected(
       ImageEventEditToolSelected event, Emitter<ImageStateBase?> emit) {
     _blocState.activeTool = event.activeTool;
-    emit(_showFilterState());
+    emit(ImageStateFeedback(editToolMessage[_blocState.activeTool]!,
+        messageType: MessageBarType.information));
     emit(_blocState.clone());
   }
 
@@ -269,20 +209,18 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
     ImageAppFilter.setMaxProcessedWidth(_blocState.maxRadius * 3);
 
     /// VERY IMPORTANT TO USE AWAIT HERE!!!
-    _blocState.image = await imageFilter.setImage(tmpImage);
+    _blocState.image = await imageOperationsHelper.setImage(tmpImage);
     emit(_blocState.clone());
     await _repo.removeLastPath();
   }
 
   FutureOr<void> detectFaces(
       ImageEventDetectFaces event, Emitter<ImageStateBase?> emit) async {
-    imageFilter.transactionStart();
+    imageOperationsHelper.transactionStart();
     var detectionResult = await faceDetection.detectFaces(
-        Platform.isIOS
-            ? imageFilter.getImageARGB8()
-            : imageFilter.getImageNV21(),
-        imageFilter.imageWidth(),
-        imageFilter.imageHeight());
+        Platform.isIOS ? imageOperationsHelper.getImageARGB8() : imageOperationsHelper.getImageNV21(),
+        imageOperationsHelper.imageWidth(),
+        imageOperationsHelper.imageHeight());
     if (_blocState.addFaces(detectionResult)) _blocState.isImageSaved = false;
     _blocState.selectedFilterIndex = _blocState.positions.length - 1;
     _blocState.resizeFilterMode = false;
@@ -295,7 +233,7 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
     _blocState.resizeFilterMode = true;
     var position = _blocState.getSelectedPosition();
     if (position != null) {
-      _cancelCurrentFilters(position);
+      imageOperationsHelper.cancelCurrentFilters(position, _blocState);
       position.rebuildRadiusFromClick(event.x, event.y);
       _delayedApplyFilter();
       emit(_blocState.clone());

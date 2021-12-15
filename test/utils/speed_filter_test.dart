@@ -25,10 +25,10 @@ void main() {
     await filter.setImage(image);
     filter.transactionStart();
     filter.setFilter(MatrixAppPixelate(3));
-    filter.apply2Square(300, 300, 200, 200); //to all image
+    filter.apply2Square(300, 300, 300, 300); //to all image
     var time1 = DateTime.now().millisecondsSinceEpoch;
     for (int i = 0; i < 200; i++) {
-      filter.apply2Square(300, 300, 20, 20); //to all image
+      filter.apply2Square(300, 300, 40, 40); //to all image
       image = (await filter.getImage()).mainImage;
     }
     var t1 = await Future.value(true);

@@ -127,7 +127,7 @@ class ImageViewer extends StatelessWidget {
     );
     int curIndex = state.selectedFilterIndex;
     if (curIndex > -1) {
-      if (_detectDragAreaClick(state.getSelectedPosition())){
+      if (_detectDragAreaClick(offset, state.getSelectedPosition())){
         changeTopRightOffset(offset.dx, offset.dy);
         return;//if we in resize mode, don't change selected index
       }
@@ -159,8 +159,8 @@ class ImageViewer extends StatelessWidget {
     return index;
   }
 
-  bool _detectDragAreaClick(FilterPosition? filter) {
-    bool result = false;
-    return result;
+  bool _detectDragAreaClick(Offset click, FilterPosition? filter) {
+    if(filter==null) return false;
+    return filter.isResizingAreaPoint(click.dx, click.dy);
   }
 }

@@ -98,7 +98,7 @@ class FilterPosition {
     }
   }
 
-  bool isResizingAreaPoint(int x, int y) {
+  bool isResizingAreaPoint(double x, double y) {
     var offset = getResizingAreaPosition();
     var clickRadius = getVisibleRadius() ~/ 5; // detect click area radius
     var eX = offset.dx;

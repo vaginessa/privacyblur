@@ -75,7 +75,7 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
     }
   }
 
-  void _applyCurrentFilter() {
+  void _delayedApplyFilter() {
     _deferredFuture?.cancel();
     _deferredFuture = Timer(_deferred, () async {
       _filterInArea();
@@ -119,7 +119,7 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
       if (event.isRounded == position.isRounded) return;
       _cancelCurrentFilters(position);
       position.isRounded = event.isRounded;
-      _applyCurrentFilter();
+      _delayedApplyFilter();
       emit(_blocState.clone()); //needed
     }
   }
@@ -132,7 +132,7 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
       _cancelCurrentFilters(position);
       position.isPixelate = event.isPixelate;
       _blocState.positionsUpdateOrder();
-      _applyCurrentFilter(); //yield _blocState.clone(); not needed here
+      _delayedApplyFilter(); //yield _blocState.clone(); not needed here
     }
   }
 
@@ -178,7 +178,7 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
     if (position != null) {
       _cancelCurrentFilters(position);
       _blocState.removePositionObject(position);
-      _applyCurrentFilter(); //yield _blocState.clone(); - not needed here
+      _delayedApplyFilter(); //yield _blocState.clone(); - not needed here
     }
   }
 
@@ -188,7 +188,7 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
     _blocState.selectedFilterIndex = _blocState.positions.length - 1;
     _blocState.resizeFilterMode = false;
     _blocState.isImageSaved = false;
-    _applyCurrentFilter();
+    _delayedApplyFilter();
     emit(_blocState.clone()); //needed
   }
 
@@ -199,7 +199,7 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
       _cancelCurrentFilters(position);
       position.posX = event.x.toInt();
       position.posY = event.y.toInt();
-      _applyCurrentFilter();
+      _delayedApplyFilter();
       emit(_blocState.clone()); //needed
     }
   }
@@ -210,7 +210,7 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
     if (position != null) {
       _cancelCurrentFilters(position);
       position.radiusRatio = event.radius;
-      _applyCurrentFilter();
+      _delayedApplyFilter();
       emit(_blocState.clone()); //needed
     }
   }
@@ -222,7 +222,7 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
       _cancelCurrentFilters(position);
       position.granularityRatio = event.power;
       _blocState.positionsUpdateOrder();
-      _applyCurrentFilter();
+      _delayedApplyFilter();
       emit(_blocState.clone()); //not really needed here, but now its necessary
     }
   }
@@ -287,14 +287,14 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
     if (_blocState.addFaces(detectionResult)) _blocState.isImageSaved = false;
     _blocState.selectedFilterIndex = _blocState.positions.length - 1;
     _blocState.resizeFilterMode = false;
-    _applyCurrentFilter();
+    _delayedApplyFilter();
     emit(_blocState.clone());
   }
 
   void resizeCurrentFilter(
       ImageEventTopRight event, Emitter<ImageStateBase?> emit) {
     _blocState.resizeFilterMode = true;
-    _applyCurrentFilter();
+    _delayedApplyFilter();
     emit(_blocState.clone());
     debug.log("resizing");
   }

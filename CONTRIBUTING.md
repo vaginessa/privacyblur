@@ -15,17 +15,17 @@ Please note we have a code of conduct, please follow it in all your interactions
 To be able to keep up good code quality we agreed to ensure some code style principles:
 
 1. Maximum file size is 300 lines =>  as soon as the size exceeds we try to outsource parts to separate files and refactor
-2. Keep UI and Logic separated => Views should contain minimal logical code and Bloc shouldn't contain any UI parts
-3. UI changes shouldn't affect Bloc changes => Changes on UI shouldn't provoke changes on Bloc implementation
-4. BLoC events can only be emitted from methods inside screen and not nested widgets
-5. Reusable widgets with state not contained a logic should manage it also internally
-6. try to use not nullable type where possible
-7. keep every part as simple as possible => no "over-engineering" or complicating
-8. make adaptive widgets replaceable for future implementations from Flutter
-9. limit the dependencies to a minimum - only include them if there isn't a simpler solution
-10. make common widgets reusable with minimum configuration
-11. strip assets to the required size (Icon-Sets)
-12. try to use only standard widgets from Flutter where it's possible
+2. BLoC events can only be emitted directly from methods inside main screen widget and not nested widgets
+3. BLoC states can be emitted directly from main BloC class, not from used classes/utils    
+4. Views should contain no or minimal logical code and Bloc shouldn't contain any UI parts and BuildContext
+5. Navigation it's a UI action. Navigate from main screen widgets, not from nested widgets
+6. Nested-Widgets with state not contained a logic should manage it internally
+7. Keep every part as simple as possible => no "over-engineering" or complicating
+8. Make adaptive widgets replaceable for future implementations from Flutter
+9. Limit the `pubspec` dependencies to a minimum - only include them if there isn't a simpler solution
+10. Make common widgets reusable with minimum configuration. Don't implement things, that you will never use
+11. Strip assets to the required size (Icon-Sets)
+12. Try to use only standard widgets from Flutter where it's possible
 
 ## Restrictions
 

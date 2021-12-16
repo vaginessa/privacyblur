@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:privacyblur/src/screens/image/helpers/constants.dart';
 import 'package:privacyblur/src/screens/image/helpers/filter_position.dart';
@@ -7,10 +9,12 @@ class ShapePainter extends CustomPainter {
   int _hash = 0;
   final int selectedPosition;
   final List<FilterPosition> positions;
+  final double pixelsInDP;
 
-  ShapePainter(this.positions, this.selectedPosition) {
+  ShapePainter(this.positions, this.selectedPosition, this.pixelsInDP) {
     // with prime numbers to reduce collisions... may be. Not very important
     // from https://primes.utm.edu/lists/small/10000.txt
+    _hash = (pixelsInDP * 5623).round();
     for (var p in positions) {
       _hash += (p.isRounded ? 7879 : 9341) +
           selectedPosition * 8467 +
@@ -59,16 +63,24 @@ class ShapePainter extends CustomPainter {
         paint);
   }
 
-  void _drawSmallRect(Canvas canvas, Offset center, double r, Color color) {
+  void _drawDragRect(Canvas canvas, Rect block, Color color) {
     var paint = Paint();
     paint.color = color;
     paint.style = PaintingStyle.fill;
     paint.strokeWidth = 1;
     canvas.drawRRect(
         RRect.fromRectAndRadius(
-            Rect.fromCircle(center: Offset(center.dx, center.dy), radius: r),
-            Radius.circular(r / 3)),
+            block, Radius.circular(min(block.width, block.height) / 3)),
         paint);
+    paint = Paint();
+    paint.color = Colors.white54;
+    paint.style = PaintingStyle.stroke;
+    paint.strokeWidth = 0.5;
+    canvas.drawRRect(
+        RRect.fromRectAndRadius(
+            block, Radius.circular(min(block.width, block.height) / 3)),
+        paint);
+
     //additional drawing for resizing rect area is here...
   }
 
@@ -106,8 +118,8 @@ class ShapePainter extends CustomPainter {
       }
       // for resizing circles just remove this condition - (!position.isRounded)
       if ((!position.isRounded) && (index == selectedPosition)) {
-        _drawSmallRect(canvas, position.getResizingAreaPosition(), radius / 7,
-            colorBorder);
+        _drawDragRect(
+            canvas, position.getResizingAreaRect(pixelsInDP), colorBorder);
       }
     });
     if (selectedPosition < 0 || selectedPosition >= positions.length) {

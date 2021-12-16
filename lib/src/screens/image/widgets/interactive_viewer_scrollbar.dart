@@ -29,13 +29,11 @@ class _InteractiveViewerScrollBarsState
     extends State<InteractiveViewerScrollBars> {
   late Size _scrollBarSize;
   late Offset _scrollBarOffset;
-  late final void Function() _listener =
-      () => _calculateTransformationUpdates();
 
   @override
   void initState() {
-    widget.controller.addListener(_listener);
     _calculateTransformationUpdates();
+    widget.controller.addListener(_calculateTransformationUpdates);
     super.initState();
   }
 
@@ -113,7 +111,7 @@ class _InteractiveViewerScrollBarsState
 
   @override
   void dispose() {
-    widget.controller.removeListener(_listener);
+    widget.controller.removeListener(_calculateTransformationUpdates);
     super.dispose();
   }
 }

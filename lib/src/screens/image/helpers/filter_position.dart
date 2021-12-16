@@ -13,6 +13,7 @@ class FilterPosition {
   static bool _sIsPixelate = true;
   static final double _sSin = sin(-pi / 4); //bottom right point
   static final double _sCos = cos(-pi / 4); //bottom right point
+  static const _resizeBlockSize = 8; //dp//lp
 
   final int maxRadius;
 
@@ -71,8 +72,8 @@ class FilterPosition {
     if (_rounded) {
       return sqrt(pow(posX - x, 2) + pow(posY - y, 2)) <= getVisibleRadius();
     } else {
-      var diffx = radius * _cos;
-      var diffY = radius * _sin;
+      var diffx = (radius * _cos).abs();
+      var diffY = (radius * _sin).abs();
       return (x <= posX + diffx &&
           x >= posX - diffx &&
           y <= posY + diffY &&
@@ -87,15 +88,11 @@ class FilterPosition {
     return Offset(eX, eY);
   }
 
-  bool isResizingAreaPoint(double x, double y) {
-    var offset = getResizingAreaPosition();
-    var clickRadius = getVisibleRadius() ~/ 5; // detect click area radius
-    var eX = offset.dx;
-    var eY = offset.dy;
-    return (x <= eX + clickRadius &&
-        x >= eX - clickRadius &&
-        y <= eY + clickRadius &&
-        y >= eY - clickRadius);
+  Rect getResizingAreaRect(double pixelsInDP) {
+    return Rect.fromCenter(
+        center: getResizingAreaPosition(),
+        width: _resizeBlockSize * pixelsInDP,
+        height: _resizeBlockSize * pixelsInDP);
   }
 
   void rebuildRadiusFromClick(double x2, double y2) {

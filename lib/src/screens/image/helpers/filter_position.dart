@@ -11,8 +11,8 @@ class FilterPosition {
   static double _sRadiusRatio = ImgConst.startRadiusRatio;
   static bool _sIsRounded = true;
   static bool _sIsPixelate = true;
-  static double _sSin = sin(pi / 4);
-  static double _sCos = cos(pi / 4);
+  static final double _sSin = sin(-pi / 4); //bottom right point
+  static final double _sCos = cos(-pi / 4); //bottom right point
 
   final int maxRadius;
 

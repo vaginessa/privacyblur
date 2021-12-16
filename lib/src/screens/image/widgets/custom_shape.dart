@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:privacyblur/src/screens/image/helpers/constants.dart';
-import 'package:privacyblur/src/screens/image/helpers/image_classes_helper.dart';
+import 'package:privacyblur/src/screens/image/helpers/filter_position.dart';
 import 'package:privacyblur/src/widgets/theme/theme_provider.dart';
 
 class ShapePainter extends CustomPainter {

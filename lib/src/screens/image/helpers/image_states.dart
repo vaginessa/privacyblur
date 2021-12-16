@@ -4,7 +4,7 @@ import 'package:privacyblur/src/utils/image_filter/helpers/filter_result.dart';
 import 'package:privacyblur/src/widgets/message_bar.dart';
 
 import 'constants.dart';
-import 'image_classes_helper.dart';
+import 'filter_position.dart';
 
 enum EditTool { EditSize, EditShape, EditGranularity, EditType }
 enum FeedbackAction { ShowMessage, Navigate }

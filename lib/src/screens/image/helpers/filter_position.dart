@@ -11,6 +11,8 @@ class FilterPosition {
   static double _sRadiusRatio = ImgConst.startRadiusRatio;
   static bool _sIsRounded = true;
   static bool _sIsPixelate = true;
+  static double _sSin = sin(pi / 4);
+  static double _sCos = cos(pi / 4);
 
   final int maxRadius;
 
@@ -18,8 +20,8 @@ class FilterPosition {
 
   double _granularity = _sGranularityRatio;
   double _radius = _sRadiusRatio;
-  double _cos = cos(pi / 4); //45 degree
-  double _sin = sin(pi / 4);
+  double _cos = _sCos; //45 degree
+  double _sin = _sSin;
 
   bool _rounded = _sIsRounded;
   bool _pixelate = _sIsPixelate;
@@ -65,11 +67,17 @@ class FilterPosition {
   int getVisibleHeight() => (maxRadius * radiusRatio * _sin * 2).toInt();
 
   bool isInnerPoint(int x, int y) {
-    var radius = (maxRadius * radiusRatio).toInt();
-    return (x <= posX + radius &&
-        x >= posX - radius &&
-        y <= posY + radius &&
-        y >= posY - radius);
+    var radius = getVisibleRadius();
+    if (_rounded) {
+      return sqrt(pow(posX - x, 2) + pow(posY - y, 2)) <= getVisibleRadius();
+    } else {
+      var diffx = radius * _cos;
+      var diffY = radius * _sin;
+      return (x <= posX + diffx &&
+          x >= posX - diffx &&
+          y <= posY + diffY &&
+          y >= posY - diffY);
+    }
   }
 
   Offset getResizingAreaPosition() {
@@ -96,6 +104,8 @@ class FilterPosition {
     var dist = sqrt(pow(diffx, 2) + pow(diffy, 2));
     _cos = diffx / dist;
     _sin = diffy / dist;
+    /*_sCos = _cos; //we will not save this for new areas always new squares and circles
+    _sSin = _sin;*/
     radiusRatio = dist / maxRadius;
     if (radiusRatio > 1.0) radiusRatio = 1.0;
   }

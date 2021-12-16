@@ -3,7 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:privacyblur/src/screens/image/helpers/image_classes_helper.dart';
+import 'package:privacyblur/src/screens/image/helpers/filter_position.dart';
 import 'package:privacyblur/src/screens/image/helpers/image_states.dart';
 import 'package:privacyblur/src/utils/image_filter/helpers/filter_result.dart';
 import 'package:privacyblur/src/widgets/interactive_viewer_scrollbar.dart';
@@ -129,7 +129,8 @@ class ImageViewer extends StatelessWidget {
     if (curIndex > -1) {
       var curFilter = state.getSelectedPosition();
       if ((curFilter != null) &&
-          (!curFilter.isRounded) && // for resizing circles just remove this condition
+          (!curFilter
+              .isRounded) && // for resizing circles just remove this condition
           _detectDragAreaClick(offset, curFilter)) {
         changeTopRightOffset(offset.dx, offset.dy);
         return; //if we in resize mode, don't change selected index
@@ -146,13 +147,9 @@ class ImageViewer extends StatelessWidget {
     int index = -1;
     double dist = 10000000;
     state.positions.asMap().forEach((key, value) {
-      var tmpRadius = state.maxRadius * value.radiusRatio;
       var tmp =
           sqrt(pow(value.posX - offset.dx, 2) + pow(value.posY - offset.dy, 2));
-      if ((value.isRounded && (tmp <= tmpRadius)) ||
-          ((!value.isRounded) &&
-              ((value.posX - offset.dx).abs() <= tmpRadius) &&
-              ((value.posY - offset.dy).abs() <= tmpRadius))) {
+      if (value.isInnerPoint(offset.dx.toInt(), offset.dy.toInt())) {
         if (tmp < dist) {
           index = key;
           dist = tmp;

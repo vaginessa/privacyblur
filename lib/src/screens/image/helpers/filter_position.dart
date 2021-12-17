@@ -11,6 +11,14 @@ class FilterPosition {
   static double _sRadiusRatio = ImgConst.startRadiusRatio;
   static bool _sIsRounded = true;
   static bool _sIsPixelate = true;
+
+  static void resetStoredInfo() {
+    _sGranularityRatio = ImgConst.startGranularityRatio;
+    _sRadiusRatio = ImgConst.startRadiusRatio;
+    _sIsRounded = true;
+    _sIsPixelate = true;
+  }
+
   static final double _sSin = sin(-pi / 4); //bottom right point
   static final double _sCos = cos(-pi / 4); //bottom right point
   static const _resizeBlockSize = 8; //dp//lp

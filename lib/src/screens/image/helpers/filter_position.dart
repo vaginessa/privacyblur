@@ -96,16 +96,26 @@ class FilterPosition {
   }
 
   void rebuildRadiusFromClick(double x2, double y2) {
-    var diffx = x2 - (posX - (maxRadius * radiusRatio * _cos));
-    var diffy = (posY + (maxRadius * radiusRatio * _sin)) - y2;
-    var dist = sqrt(pow(diffx, 2) + pow(diffy, 2));
-    posX = (((x2 - diffx) + x2) / 2);
-    posY = (((y2 + diffy) + y2) / 2);
-    _cos = diffx / dist;
-    _sin = diffy / dist;
-    /*_sCos = _cos; //we will not save this for new areas always new squares and circles
+    if (_rounded) {
+      var diffx = x2 - posX;
+      var diffy = posY - y2;
+      var dist = sqrt(pow(diffx, 2) + pow(diffy, 2));
+      _cos = diffx / dist;
+      _sin = diffy / dist;
+      /*_sCos = _cos; //we will not save this for new areas always new squares and circles
     _sSin = _sin;*/
-    radiusRatio = dist / (maxRadius * 2);
-    if (radiusRatio > 1.0) radiusRatio = 1.0;
+      radiusRatio = dist / maxRadius;
+      if (radiusRatio > 1.0) radiusRatio = 1.0;
+    } else {
+      var diffx = x2 - (posX - (maxRadius * radiusRatio * _cos));
+      var diffy = (posY + (maxRadius * radiusRatio * _sin)) - y2;
+      var dist = sqrt(pow(diffx, 2) + pow(diffy, 2));
+      posX = (((x2 - diffx) + x2) / 2);
+      posY = (((y2 + diffy) + y2) / 2);
+      _cos = diffx / dist;
+      _sin = diffy / dist;
+      radiusRatio = dist / (maxRadius * 2);
+      if (radiusRatio > 1.0) radiusRatio = 1.0;
+    }
   }
 }

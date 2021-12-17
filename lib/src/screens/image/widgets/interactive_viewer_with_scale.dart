@@ -147,7 +147,7 @@ class _InteractiveViewerWithScaleState
     widget.extState.positions.asMap().forEach((key, value) {
       var tmp =
           sqrt(pow(value.posX - offset.dx, 2) + pow(value.posY - offset.dy, 2));
-      if (value.isInnerPoint(offset.dx.toInt(), offset.dy.toInt())) {
+      if (value.isInnerPoint(offset.dx, offset.dy)) {
         if (tmp < dist) {
           index = key;
           dist = tmp;

@@ -19,8 +19,8 @@ class ShapePainter extends CustomPainter {
       _hash += (p.isRounded ? 7879 : 9341) +
           selectedPosition * 8467 +
           (p.getVisibleRadius() * 14557).toInt() +
-          p.posX +
-          p.posY * 12347;
+          p.posX.toInt() +
+          p.posY.toInt() * 12347;
     }
   }
 
@@ -41,16 +41,16 @@ class ShapePainter extends CustomPainter {
         const Offset(0, 0) & Size(size.width - 2, size.height - 2), paint1);
   }
 
-  void _drawCircle(Canvas canvas, int x, int y, int r, Color color) {
+  void _drawCircle(Canvas canvas, double x, double y, int r, Color color) {
     var paint = Paint();
     paint.color = color;
     paint.style = PaintingStyle.stroke;
     paint.strokeWidth = 2;
-    canvas.drawCircle(Offset(x.toDouble(), y.toDouble()), r.toDouble(), paint);
+    canvas.drawCircle(Offset(x, y), r.toDouble(), paint);
   }
 
   void _drawRect(
-      Canvas canvas, int x, int y, int width, int height, Color color) {
+      Canvas canvas, double x, double y, int width, int height, Color color) {
     var paint = Paint();
     paint.color = color;
     paint.style = PaintingStyle.stroke;

@@ -70,8 +70,8 @@ class ImageStateScreen extends ImageStateBase {
   bool _addFace(Face face) {
     if (PositionsUtils.checkNewFace(positions, face)) {
       positions.add(FilterPosition(maxRadius)
-        ..posX = face.x
-        ..posY = face.y
+        ..posX = face.x.toDouble()
+        ..posY = face.y.toDouble()
         ..radiusRatio = face.radius / maxRadius);
       return true;
     } else {
@@ -81,8 +81,8 @@ class ImageStateScreen extends ImageStateBase {
 
   void addPosition(double x, double y) {
     positions.add(FilterPosition(maxRadius)
-      ..posX = x.toInt()
-      ..posY = y.toInt());
+      ..posX = x
+      ..posY = y);
     positionsUpdateOrder();
   }
 

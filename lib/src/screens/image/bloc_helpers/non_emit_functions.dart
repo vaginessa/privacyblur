@@ -17,9 +17,9 @@ class ImageOperationsHelper {
     position.canceled = true;
     if (position.isRounded) {
       imageFilter.cancelCircle(
-          position.posX, position.posY, position.getVisibleRadius());
+          position.posX.toInt(), position.posY.toInt(), position.getVisibleRadius());
     } else {
-      imageFilter.cancelSquare(position.posX, position.posY,
+      imageFilter.cancelSquare(position.posX.toInt(), position.posY.toInt(),
           position.getVisibleWidth(), position.getVisibleHeight());
     }
   }
@@ -48,9 +48,9 @@ class ImageOperationsHelper {
         }
         if (position.isRounded) {
           imageFilter.apply2Circle(
-              position.posX, position.posY, position.getVisibleRadius());
+              position.posX.toInt(), position.posY.toInt(), position.getVisibleRadius());
         } else {
-          imageFilter.apply2Square(position.posX, position.posY,
+          imageFilter.apply2Square(position.posX.toInt(), position.posY.toInt(),
               position.getVisibleWidth(), position.getVisibleHeight());
         }
         position.canceled = false;

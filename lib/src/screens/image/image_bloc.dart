@@ -138,8 +138,8 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
     var position = _blocState.getSelectedPosition();
     if (position != null) {
       imageOperationsHelper.cancelCurrentFilters(position, _blocState);
-      position.posX = event.x.toInt();
-      position.posY = event.y.toInt();
+      position.posX = event.x;
+      position.posY = event.y;
       _delayedApplyFilter();
       emit(_blocState.clone()); //needed
     }

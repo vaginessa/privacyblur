@@ -27,8 +27,8 @@ class FilterPosition {
   bool _rounded = _sIsRounded;
   bool _pixelate = _sIsPixelate;
 
-  int posX = ImgConst.undefinedPosValue;
-  int posY = ImgConst.undefinedPosValue;
+  double posX = ImgConst.undefinedPosValue.toDouble();
+  double posY = ImgConst.undefinedPosValue.toDouble();
 
   set granularityRatio(double value) {
     _granularity = value;
@@ -67,15 +67,15 @@ class FilterPosition {
 
   int getVisibleHeight() => (maxRadius * radiusRatio * _sin * 2).toInt();
 
-  bool isInnerPoint(int x, int y) {
+  bool isInnerPoint(double x, double y) {
     var radius = getVisibleRadius();
     if (_rounded) {
       return sqrt(pow(posX - x, 2) + pow(posY - y, 2)) <= getVisibleRadius();
     } else {
-      var diffx = (radius * _cos).abs();
+      var diffX = (radius * _cos).abs();
       var diffY = (radius * _sin).abs();
-      return (x <= posX + diffx &&
-          x >= posX - diffx &&
+      return (x <= posX + diffX &&
+          x >= posX - diffX &&
           y <= posY + diffY &&
           y >= posY - diffY);
     }
@@ -96,14 +96,16 @@ class FilterPosition {
   }
 
   void rebuildRadiusFromClick(double x2, double y2) {
-    var diffx = x2 - posX;
-    var diffy = posY - y2;
+    var diffx = x2 - (posX - (maxRadius * radiusRatio * _cos));
+    var diffy = (posY + (maxRadius * radiusRatio * _sin)) - y2;
     var dist = sqrt(pow(diffx, 2) + pow(diffy, 2));
+    posX = (((x2 - diffx) + x2) / 2);
+    posY = (((y2 + diffy) + y2) / 2);
     _cos = diffx / dist;
     _sin = diffy / dist;
     /*_sCos = _cos; //we will not save this for new areas always new squares and circles
     _sSin = _sin;*/
-    radiusRatio = dist / maxRadius;
+    radiusRatio = dist / (maxRadius * 2);
     if (radiusRatio > 1.0) radiusRatio = 1.0;
   }
 }

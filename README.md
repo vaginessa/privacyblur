@@ -118,7 +118,7 @@ More on how to configure build-types in you IDE:
 - Click in the top bar of your IDE on the corresponding Build-Configuration tile
 - Click "Edit Configurations" (IntelliJ)
 - Click "+"-Button to add a configuration
-- Enter the entry point - e.g.: ``[PROJECT_PATH]/lib/main-[flavor_name].dart``
+- Enter the entry point - e.g.: ``[PROJECT_PATH]/lib/main_[flavor_name].dart``
 - Enter the build flavor
 
 ![Instructions](docs/assets/blur1633609294856.jpg)

@@ -47,16 +47,18 @@ class _InteractiveViewerWithScaleState
     extends State<InteractiveViewerWithScale> {
   double imgPixelsInDP = 1.0;
   double devicePixelsInDP = 1.0;
+  late final void Function() listenerCallback = _calculateScaleUpdate;
 
   @override
   void initState() {
-    widget.controller.addListener(_calculateScaleUpdate);
     super.initState();
   }
 
   @override
   void didChangeDependencies() {
     devicePixelsInDP = MediaQuery.of(context).devicePixelRatio;
+    widget.controller.removeListener(listenerCallback);
+    widget.controller.addListener(listenerCallback);
     _calculateScaleUpdate();
     super.didChangeDependencies();
   }
@@ -176,7 +178,7 @@ class _InteractiveViewerWithScaleState
 
   @override
   void dispose() {
-    widget.controller.removeListener(_calculateScaleUpdate);
+    widget.controller.removeListener(listenerCallback);
     super.dispose();
   }
 }

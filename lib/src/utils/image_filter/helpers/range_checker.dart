@@ -16,21 +16,12 @@ class RangeHelper {
   final bool isCircle;
   late bool fail;
 
-  RangeHelper(this.centerX, this.centerY, this.radius, this.isCircle,
-      this.imgWidth, this.imgHeight, this.imgBorder) {
+  RangeHelper.circle(this.centerX, this.centerY, this.radius, this.imgWidth,
+      this.imgHeight, this.imgBorder)
+      : isCircle = true {
     fail =
         ((imgBorder + 1) > imgWidth ~/ 2) || ((imgBorder + 1) > imgHeight ~/ 2);
-
-    if (isCircle) {
-      _calculateRadiusArea();
-    } else {
-      x1 = centerX - radius;
-      y1 = centerY - radius;
-      x2 = centerX + radius;
-      y2 = centerY + radius;
-      _calculateArea();
-    }
-
+    _calculateRadiusArea();
     if (fail) {
       x1 = 1;
       x2 = 0;
@@ -50,7 +41,16 @@ class RangeHelper {
         radius = 0 {
     fail =
         ((imgBorder + 1) > imgWidth ~/ 2) || ((imgBorder + 1) > imgHeight ~/ 2);
-
+    if (x1 > x2) {
+      var t = x1;
+      x1 = x2;
+      x2 = t;
+    }
+    if (y1 > y2) {
+      var t = y1;
+      y1 = y2;
+      y2 = t;
+    }
     _calculateArea();
 
     if (fail) {

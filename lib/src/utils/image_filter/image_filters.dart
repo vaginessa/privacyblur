@@ -80,18 +80,60 @@ class ImageAppFilter {
     _cancelArea(_imgChannels.getChangedRange());
   }
 
-  void cancelArea(int centerX, int centerY, int radius, isCircle) {
+  /*void cancelArea(int centerX, int centerY, int radius, isCircle) {
     if (!_imgChannels.transactionActive) return;
     if (_allCanceled) return;
     RangeHelper range = RangeHelper(centerX, centerY, radius, isCircle,
         _imgChannels.imageWidth, _imgChannels.imageHeight, 0);
     _cancelArea(range);
+  }*/
+
+  void cancelCircle(int centerX, int centerY, int radius) {
+    if (!_imgChannels.transactionActive) return;
+    if (_allCanceled) return;
+    RangeHelper range = RangeHelper.circle(centerX, centerY, radius,
+        _imgChannels.imageWidth, _imgChannels.imageHeight, 0);
+    _cancelArea(range);
   }
 
-  void apply2Area(int centerX, int centerY, int radius, bool isCircle) {
+  void cancelSquare(int centerX, int centerY, int width, int height) {
     if (!_imgChannels.transactionActive) return;
-    RangeHelper range = RangeHelper(centerX, centerY, radius, isCircle,
+    if (_allCanceled) return;
+    var halfWidth = width ~/ 2;
+    var halfHeight = height ~/ 2;
+    RangeHelper range = RangeHelper.square(
+        centerX - halfWidth,
+        centerY - halfHeight,
+        centerX + halfWidth,
+        centerY + halfHeight,
+        _imgChannels.imageWidth,
+        _imgChannels.imageHeight,
+        0);
+    _cancelArea(range);
+  }
+
+  void apply2Circle(int centerX, int centerY, int radius) {
+    if (!_imgChannels.transactionActive) return;
+    RangeHelper range = RangeHelper.circle(centerX, centerY, radius,
         _imgChannels.imageWidth, _imgChannels.imageHeight, 0);
+    _activeMatrix.calculateInRange(range, _imgChannels);
+    _allCanceled = false;
+    _imgChannels.collectRange(range);
+    needRebuild = true;
+  }
+
+  void apply2Square(int centerX, int centerY, int width, int height) {
+    if (!_imgChannels.transactionActive) return;
+    var halfWidth = width ~/ 2;
+    var halfHeight = height ~/ 2;
+    RangeHelper range = RangeHelper.square(
+        centerX - halfWidth,
+        centerY - halfHeight,
+        centerX + halfWidth,
+        centerY + halfHeight,
+        _imgChannels.imageWidth,
+        _imgChannels.imageHeight,
+        0);
     _activeMatrix.calculateInRange(range, _imgChannels);
     _allCanceled = false;
     _imgChannels.collectRange(range);

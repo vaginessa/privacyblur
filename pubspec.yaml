@@ -27,19 +27,19 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^1.0.3
-  bloc: ^7.0.0
-  flutter_bloc: ^7.0.0
+  bloc: ^8.0.1
+  flutter_bloc: ^8.0.0
   shared_preferences: ^2.0.5
   flutter_translate: ^3.0.1
   flutter_styled_toast: ^2.0.0
   image_size_getter: ^1.0.0
-  flutter_exif_rotation: ^0.4.1
+  flutter_exif_rotation: ^0.4.2
   url_launcher: ^6.0.3
-  image_picker: ^0.7.5+2
+  image_picker: ^0.8.4+4
   image: ^3.0.2
   image_gallery_saver: ^1.6.9
   permission_handler: ^7.2.0
-  path_provider: ^2.0.1
+  path_provider: ^2.0.8
 
   # Desktop support
   desktop_window: ^0.4.0
@@ -52,7 +52,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  bloc_test: ^8.0.0
+  bloc_test: ^9.0.1
   mockito: ^5.0.7
   build_runner: ^2.0.3
   flutter_translate_gen: ^2.0.0

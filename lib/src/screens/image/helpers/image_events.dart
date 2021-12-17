@@ -77,3 +77,11 @@ class ImageEventSave2Disk extends ImageEventBase {
 
   ImageEventSave2Disk(this.needOverride);
 }
+
+/// image change position of top right filter area
+class ImageEventTopRight extends ImageEventBase {
+  final double x;
+  final double y;
+
+  ImageEventTopRight(this.x, this.y);
+}

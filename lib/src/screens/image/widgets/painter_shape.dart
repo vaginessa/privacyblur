@@ -1,16 +1,20 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:privacyblur/src/screens/image/helpers/constants.dart';
-import 'package:privacyblur/src/screens/image/helpers/image_classes_helper.dart';
+import 'package:privacyblur/src/screens/image/helpers/filter_position.dart';
 import 'package:privacyblur/src/widgets/theme/theme_provider.dart';
 
 class ShapePainter extends CustomPainter {
   int _hash = 0;
   final int selectedPosition;
   final List<FilterPosition> positions;
+  final double pixelsInDP;
 
-  ShapePainter(this.positions, this.selectedPosition) {
+  ShapePainter(this.positions, this.selectedPosition, this.pixelsInDP) {
     // with prime numbers to reduce collisions... may be. Not very important
     // from https://primes.utm.edu/lists/small/10000.txt
+    _hash = (pixelsInDP * 5623).round();
     for (var p in positions) {
       _hash += (p.isRounded ? 7879 : 9341) +
           selectedPosition * 8467 +
@@ -45,15 +49,39 @@ class ShapePainter extends CustomPainter {
     canvas.drawCircle(Offset(x.toDouble(), y.toDouble()), r.toDouble(), paint);
   }
 
-  void _drawRect(Canvas canvas, int x, int y, int r, Color color) {
+  void _drawRect(
+      Canvas canvas, int x, int y, int width, int height, Color color) {
     var paint = Paint();
     paint.color = color;
     paint.style = PaintingStyle.stroke;
     paint.strokeWidth = 2;
     canvas.drawRect(
-        Rect.fromCircle(
-            center: Offset(x.toDouble(), y.toDouble()), radius: r.toDouble()),
+        Rect.fromCenter(
+            center: Offset(x.toDouble(), y.toDouble()),
+            width: width.toDouble(),
+            height: height.toDouble()),
         paint);
+  }
+
+  void _drawDragRect(Canvas canvas, Rect block, Color color) {
+    var paint = Paint();
+    paint.color = color;
+    paint.style = PaintingStyle.fill;
+    paint.strokeWidth = 1;
+    canvas.drawRRect(
+        RRect.fromRectAndRadius(
+            block, Radius.circular(min(block.width, block.height) / 3)),
+        paint);
+    paint = Paint();
+    paint.color = Colors.white54;
+    paint.style = PaintingStyle.stroke;
+    paint.strokeWidth = 0.5;
+    canvas.drawRRect(
+        RRect.fromRectAndRadius(
+            block, Radius.circular(min(block.width, block.height) / 3)),
+        paint);
+
+    //additional drawing for resizing rect area is here...
   }
 
   @override
@@ -73,9 +101,25 @@ class ShapePainter extends CustomPainter {
         _drawCircle(
             canvas, position.posX, position.posY, radius - 2, colorBorderInner);
       } else {
-        _drawRect(canvas, position.posX, position.posY, radius, colorBorder);
         _drawRect(
-            canvas, position.posX, position.posY, radius - 2, colorBorderInner);
+            canvas,
+            position.posX,
+            position.posY,
+            position.getVisibleWidth(),
+            position.getVisibleHeight(),
+            colorBorder);
+        _drawRect(
+            canvas,
+            position.posX,
+            position.posY,
+            position.getVisibleWidth() - 2,
+            position.getVisibleHeight() - 2,
+            colorBorderInner);
+      }
+      // for resizing circles just remove this condition - (!position.isRounded)
+      if ((!position.isRounded) && (index == selectedPosition)) {
+        _drawDragRect(
+            canvas, position.getResizingAreaRect(pixelsInDP), colorBorder);
       }
     });
     if (selectedPosition < 0 || selectedPosition >= positions.length) {

@@ -6,10 +6,10 @@ import 'package:privacyblur/resources/localization/keys.dart';
 import 'package:privacyblur/src/di.dart';
 import 'package:privacyblur/src/router.dart';
 import 'package:privacyblur/src/screens/image/utils/internal_layout.dart';
-import 'package:privacyblur/src/screens/image/widgets/custom_painter.dart';
+import 'package:privacyblur/src/screens/image/widgets/painter_image.dart';
 import 'package:privacyblur/src/utils/image_filter/helpers/filter_result.dart';
 import 'package:privacyblur/src/widgets/adaptive_widgets_builder.dart';
-import 'package:privacyblur/src/widgets/interactive_viewer_scrollbar.dart';
+import 'package:privacyblur/src/screens/image/widgets/interactive_viewer_scrollbar.dart';
 
 // ignore: must_be_immutable
 class ImagePreviewScreen extends StatelessWidget {

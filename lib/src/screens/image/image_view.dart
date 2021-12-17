@@ -155,6 +155,7 @@ class ImageScreen extends StatelessWidget with AppMessages {
               _transformationController!,
               (posX, posY) => _bloc.add(ImageEventPositionChanged(posX, posY)),
               (posX, posY) => _bloc.add(ImageEventNewFilter(posX, posY)),
+              (posX, posY) => _bloc.add(ImageEventTopRight(posX, posY)),
               (index) => _bloc.add(ImageEventExistingFilterSelected(index)),
             );
           },

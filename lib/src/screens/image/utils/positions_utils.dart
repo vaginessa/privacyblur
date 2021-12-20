@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:privacyblur/src/data/services/face_detection.dart';
 import 'package:privacyblur/src/screens/image/utils/filter_position.dart';
 
@@ -52,24 +54,43 @@ class PositionsUtils {
 
   static bool _checkCross(
       FilterPosition oneFilter, FilterPosition anotherFilter) {
-    var anotherRadius = anotherFilter.getVisibleRadius();
+    Rect oneRect = Rect.zero;
+    if (oneFilter.isRounded) {
+      oneRect = Rect.fromCircle(
+          center: Offset(oneFilter.posX, oneFilter.posY),
+          radius: oneFilter.getVisibleRadius().toDouble());
+    } else {
+      oneRect = Rect.fromLTWH(
+          oneFilter.posX,
+          oneFilter.posY,
+          oneFilter.getVisibleWidth().toDouble(),
+          oneFilter.getVisibleHeight().toDouble());
+    }
+    Rect anotherRect = Rect.zero;
+    if (anotherFilter.isRounded) {
+      anotherRect = Rect.fromCircle(
+          center: Offset(anotherFilter.posX, anotherFilter.posY),
+          radius: anotherFilter.getVisibleRadius().toDouble());
+    } else {
+      anotherRect = Rect.fromLTWH(
+          anotherFilter.posX,
+          anotherFilter.posY,
+          anotherFilter.getVisibleWidth().toDouble(),
+          anotherFilter.getVisibleHeight().toDouble());
+    }
+    if (oneRect.contains(anotherRect.center)) return true;
+    if (anotherRect.contains(oneRect.center)) return true;
 
-    if (oneFilter.isInnerPoint(anotherFilter.posX - anotherRadius,
-        anotherFilter.posY - anotherRadius)) {
-      return true;
-    }
-    if (oneFilter.isInnerPoint(anotherFilter.posX + anotherRadius,
-        anotherFilter.posY + anotherRadius)) {
-      return true;
-    }
-    if (oneFilter.isInnerPoint(anotherFilter.posX - anotherRadius,
-        anotherFilter.posY + anotherRadius)) {
-      return true;
-    }
-    if (oneFilter.isInnerPoint(anotherFilter.posX + anotherRadius,
-        anotherFilter.posY - anotherRadius)) {
-      return true;
-    }
+    if (oneRect.contains(anotherRect.topLeft)) return true;
+    if (oneRect.contains(anotherRect.topRight)) return true;
+    if (oneRect.contains(anotherRect.bottomLeft)) return true;
+    if (oneRect.contains(anotherRect.bottomRight)) return true;
+
+    if (anotherRect.contains(oneRect.topLeft)) return true;
+    if (anotherRect.contains(oneRect.topRight)) return true;
+    if (anotherRect.contains(oneRect.bottomLeft)) return true;
+    if (anotherRect.contains(oneRect.bottomRight)) return true;
+
     return false;
   }
 
@@ -81,10 +102,6 @@ class PositionsUtils {
       var anotherFilter = arr[i];
       if (anotherFilter.forceRedraw) continue;
       if (_checkCross(currentFilter, anotherFilter)) {
-        anotherFilter.forceRedraw = true;
-        continue;
-      }
-      if (_checkCross(anotherFilter, currentFilter)) {
         anotherFilter.forceRedraw = true;
         continue;
       }

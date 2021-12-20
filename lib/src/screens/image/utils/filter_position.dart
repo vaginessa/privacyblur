@@ -137,4 +137,42 @@ class FilterPosition {
       if (radiusRatio > 1.0) radiusRatio = 1.0;
     }
   }
+
+  bool contains(FilterPosition anotherFilter) {
+    Rect oneRect = Rect.zero;
+    if (isRounded) {
+      oneRect = Rect.fromCircle(
+          center: Offset(posX, posY), radius: getVisibleRadius().toDouble());
+    } else {
+      oneRect = Rect.fromCenter(
+          center: Offset(posX, posY),
+          width: getVisibleWidth().toDouble(),
+          height: getVisibleHeight().toDouble());
+    }
+    Rect anotherRect = Rect.zero;
+    if (anotherFilter.isRounded) {
+      anotherRect = Rect.fromCircle(
+          center: Offset(anotherFilter.posX, anotherFilter.posY),
+          radius: anotherFilter.getVisibleRadius().toDouble());
+    } else {
+      anotherRect = Rect.fromCenter(
+          center: Offset(anotherFilter.posX, anotherFilter.posY),
+          width: anotherFilter.getVisibleWidth().toDouble(),
+          height: anotherFilter.getVisibleHeight().toDouble());
+    }
+    if (oneRect.contains(anotherRect.center)) return true;
+    if (anotherRect.contains(oneRect.center)) return true;
+
+    if (oneRect.contains(anotherRect.topLeft)) return true;
+    if (oneRect.contains(anotherRect.topRight)) return true;
+    if (oneRect.contains(anotherRect.bottomLeft)) return true;
+    if (oneRect.contains(anotherRect.bottomRight)) return true;
+
+    if (anotherRect.contains(oneRect.topLeft)) return true;
+    if (anotherRect.contains(oneRect.topRight)) return true;
+    if (anotherRect.contains(oneRect.bottomLeft)) return true;
+    if (anotherRect.contains(oneRect.bottomRight)) return true;
+
+    return false;
+  }
 }

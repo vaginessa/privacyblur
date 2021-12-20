@@ -53,7 +53,10 @@ class FilterPosition {
     _radius = value;
     _sRadiusRatio = value;
     if (!_rounded) {
-      _sRadiusRatio = max((_radius * _cos).abs(), (_radius * _sin).abs());
+      _sRadiusRatio = ((((_radius * _cos).abs() + (_radius * _sin).abs()) / 2) /
+              cos(_startAngle))
+          .abs();
+      if (_sRadiusRatio > 1.0) _sRadiusRatio = 1.0;
     }
   }
 

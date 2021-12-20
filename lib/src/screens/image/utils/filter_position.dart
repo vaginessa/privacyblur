@@ -22,9 +22,9 @@ class FilterPosition {
   }
 
   /// scale area constants
-  static const startAngle = -pi / 4;
-  static final double _sSin = sin(startAngle); //bottom right point
-  static final double _sCos = cos(startAngle); //bottom right point
+  static const _startAngle = -pi / 4; //bottom right point
+  static final double _sSin = sin(_startAngle);
+  static final double _sCos = cos(_startAngle);
   static const _resizeBlockSize = 8; //dp//lp
 
   final int maxRadius;

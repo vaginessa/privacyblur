@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/widgets.dart';
-import 'package:privacyblur/src/screens/image/helpers/filter_position.dart';
+import 'package:privacyblur/src/screens/image/utils/filter_position.dart';
 import 'package:privacyblur/src/screens/image/helpers/image_states.dart';
 import 'package:privacyblur/src/utils/image_filter/helpers/filter_result.dart';
 

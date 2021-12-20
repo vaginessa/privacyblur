@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:privacyblur/src/screens/image/helpers/constants.dart';
-import 'package:privacyblur/src/screens/image/helpers/filter_position.dart';
+import 'package:privacyblur/src/screens/image/utils/filter_position.dart';
 
 void main() {
   /// --- UserInfo ---

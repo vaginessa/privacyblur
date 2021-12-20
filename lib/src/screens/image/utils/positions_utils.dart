@@ -1,5 +1,5 @@
 import 'package:privacyblur/src/data/services/face_detection.dart';
-import 'package:privacyblur/src/screens/image/helpers/filter_position.dart';
+import 'package:privacyblur/src/screens/image/utils/filter_position.dart';
 
 class PositionsUtils {
   /// suppose to return new selected-index after resorting array

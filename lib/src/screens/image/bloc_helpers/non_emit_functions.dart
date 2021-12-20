@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 import 'dart:ui' as img_tools;
 
-import 'package:privacyblur/src/screens/image/helpers/filter_position.dart';
+import 'package:privacyblur/src/screens/image/utils/filter_position.dart';
 import 'package:privacyblur/src/screens/image/helpers/image_states.dart';
 import 'package:privacyblur/src/screens/image/utils/image_tools.dart';
 import 'package:privacyblur/src/utils/image_filter/helpers/filter_result.dart';

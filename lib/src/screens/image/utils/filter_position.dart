@@ -3,7 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 
-import 'constants.dart';
+import '../helpers/constants.dart';
 
 class FilterPosition {
   /// static filter storage. to keep last created value in memory
@@ -12,6 +12,8 @@ class FilterPosition {
   static bool _sIsRounded = true;
   static bool _sIsPixelate = true;
 
+  // todo - for tests we need to reset class to inital values
+  // todo - but better to use some provider in future and mock it in tests
   static void resetStoredInfo() {
     _sGranularityRatio = ImgConst.startGranularityRatio;
     _sRadiusRatio = ImgConst.startRadiusRatio;
@@ -19,8 +21,10 @@ class FilterPosition {
     _sIsPixelate = true;
   }
 
-  static final double _sSin = sin(-pi / 4); //bottom right point
-  static final double _sCos = cos(-pi / 4); //bottom right point
+  /// scale area constants
+  static const startAngle = -pi / 4;
+  static final double _sSin = sin(startAngle); //bottom right point
+  static final double _sCos = cos(startAngle); //bottom right point
   static const _resizeBlockSize = 8; //dp//lp
 
   final int maxRadius;
@@ -78,10 +82,11 @@ class FilterPosition {
   bool isInnerPoint(double x, double y) {
     var radius = getVisibleRadius();
     if (_rounded) {
-      return sqrt(pow(posX - x, 2) + pow(posY - y, 2)) <= getVisibleRadius();
+      return sqrt(pow(posX - x, 2) + pow(posY - y, 2)) <=
+          (getVisibleRadius() + 0.51);
     } else {
-      var diffX = (radius * _cos).abs();
-      var diffY = (radius * _sin).abs();
+      var diffX = (radius * _cos).abs() + 0.51;
+      var diffY = (radius * _sin).abs() + 0.51;
       return (x <= posX + diffX &&
           x >= posX - diffX &&
           y <= posY + diffY &&

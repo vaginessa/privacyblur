@@ -85,6 +85,7 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
 
   FutureOr<void> saveImage(
       ImageEventSave2Disk event, Emitter<ImageStateBase?> emit) async {
+    _blocState.resizeFilterMode = false;
     await imageOperationsHelper.saveImage(
         _blocState, imgTools, event.needOverride);
     if (_blocState.isImageSaved) {
@@ -107,11 +108,13 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
 
   FutureOr<void> deleteFilterIndex(ImageEventCurrentFilterDelete event,
       Emitter<ImageStateBase?> emit) async {
+    _blocState.resizeFilterMode = false;
     if (_blocState.positions.length <= 1) {
       imageOperationsHelper.transactionCancel();
       _blocState.resetSelection();
       _blocState.image = await imageOperationsHelper.getImage();
       if (_blocState.positions.isEmpty) _blocState.isImageSaved = true;
+      _delayedApplyFilter();
       emit(_blocState.clone()); //needed
       return;
     }
@@ -125,16 +128,18 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
 
   void addFilter(ImageEventNewFilter event, Emitter<ImageStateBase?> emit) {
     imageOperationsHelper.transactionStart();
+    _blocState.resizeFilterMode = false;
     _blocState.addPosition(event.x, event.y);
     _blocState.selectedFilterIndex = _blocState.positions.length - 1;
-    _blocState.resizeFilterMode = false;
     _blocState.isImageSaved = false;
+    _blocState.positionsUpdateOrder();
     _delayedApplyFilter();
     emit(_blocState.clone()); //needed
   }
 
   void positionFilterChanged(
       ImageEventPositionChanged event, Emitter<ImageStateBase?> emit) {
+    _blocState.resizeFilterMode = false;
     var position = _blocState.getSelectedPosition();
     if (position != null) {
       imageOperationsHelper.cancelCurrentFilters(position, _blocState);
@@ -192,6 +197,7 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
     }
     _blocState.filename = event.filename;
     _blocState.isImageSaved = true;
+    _blocState.resizeFilterMode = false;
     img_tools.Image? tmpImage;
     try {
       tmpImage = await imgTools.scaleFile(_blocState.filename, maxImageSize);

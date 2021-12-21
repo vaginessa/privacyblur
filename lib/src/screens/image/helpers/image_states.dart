@@ -3,8 +3,8 @@ import 'package:privacyblur/src/screens/image/utils/positions_utils.dart';
 import 'package:privacyblur/src/utils/image_filter/helpers/filter_result.dart';
 import 'package:privacyblur/src/widgets/message_bar.dart';
 
-import 'constants.dart';
 import '../utils/filter_position.dart';
+import 'constants.dart';
 
 enum EditTool { EditSize, EditShape, EditGranularity, EditType }
 enum FeedbackAction { ShowMessage, Navigate }
@@ -123,21 +123,4 @@ class ImageStateScreen extends ImageStateBase {
   }
 }
 
-/// base state class with override for == operator
-class ImageStateBase {
-  static int _globalSerial = 1;
-  int _blocSerial = 0;
-
-  ImageStateBase() {
-    _globalSerial++;
-    _blocSerial = _globalSerial;
-  }
-
-  @override
-  bool operator ==(other) {
-    if (other is ImageStateBase) {
-      return _blocSerial == other._blocSerial;
-    }
-    return false;
-  }
-}
+class ImageStateBase {}

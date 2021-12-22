@@ -1,5 +1,5 @@
 import 'package:privacyblur/src/data/services/face_detection.dart';
-import 'package:privacyblur/src/screens/image/helpers/filter_position.dart';
+import 'package:privacyblur/src/screens/image/utils/filter_position.dart';
 
 class PositionsUtils {
   /// suppose to return new selected-index after resorting array
@@ -38,7 +38,7 @@ class PositionsUtils {
       var pos = arr[i];
       var radiusRatio = face.radius / pos.getVisibleRadius();
       if (radiusRatio > 0.85 && radiusRatio < 1.15) {
-        if (pos.isInnerPoint(face.x, face.y)) {
+        if (pos.isInnerPoint(face.x.toDouble(), face.y.toDouble())) {
           var diffX = (face.x - pos.posX).abs();
           var diffY = (face.y - pos.posY).abs();
           if ((diffX + diffY) < (face.radius * 0.5)) {
@@ -50,29 +50,6 @@ class PositionsUtils {
     return true;
   }
 
-  static bool _checkCross(
-      FilterPosition oneFilter, FilterPosition anotherFilter) {
-    var anotherRadius = anotherFilter.getVisibleRadius();
-
-    if (oneFilter.isInnerPoint(anotherFilter.posX - anotherRadius,
-        anotherFilter.posY - anotherRadius)) {
-      return true;
-    }
-    if (oneFilter.isInnerPoint(anotherFilter.posX + anotherRadius,
-        anotherFilter.posY + anotherRadius)) {
-      return true;
-    }
-    if (oneFilter.isInnerPoint(anotherFilter.posX - anotherRadius,
-        anotherFilter.posY + anotherRadius)) {
-      return true;
-    }
-    if (oneFilter.isInnerPoint(anotherFilter.posX + anotherRadius,
-        anotherFilter.posY - anotherRadius)) {
-      return true;
-    }
-    return false;
-  }
-
   static void _markRedraw(List<FilterPosition> arr, int currentIndex) {
     if (currentIndex >= arr.length || currentIndex < 0) return;
     var currentFilter = arr[currentIndex];
@@ -80,11 +57,7 @@ class PositionsUtils {
       if (i == currentIndex) continue;
       var anotherFilter = arr[i];
       if (anotherFilter.forceRedraw) continue;
-      if (_checkCross(currentFilter, anotherFilter)) {
-        anotherFilter.forceRedraw = true;
-        continue;
-      }
-      if (_checkCross(anotherFilter, currentFilter)) {
+      if (currentFilter.contains(anotherFilter)) {
         anotherFilter.forceRedraw = true;
         continue;
       }

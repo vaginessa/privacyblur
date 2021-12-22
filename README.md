@@ -132,6 +132,7 @@ For Deployment:
 ````bash
 flutter build [platform] --flavor [flavor_name] -t lib/[entry_flavor_file].dart
 ````
+[Android platform - appbundle or apk](https://docs.flutter.dev/deployment/android#build-an-app-bundle)
 
 The app is targeted for iOS and Android on Phones and Tablets.
 Desktop and Web Platform may cause issues and are currently not planned.

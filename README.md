@@ -32,7 +32,7 @@ The App is available on Google Playstore  and the the Appstore now!
   - [Table of contents](#table-of-contents)
   - [Project description](#what-does-the-app-do)
   - [Code style](#code-style)
-    [BUILDING :warning:](#building)
+  - [BUILDING :warning:](#building)
   - [Internationalization](#internationalization)
   - [Features](#features)
   - [Setup](#flutter-sdk-setup)

@@ -212,8 +212,8 @@ class ImageBloc extends Bloc<ImageEventBase, ImageStateBase?> {
           await _yieldCriticalException(Keys.Messages_Errors_Img_Not_Readable));
       return;
     }
-    _blocState.maxRadius = (max(tmpImage.width, tmpImage.height) ~/ 2);
-    _blocState.maxPower = (max(tmpImage.width, tmpImage.height) ~/ 35);
+    _blocState.maxRadius = max(tmpImage.width, tmpImage.height) ~/ 1.8;
+    _blocState.maxPower = max(tmpImage.width, tmpImage.height) ~/ 35;
     _blocState.resetSelection();
     ImageAppFilter.setMaxProcessedWidth(_blocState.maxRadius * 3);
 

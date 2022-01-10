@@ -26,6 +26,7 @@ class FilterPosition {
   static final double _sSin = sin(_startAngle);
   static final double _sCos = cos(_startAngle);
   static const _resizeBlockSize = 8; //dp//lp
+  static const _resizeClickSize = 32; //dp//lp
 
   final int maxRadius;
 
@@ -113,6 +114,14 @@ class FilterPosition {
         width: _resizeBlockSize * pixelsInDP,
         height: _resizeBlockSize * pixelsInDP);
   }
+
+  Rect getResizingAreaClickRect(double pixelsInDP) {
+    return Rect.fromCenter(
+        center: getResizingAreaPosition(),
+        width: _resizeClickSize * pixelsInDP,
+        height: _resizeClickSize * pixelsInDP);
+  }
+
 
   void rebuildRadiusFromClick(double x2, double y2) {
     if (_rounded) {

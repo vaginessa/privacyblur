@@ -1,8 +1,8 @@
 import 'dart:math';
 
 import 'package:flutter/widgets.dart';
-import 'package:privacyblur/src/screens/image/utils/filter_position.dart';
 import 'package:privacyblur/src/screens/image/helpers/image_states.dart';
+import 'package:privacyblur/src/screens/image/utils/filter_position.dart';
 import 'package:privacyblur/src/utils/image_filter/helpers/filter_result.dart';
 
 import 'painter_image.dart';
@@ -159,12 +159,8 @@ class _InteractiveViewerWithScaleState
 
   bool _detectDragAreaClick(Offset click, FilterPosition? filter) {
     if (filter == null) return false;
-    var rect = filter.getResizingAreaRect(imgPixelsInDP);
-    var rect2 = Rect.fromCenter(
-        center: rect.center,
-        width: (rect.width + 2) * 1.15, //let's extend click area +15%
-        height: (rect.height + 2) * 1.15);
-    return rect2.contains(click);
+    var rect = filter.getResizingAreaClickRect(imgPixelsInDP);
+    return rect.contains(click);
   }
 
   void _calculateScaleUpdate() {

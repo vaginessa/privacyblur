@@ -9,7 +9,7 @@ class ImgConst {
   static const defaultImageSize = 2400;
   static const imgQuality = 80; //[0..100]
   static const partFreeMemory = 0.7; //[0..1]
-  static const applyDelayDuration = 150;
+  static const applyDelayDuration = 170;
 }
 
 const Map<EditTool, String> editToolMessage = {

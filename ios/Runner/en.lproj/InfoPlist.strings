@@ -2,8 +2,7 @@
   InfoPlist.strings
   Runner
 
-  Created by Pirmin Bahr on 01.10.21.
+  Created by Pirmin Bahr on 15.02.22.
   
 */
-
-"NSPhotoLibraryUsageDescription" = "The app requires access to you photo library";
+"NSPhotoLibraryUsageDescription" = "Access must be granted to enable acces to the photo library and to save photos to your personal library.";
